@@ -18,9 +18,7 @@ IDEA小锤子的远程版
 </dependency>
 ```
 
-2、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`
-
-请自行拉取源代码打包
+2、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`，请自行拉取源代码打包
 
 3、进入命令行界面，启动本地服务器：
 
