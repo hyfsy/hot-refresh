@@ -11,7 +11,6 @@ IDEA小锤子的远程版
 1、需要热刷新的应用程序引入依赖：
 
 ```xml
-
 <dependency>
     <groupId>com.hyf</groupId>
     <artifactId>hot-refresh-core</artifactId>
@@ -21,7 +20,9 @@ IDEA小锤子的远程版
 
 2、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`
 
-2、进入命令行界面，启动本地服务器：
+请自行拉取源代码打包
+
+3、进入命令行界面，启动本地服务器：
 
 ```bash
 java 
