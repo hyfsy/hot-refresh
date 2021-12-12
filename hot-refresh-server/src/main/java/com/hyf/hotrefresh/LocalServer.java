@@ -15,8 +15,8 @@ public class LocalServer {
 
     public static void main(String[] args) {
 
-        System.setProperty("home", "C:\\Users\\baB_hyf\\Desktop\\test");
-        System.setProperty("url", "http://localhost:8082");
+        // System.setProperty("home", "C:\\Users\\baB_hyf\\Desktop\\test");
+        // System.setProperty("url", "http://localhost:8082");
 
         // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
