@@ -32,6 +32,8 @@ java
 - `home`：修改代码的工作目录
 - `url`：需要热刷新的应用程序地址，到接口路径，如：http://localhost:8080/rest/
 
+4、修改`home`目录下的java文件可看到应用系统热刷新。
+
 # 模块介绍
 
 - `hot-refresh-core`：热刷新核心包，应用程序引入
