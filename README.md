@@ -29,8 +29,8 @@ java
   -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 ```
 
-- `home`：修改代码的工作目录
-- `url`：需要热刷新的应用程序地址，到接口路径，如：http://localhost:8080/rest/
+- `home`：本地编写代码的工作目录
+- `url`：需要热刷新的应用程序地址，到servlet路径，如：http://localhost:8080/ctx-path/rest/
 
 4、修改`home`目录下的java文件可看到应用系统热刷新。
 
@@ -44,11 +44,12 @@ java
 
 ## 环境限制
 
-暂时只支持SpringBoot环境
+1. 暂时只支持SpringBoot环境
+2. 只支持JDK环境，JRE环境不支持
 
 ## 功能限制
 
-1. 热刷新时会发送HTTP请求，如果该请求被拦截，请自行在应用系统里将该请求放行
+1. 热刷新时会发送HTTP请求，如果该`/hot-refresh`请求被拦截，请自行在应用系统内放行
 2. 热刷新功能基于JVMTI，所以不能修改类的方法签名等信息，推荐只修改方法内代码
-3. 针对于jar包内混淆的字节码无法热刷新
+3. 无法热刷新混淆的字节码
 
