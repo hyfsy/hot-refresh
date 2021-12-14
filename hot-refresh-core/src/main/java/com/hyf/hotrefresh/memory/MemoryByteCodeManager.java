@@ -1,0 +1,119 @@
+package com.hyf.hotrefresh.memory;
+
+import javax.tools.*;
+import java.io.IOException;
+import java.util.*;
+
+/**
+ * @author baB_hyf
+ * @date 2021/12/12
+ */
+class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
+
+    private static final String[] LOCATION_NAMES = {StandardLocation.PLATFORM_CLASS_PATH.name(), /* JPMS StandardLocation.SYSTEM_MODULES **/ "SYSTEM_MODULES"};
+
+    private final MemoryByteCodeCollectClassLoader bcc = new MemoryByteCodeCollectClassLoader();
+
+    private final PackageFinder packageFinder = new PackageFinder(bcc);
+
+    private final List<MemoryByteCode> tempCache = new ArrayList<>();
+
+    public MemoryByteCodeManager(JavaFileManager fileManager) {
+        super(fileManager);
+    }
+
+    @Override
+    public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
+
+        for (MemoryByteCode byteCode : tempCache) {
+            if (byteCode.getClassName().equals(className)) {
+                return byteCode;
+            }
+        }
+
+        MemoryByteCode memoryByteCode = new MemoryByteCode(className);
+        tempCache.add(memoryByteCode);
+        bcc.collect(className, memoryByteCode);
+        return memoryByteCode;
+    }
+
+    @Override
+    public ClassLoader getClassLoader(Location location) {
+        return bcc;
+    }
+
+    @Override
+    public String inferBinaryName(Location location, JavaFileObject file) {
+        if (file instanceof CustomJavaFileObject) {
+            return ((CustomJavaFileObject) file).binaryName();
+        }
+        else {
+            /*
+             * if it's not CustomJavaFileObject, then it's coming from standard file manager
+             * - let it handle the file
+             */
+            return super.inferBinaryName(location, file);
+        }
+    }
+
+    @Override
+    public Iterable<JavaFileObject> list(Location location, String packageName, Set<JavaFileObject.Kind> kinds, boolean recurse) throws IOException {
+        if (location instanceof StandardLocation) {
+            String locationName = ((StandardLocation) location).name();
+            for (String name : LOCATION_NAMES) {
+                if (name.equals(locationName)) {
+                    return super.list(location, packageName, kinds, recurse);
+                }
+            }
+        }
+
+        // merge JavaFileObjects from specified ClassLoader
+        if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
+            return new IterableJoin<>(super.list(location, packageName, kinds, recurse), packageFinder.find(packageName));
+        }
+
+        return super.list(location, packageName, kinds, recurse);
+    }
+
+    public Map<String, byte[]> getByteCodes() {
+        return bcc.getCollectedByteCodes();
+    }
+
+    private static class IterableJoin<T> implements Iterable<T> {
+
+        private final Iterable<T> first, next;
+
+        public IterableJoin(Iterable<T> first, Iterable<T> next) {
+            this.first = first;
+            this.next = next;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new IteratorJoin<>(first.iterator(), next.iterator());
+        }
+    }
+
+    private static class IteratorJoin<T> implements Iterator<T> {
+
+        private final Iterator<T> first, next;
+
+        public IteratorJoin(Iterator<T> first, Iterator<T> next) {
+            this.first = first;
+            this.next = next;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return first.hasNext() || next.hasNext();
+        }
+
+        @Override
+        public T next() {
+            if (first.hasNext()) {
+                return first.next();
+            }
+            return next.next();
+        }
+    }
+}

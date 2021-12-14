@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.util;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -33,12 +34,20 @@ public class HttpUtil {
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create().setLaxMode();
         if (fileMap != null) {
-            fileMap.forEach((n, f) -> builder.addPart(n, new FileBody(f)));
+            fileMap.forEach((n, f) -> {
+                if (f.exists()) {
+                    builder.addPart(n, new FileBody(f));
+                }
+            });
         }
         httpPost.setEntity(builder.build());
 
         CloseableHttpResponse execute = CLIENT.execute(httpPost);
         HttpEntity entity = execute.getEntity();
+        StatusLine sl = execute.getStatusLine();
+        if (sl.getStatusCode() >= 300) {
+            throw new IOException(sl.getStatusCode() + " " + sl.getReasonPhrase());
+        }
         return entity.getContent();
     }
 }

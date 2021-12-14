@@ -20,19 +20,23 @@ public class HotRefreshManager {
     static {
         INST = Util.getInfrastructureJarClassLoader().install();
         start();
-        System.out.println("Hot refresh infrastructure has been installed");
+        // System.out.println("Hot refresh infrastructure has been installed");
     }
 
     public static Instrumentation getInstrumentation() {
+        if (INST == null) {
+            throw new IllegalStateException("Instrumentation must not be null");
+        }
         return INST;
     }
 
     public static void start() {
-        INST.addTransformer(HOT_REFRESH_TRANSFORMER, true);
+        stop();
+        getInstrumentation().addTransformer(HOT_REFRESH_TRANSFORMER, true);
     }
 
     public static void stop() {
-        INST.removeTransformer(HOT_REFRESH_TRANSFORMER);
+        getInstrumentation().removeTransformer(HOT_REFRESH_TRANSFORMER);
     }
 
     public static void reset(String className) throws AgentException {
@@ -48,7 +52,7 @@ public class HotRefreshManager {
         try {
             HotRefreshManager.getInstrumentation().retransformClasses(clazz);
         } catch (UnmodifiableClassException e) {
-            throw new AgentException("Failed to reset classes", e);
+            throw new AgentException("Class file structure has been modified", e);
         }
     }
 
@@ -57,7 +61,7 @@ public class HotRefreshManager {
         try {
             HotRefreshManager.getInstrumentation().retransformClasses(classList.toArray(new Class[0]));
         } catch (UnmodifiableClassException e) {
-            throw new AgentException("Failed to reTransform classes", e);
+            throw new AgentException("Class file structure has been modified", e);
         }
     }
 }

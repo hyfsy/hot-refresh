@@ -10,8 +10,7 @@
     </parent>
     <groupId>com.hyf</groupId>
     <artifactId>hot-refresh-test-springboot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>learn-springboot-initializr</name>
+    <version>1.0.0-SNAPSHOT</version>
     <description>Demo project for Spring Boot</description>
 
     <properties>

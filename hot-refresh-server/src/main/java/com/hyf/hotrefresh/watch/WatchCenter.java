@@ -107,10 +107,6 @@ public class WatchCenter {
 
                 try {
                     WatchKey watchKey = watchService.take();
-                    if (watchKey == null) {
-                        continue;
-                    }
-
                     List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
                     watchKey.reset();
 

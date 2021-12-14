@@ -6,10 +6,6 @@ package com.hyf.hotrefresh.exception;
  */
 public class RefreshException extends Exception {
 
-    public RefreshException() {
-        super();
-    }
-
     public RefreshException(String message) {
         super(message);
     }

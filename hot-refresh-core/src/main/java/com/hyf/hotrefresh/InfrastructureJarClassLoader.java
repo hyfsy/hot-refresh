@@ -24,10 +24,6 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
     private static final InfrastructureJarClassLoader INSTANCE = new InfrastructureJarClassLoader(byteBuddyResource, asmResource);
 
-    static {
-        registerAsParallelCapable();
-    }
-
     private Class<?> agentClass         = null;
     private Method   installMethod      = null;
     private Class<?> classReaderClass   = null;

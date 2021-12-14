@@ -2,6 +2,7 @@ package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 
+import java.io.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -32,7 +33,27 @@ class HotRefreshTransformer implements ClassFileTransformer {
         if (bytes == null) {
             bytes = classfileBuffer;
         }
+        // else {
+        //     store(classResourceName, bytes);
+        // }
 
         return bytes;
+    }
+
+    private void store(String classResourceName, byte[] bytes) {
+
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("E:\\" + classResourceName.replace("/", File.separator) + ".class"))) {
+
+            int len;
+            byte[] buf = new byte[1024];
+            while ((len = bais.read(buf)) != -1) {
+                bos.write(buf, 0, len);
+            }
+            bos.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

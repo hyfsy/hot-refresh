@@ -6,10 +6,6 @@ package com.hyf.hotrefresh.exception;
  */
 public class AgentException extends RefreshException {
 
-    public AgentException() {
-        super();
-    }
-
     public AgentException(String message) {
         super(message);
     }

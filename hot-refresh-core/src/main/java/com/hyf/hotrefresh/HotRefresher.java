@@ -1,10 +1,9 @@
 package com.hyf.hotrefresh;
 
+import com.hyf.hotrefresh.memory.MemoryCode;
+import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
 import com.hyf.hotrefresh.exception.RefreshException;
-import com.hyf.hotrefresh.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.memory.MemoryCompiler;
 
-import java.lang.instrument.Instrumentation;
 import java.util.Map;
 
 /**
@@ -13,49 +12,38 @@ import java.util.Map;
  */
 public class HotRefresher {
 
-    static {
-        HotRefreshManager.class.getName();
-    }
-
-    public static void refresh(String javaFileContent, String name, String type) throws RefreshException {
+    public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
 
         try {
-
-            MemoryClassLoader mcl = Util.getThrowawayMemoryClassLoader();
-
-            Map<String, byte[]> compiledBytes = MemoryCompiler.compile(name, javaFileContent);
+            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
+            Util.getThrowawayMemoryClassLoader().store(compiledBytes);
 
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
                 String className = entry.getKey();
-                byte[] bytes = entry.getValue();
-
-                // 添加到缓存中
-                mcl.store(name, bytes);
 
                 // 加载 | 转换
-                if ("CREATE".equals(type) || "MODIFY".equals(type)) {
+                if ("CREATE".equals(fileChangeType) || "MODIFY".equals(fileChangeType)) {
                     Class<?> clazz;
                     try {
-                        clazz = Class.forName(className, false, mcl.getParent());
-                    } catch (ClassNotFoundException e) {
+                        clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
+                    } catch (ClassNotFoundException ignored) {
                         try {
-                            clazz = Class.forName(className, false, mcl);
-                        } catch (ClassNotFoundException cnfe) {
-                            throw new RuntimeException("Class not found: " + className, cnfe);
+                            clazz = Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Class not found: " + className, e);
                         }
                     }
 
-                    if ("MODIFY".equals(type)) {
+                    if ("MODIFY".equals(fileChangeType)) {
                         try {
-                            Instrumentation instrumentation = HotRefreshManager.getInstrumentation();
-                            instrumentation.retransformClasses(clazz);
+                            HotRefreshManager.getInstrumentation().retransformClasses(clazz);
                         } catch (Exception e) {
-                            throw new RuntimeException("Class info has been modified", e);
+                            throw new RefreshException("Class file structure has been modified", e);
                         }
                     }
                 }
                 // 类卸载
-                else if ("DELETE".equals(type)) {
+                else if ("DELETE".equals(fileChangeType)) {
                     reset(className);
                 }
             }

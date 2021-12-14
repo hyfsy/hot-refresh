@@ -1,0 +1,48 @@
+package com.hyf.hotrefresh.memory;
+
+import com.hyf.hotrefresh.Util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author baB_hyf
+ * @date 2021/12/12
+ */
+class MemoryByteCodeCollectClassLoader extends ClassLoader {
+
+    static {
+        registerAsParallelCapable();
+    }
+
+    private final Map<String, MemoryByteCode> collectedByteCode = new HashMap<>();
+
+    MemoryByteCodeCollectClassLoader() {
+        super(Util.getThrowawayMemoryClassLoader());
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        MemoryByteCode memoryByteCode = collectedByteCode.get(name);
+
+        if (memoryByteCode != null) {
+            return defineClass(name, memoryByteCode.getByteCode(), 0, memoryByteCode.getByteCode().length);
+        }
+
+        return super.findClass(name);
+    }
+
+    public MemoryByteCode collect(String className, MemoryByteCode memoryByteCode) {
+        return collectedByteCode.put(className, memoryByteCode);
+    }
+
+    public Map<String, byte[]> getCollectedByteCodes() {
+        Map<String, byte[]> bytesMap = new HashMap<>();
+        for (Map.Entry<String, MemoryByteCode> entry : collectedByteCode.entrySet()) {
+            String key = entry.getKey();
+            MemoryByteCode value = entry.getValue();
+            bytesMap.put(key, value.getByteCode());
+        }
+        return bytesMap;
+    }
+}

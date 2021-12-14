@@ -26,6 +26,8 @@ public interface Watcher {
         onChange(file, Type.MODIFY);
     }
 
+    void stopWatch();
+
     enum Type {
         CREATE, MODIFY, DELETE
     }

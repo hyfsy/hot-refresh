@@ -5,7 +5,6 @@ import com.hyf.hotrefresh.Util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,6 +15,12 @@ public class MemoryClassLoader extends ClassLoader {
 
     /** full class name -> class bytes */
     private static final Map<String, byte[]> bytesCache = new ConcurrentHashMap<>();
+
+    // TODO 缓存加载未重刷新的类
+    /** full class name -> refreshed class */
+    private static final Map<String, Class<?>> classCache = new ConcurrentHashMap<>();
+
+    private static final ThreadLocal<ClassLoader> cclPerThread = new ThreadLocal<>();
 
     private static final Object LOCK = new Object();
 
@@ -31,27 +36,29 @@ public class MemoryClassLoader extends ClassLoader {
         return new MemoryClassLoader(Util.getOriginContextClassLoader());
     }
 
-    private static String getClassName(byte[] bytes) {
-        return Util.getInfrastructureJarClassLoader().getClassName(bytes);
+    public static void bind() {
+        if (cclPerThread.get() == null) {
+            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(Util.getThrowawayMemoryClassLoader());
+            cclPerThread.set(ccl);
+        }
     }
 
-    public String store(String fileName, byte[] bytes) {
-        String className = getClassName(bytes);
+    public static void unBind() {
+        ClassLoader ccl = cclPerThread.get();
+        Thread.currentThread().setContextClassLoader(ccl);
+        cclPerThread.remove();
+    }
+
+    public void store(Map<String, byte[]> compiledBytes) {
         synchronized (LOCK) {
-            bytesCache.put(className, bytes);
+            bytesCache.putAll(compiledBytes);
         }
-        return className;
     }
 
     public byte[] get(String className) {
         synchronized (LOCK) {
             return bytesCache.get(className);
-        }
-    }
-
-    public byte[] put(String className, byte[] data) {
-        synchronized (LOCK) {
-            return bytesCache.put(className, data);
         }
     }
 
@@ -61,19 +68,19 @@ public class MemoryClassLoader extends ClassLoader {
         }
     }
 
+    public Class<?> getClass(String className) {
+        try {
+            return findClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Cannot find class: " + className);
+        }
+    }
+
     public List<Class<?>> clear() {
         List<Class<?>> classList = new ArrayList<>();
 
         synchronized (LOCK) {
-            Set<String> classNameList = bytesCache.keySet();
-
-            classNameList.forEach(className -> {
-                try {
-                    classList.add(loadClass(className));
-                } catch (ClassNotFoundException ignored) {
-                }
-            });
-
+            bytesCache.keySet().forEach(className -> classList.add(getClass(className)));
             bytesCache.clear();
         }
 

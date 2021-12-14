@@ -1,12 +1,12 @@
 package com.hyf.hotrefresh.spring;
 
 import com.hyf.hotrefresh.servlet.HotRefreshFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
 import java.util.Collections;
 
 /**
@@ -19,8 +19,9 @@ import java.util.Collections;
 public class HotRefreshFilterConfiguration {
 
     @Bean
-    public FilterRegistrationBean<Filter> hotRefreshFilter() {
-        FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+    @ConditionalOnMissingBean
+    public FilterRegistrationBean /* 兼容旧版本spring */ hotRefreshFilter() {
+        FilterRegistrationBean filterFilterRegistrationBean = new FilterRegistrationBean<>();
         filterFilterRegistrationBean.setFilter(new HotRefreshFilter());
         filterFilterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
         filterFilterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST);

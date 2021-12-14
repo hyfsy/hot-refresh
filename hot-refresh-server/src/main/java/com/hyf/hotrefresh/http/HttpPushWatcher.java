@@ -8,24 +8,48 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author baB_hyf
  * @date 2021/12/11
  */
-public class HttpPushWatcher implements Watcher {
+public class HttpPushWatcher extends Thread implements Watcher {
 
     public static final String SEPARATOR = "@@@";
 
-    private final Map<String, File> changedFileMap = new LinkedHashMap<>();
+    private final Map<String, File> changedFileMap = new ConcurrentHashMap<>();
 
-    // TODO distinct
+    private volatile boolean closed = false;
+
+    public HttpPushWatcher() {
+        start();
+    }
+
+    @Override
+    public boolean interest(Object context) {
+        if (!(context instanceof Path)) {
+            return false;
+        }
+
+        Path p = (Path) context;
+        return p.toString().endsWith(".java");
+    }
+
     @Override
     public void onChange(File file, Type type) {
         addFile(file, type);
-        push(purge());
+    }
+
+    @Override
+    public void stopWatch() {
+        closed = true;
     }
 
     public void push(Map<String, File> fileMap) {
@@ -51,7 +75,9 @@ public class HttpPushWatcher implements Watcher {
             }
 
             String content = baos.toString();
-            System.out.println(content);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println(sdf.format(new Date()) + " " + content);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,5 +99,16 @@ public class HttpPushWatcher implements Watcher {
         Map<String, File> fileMap = new LinkedHashMap<>(changedFileMap);
         changedFileMap.clear();
         return fileMap;
+    }
+
+    @Override
+    public void run() {
+        while (!closed) {
+            push(purge());
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 }

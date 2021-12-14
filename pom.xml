@@ -16,7 +16,7 @@
     <modules>
         <module>hot-refresh-core</module>
         <module>hot-refresh-server</module>
-        <module>hot-refresh-test-springboot</module>
+        <!--<module>hot-refresh-test-springboot</module>-->
     </modules>
 
 
