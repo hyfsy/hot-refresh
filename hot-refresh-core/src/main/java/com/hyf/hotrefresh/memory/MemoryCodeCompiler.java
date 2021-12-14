@@ -6,6 +6,8 @@ import javax.tools.*;
 import java.util.*;
 
 /**
+ * https://www.cnblogs.com/eoss/p/6136943.html
+ *
  * @author baB_hyf
  * @date 2021/12/12
  */
@@ -24,6 +26,11 @@ public class MemoryCodeCompiler {
     public static Map<String, byte[]> compile(List<MemoryCode> memoryCodeList) throws CompileException {
         if (memoryCodeList == null || memoryCodeList.isEmpty()) {
             return new HashMap<>();
+        }
+
+        // check
+        if (COMPILER == null) {
+            throw new IllegalStateException("Cannot load JavaCompiler, please confirm the application running in JDK not JRE.");
         }
 
         try {

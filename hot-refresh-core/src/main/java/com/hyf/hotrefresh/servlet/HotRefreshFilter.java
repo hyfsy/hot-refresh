@@ -73,7 +73,7 @@ public class HotRefreshFilter implements Filter {
             }
 
             // parse file content
-            Exception ex = null;
+            Throwable ex = null;
             try {
                 Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
                 if (fileStreamMap == null || fileStreamMap.isEmpty()) {
@@ -121,7 +121,7 @@ public class HotRefreshFilter implements Filter {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (ex == null) {
                     ex = e;
                 }
@@ -141,7 +141,7 @@ public class HotRefreshFilter implements Filter {
         }
     }
 
-    private boolean uriMatch(HttpServletRequest req) {
+    protected boolean uriMatch(HttpServletRequest req) {
         String requestURI = req.getRequestURI();
         String contextPath = req.getContextPath();
         String servletPath = req.getServletPath();
@@ -201,7 +201,7 @@ public class HotRefreshFilter implements Filter {
         response(response, Result.success());
     }
 
-    private void error(HttpServletResponse response, Exception ex) {
+    private void error(HttpServletResponse response, Throwable ex) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
         ex.printStackTrace(ps);

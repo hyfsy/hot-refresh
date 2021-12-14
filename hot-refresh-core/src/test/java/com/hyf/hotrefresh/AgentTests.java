@@ -20,6 +20,18 @@ public class AgentTests {
     }
 
     @Test
+    public void testDownload() {
+        Util.getInfrastructureJarClassLoader();
+    }
+
+    @Test
+    public void testObfuscation() throws RefreshException {
+        // Map<String, byte[]> aaa = new HashMap<>();
+        // Map<String, byte[]> obfuscation = HotRefresher.obfuscation(aaa);
+        // System.out.println(obfuscation == aaa);
+    }
+
+    @Test
     public void testRefresh() throws RefreshException {
         String fileName = "Test.java";
         String content = "package com.hyf.hotrefresh;\n" +
