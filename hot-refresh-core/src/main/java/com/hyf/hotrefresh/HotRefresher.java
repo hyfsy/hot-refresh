@@ -1,10 +1,11 @@
 package com.hyf.hotrefresh;
 
+import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
-import com.hyf.hotrefresh.exception.RefreshException;
 
 import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * @author baB_hyf
@@ -16,6 +17,7 @@ public class HotRefresher {
 
         try {
             Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
+            compiledBytes = obfuscation(compiledBytes);
             Util.getThrowawayMemoryClassLoader().store(compiledBytes);
 
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
@@ -60,5 +62,18 @@ public class HotRefresher {
 
     public static void reset() throws RefreshException {
         HotRefreshManager.resetAll();
+    }
+
+    private static Map<String, byte[]> obfuscation(Map<String, byte[]> compiledBytes) throws RefreshException {
+        try {
+            ServiceLoader<ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(ObfuscationHandler.class);
+            for (ObfuscationHandler handler : obfuscationHandlers) {
+                compiledBytes = handler.handle(compiledBytes);
+            }
+        } catch (Exception e) {
+            throw new RefreshException("Obfuscation failed", e);
+        }
+
+        return compiledBytes;
     }
 }
