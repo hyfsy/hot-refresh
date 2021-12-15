@@ -16,6 +16,10 @@ public class HotRefresher {
     public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
 
         try {
+
+            // TODO 多文件处理顺序
+            // TODO 无需编译，直接class
+
             Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
             compiledBytes = obfuscation(compiledBytes);
             Util.getThrowawayMemoryClassLoader().store(compiledBytes);
