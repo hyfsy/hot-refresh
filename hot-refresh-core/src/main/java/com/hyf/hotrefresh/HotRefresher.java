@@ -41,11 +41,7 @@ public class HotRefresher {
                     }
 
                     if ("MODIFY".equals(fileChangeType)) {
-                        try {
-                            HotRefreshManager.getInstrumentation().retransformClasses(clazz);
-                        } catch (Exception e) {
-                            throw new RefreshException("Class file structure has been modified", e);
-                        }
+                        HotRefreshManager.reTransform(clazz);
                     }
                 }
                 // 类卸载

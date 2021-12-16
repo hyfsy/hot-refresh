@@ -12,7 +12,8 @@ public class Result {
         // status.put("code", "1");
         // rtn.put("status", status);
         // return rtn.toString();
-        return "{\"status\":{\"code\":1, \"text\":\"\"}}";
+        // return "{\"status\":{\"code\":1, \"text\":\"\"}}";
+        return "";
     }
 
     public static String error(String errorMessage) {
@@ -22,6 +23,7 @@ public class Result {
         // status.put("text", errorMessage);
         // rtn.put("status", status);
         // return rtn.toString();
-        return "{\"status\":{\"code\":0, \"text\":\"" + errorMessage + "\"}}";
+        // return "{\"status\":{\"code\":0, \"text\":\"" + errorMessage + "\"}}";
+        return errorMessage;
     }
 }

@@ -4,8 +4,9 @@ import com.hyf.hotrefresh.exception.AgentException;
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author baB_hyf
@@ -49,19 +50,20 @@ public class HotRefreshManager {
             throw new AgentException("Failed to reset class: " + className, e);
         }
 
-        try {
-            HotRefreshManager.getInstrumentation().retransformClasses(clazz);
-        } catch (UnmodifiableClassException e) {
-            throw new AgentException("Class file structure has been modified", e);
-        }
+        reTransform(clazz);
     }
 
     public static void resetAll() throws AgentException {
         List<Class<?>> classList = Util.getThrowawayMemoryClassLoader().clear();
+        reTransform(classList.toArray(new Class[0]));
+    }
+
+    public static void reTransform(Class<?>... classes) throws AgentException {
         try {
-            HotRefreshManager.getInstrumentation().retransformClasses(classList.toArray(new Class[0]));
-        } catch (UnmodifiableClassException e) {
-            throw new AgentException("Class file structure has been modified", e);
+            HotRefreshManager.getInstrumentation().retransformClasses(classes);
+        } catch (Throwable e) {
+            String classNames = Arrays.stream(classes).map(Class::getName).collect(Collectors.joining("\n"));
+            throw new AgentException("Class file structure has been modified: " + classNames, e);
         }
     }
 }

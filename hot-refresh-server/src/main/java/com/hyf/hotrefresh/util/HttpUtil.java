@@ -22,7 +22,7 @@ import java.util.Map;
 public class HttpUtil {
 
     // TODO async、ssl
-    private static final CloseableHttpClient CLIENT = HttpClients.createDefault();
+    private static final CloseableHttpClient CLIENT = HttpClients.createMinimal();
 
     private static final RequestConfig DEFAULT_CONFIG = RequestConfig.custom().setConnectionRequestTimeout(5000)
             .setConnectTimeout(5000).setSocketTimeout(5000).build();

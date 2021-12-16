@@ -202,10 +202,25 @@ public class HotRefreshFilter implements Filter {
     }
 
     private void error(HttpServletResponse response, Throwable ex) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        ex.printStackTrace(ps);
-        response(response, Result.error(baos.toString()));
+        StringBuilder sb = new StringBuilder();
+        Throwable cur = ex;
+        while (ex != null) {
+            if (sb.length() != 0) {
+                sb.append("; nested exception is ");
+            }
+            sb.append(ex);
+            ex = ex.getCause();
+        }
+        sb.append("\r\n");
+
+        if (cur != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+            cur.printStackTrace(ps);
+            sb.append(Result.error(baos.toString()));
+        }
+
+        response(response, sb.toString());
     }
 
     private void response(HttpServletResponse response, String message) {

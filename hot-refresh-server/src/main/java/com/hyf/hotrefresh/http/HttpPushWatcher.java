@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.http;
 
 import com.hyf.hotrefresh.Constants;
+import com.hyf.hotrefresh.log.Log;
 import com.hyf.hotrefresh.util.HttpUtil;
 import com.hyf.hotrefresh.watch.Watcher;
 
@@ -9,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,8 +60,7 @@ public class HttpPushWatcher extends Thread implements Watcher {
         try {
             is = HttpUtil.upload(Constants.PUSH_SERVER_URL, fileMap);
         } catch (IOException e) {
-            System.out.println("Upload failed: " + e.getMessage());
-            // e.printStackTrace();
+            Log.error("Upload failed: " + Constants.PUSH_SERVER_URL, e);
             return;
         }
 
@@ -74,11 +72,8 @@ public class HttpPushWatcher extends Thread implements Watcher {
                 baos.write(bytes, 0, len);
             }
 
-            String content = baos.toString();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            System.out.println(sdf.format(new Date()) + " " + content);
-
+            String content = baos.toString("UTF-8");
+            handleResponse(content);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -88,6 +83,21 @@ public class HttpPushWatcher extends Thread implements Watcher {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void handleResponse(String content) {
+        int idx = content.indexOf("\r\n");
+        if (idx == -1) {
+            Log.info("success");
+            return;
+        }
+
+        String infoMessage = content.substring(0, idx);
+        String debugMessage = content.substring(idx + 2);
+        if (!Log.isDebugEnabled()) {
+            Log.warn(infoMessage);
+        }
+        Log.debug(debugMessage);
     }
 
     // TODO name

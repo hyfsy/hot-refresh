@@ -62,9 +62,11 @@ public class MemoryClassLoader extends ClassLoader {
         }
     }
 
-    public byte[] remove(String className) {
+    public Class<?> remove(String className) {
         synchronized (LOCK) {
-            return bytesCache.remove(className);
+            Class<?> clazz = getClass(className);
+            bytesCache.remove(className);
+            return clazz;
         }
     }
 
