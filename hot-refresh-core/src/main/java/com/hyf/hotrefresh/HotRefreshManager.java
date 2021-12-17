@@ -59,6 +59,10 @@ public class HotRefreshManager {
     }
 
     public static void reTransform(Class<?>... classes) throws AgentException {
+        if (classes.length == 0) {
+            return;
+        }
+
         try {
             HotRefreshManager.getInstrumentation().retransformClasses(classes);
         } catch (Throwable e) {
