@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh.watch;
 
+import com.hyf.hotrefresh.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -31,14 +33,12 @@ public class WatchCenter {
     }
 
     public static synchronized void registerWatcher(String path, Watcher watcher) {
-        WatchTask refreshTask = WATCH_TASK_MAP.compute(path, (p, t) -> {
-            if (t == null) {
-                t = new WatchTask(path);
-                t.start();
-            }
-            return t;
+        WatchTask watchTask = WATCH_TASK_MAP.computeIfAbsent(path, p -> {
+            WatchTask task = new WatchTask(p);
+            task.start();
+            return task;
         });
-        refreshTask.addWatcher(watcher);
+        watchTask.addWatcher(watcher);
     }
 
     public static synchronized void deregisterAllWatcher(String path) {
@@ -56,7 +56,7 @@ public class WatchCenter {
     }
 
     public static void purge() {
-        System.out.println("exiting...");
+        Log.info("exiting...");
 
         if (!PURGING.compareAndSet(false, true)) {
             return;
@@ -95,7 +95,7 @@ public class WatchCenter {
                 p.register(watchService, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE},
                         FILE_TREE);
             } catch (IOException e) {
-                throw new IllegalStateException("Cannot create WatchService: " + p.toString(), e);
+                throw new IllegalStateException("WatchService start failed: " + p.toString(), e);
             }
 
             singleExecutor = Executors.newSingleThreadExecutor();
@@ -110,12 +110,12 @@ public class WatchCenter {
                     List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
                     watchKey.reset();
 
-                    if (singleExecutor.isShutdown()) {
-                        return;
-                    }
-
                     if (watchEvents.isEmpty()) {
                         continue;
+                    }
+
+                    if (singleExecutor.isShutdown()) {
+                        return;
                     }
 
                     singleExecutor.submit(() -> {
@@ -124,10 +124,10 @@ public class WatchCenter {
                             WatchEvent.Kind<?> kind = event.kind();
                             Object context = event.context();
 
-                            if (OVERFLOW.equals(kind)) {
-                                System.out.println("File watch overflow: " + context);
-                                continue;
-                            }
+                            // if (OVERFLOW.equals(kind)) {
+                            //     System.out.println("File watch overflow: " + context);
+                            //     continue;
+                            // }
 
                             File changedFile = new File(path, context.toString());
 
@@ -157,8 +157,7 @@ public class WatchCenter {
                 } catch (InterruptedException ignored) {
                     Thread.interrupted();
                 } catch (Exception e) {
-                    System.out.println("Watch failed");
-                    e.printStackTrace();
+                    Log.error("Watch failed", e);
                 }
             }
         }
@@ -176,7 +175,7 @@ public class WatchCenter {
             watchers.remove(watcher);
         }
 
-        public String getPath() {
+        public String getWatchPath() {
             return path;
         }
     }

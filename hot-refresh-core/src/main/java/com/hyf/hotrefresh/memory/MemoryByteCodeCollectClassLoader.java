@@ -32,8 +32,12 @@ class MemoryByteCodeCollectClassLoader extends ClassLoader {
         return super.findClass(name);
     }
 
-    public MemoryByteCode collect(String className, MemoryByteCode memoryByteCode) {
-        return collectedByteCode.put(className, memoryByteCode);
+    public MemoryByteCode get(String className) {
+        return collectedByteCode.get(className);
+    }
+
+    public MemoryByteCode collect(MemoryByteCode memoryByteCode) {
+        return collectedByteCode.put(memoryByteCode.getClassName(), memoryByteCode);
     }
 
     public Map<String, byte[]> getCollectedByteCodes() {

@@ -5,6 +5,9 @@ import com.hyf.hotrefresh.watch.WatchCenter;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+
+import static com.hyf.hotrefresh.Constants.*;
 
 /**
  * @author baB_hyf
@@ -19,15 +22,15 @@ public class LocalServer {
 
         // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
-        printInfo();
+        parse(args);
+        print();
         check();
-
-        WatchCenter.registerWatcher(Constants.WATCH_HOME, new HttpPushWatcher());
+        start();
     }
 
-    private static void printInfo() {
-        String home = "Watch Home Path: " + Constants.WATCH_HOME;
-        String url = "Refresh Server : " + Constants.PUSH_SERVER_URL;
+    private static void print() {
+        String home = "Watch Home Path: " + WATCH_HOME;
+        String url = "Refresh Server : " + PUSH_SERVER_URL;
 
         int max = Math.max(home.length(), url.length());
         StringBuilder sb = new StringBuilder(max);
@@ -35,41 +38,70 @@ public class LocalServer {
             sb.append('=');
         }
 
-        System.out.println();
-        System.out.println(sb.toString());
-        System.out.println(home);
-        System.out.println(url);
-        System.out.println(sb.toString());
-        System.out.println();
+        Log.info("");
+        Log.info(sb.toString());
+        Log.info(home);
+        Log.info(url);
+        Log.info(sb.toString());
+        Log.info("");
     }
 
     private static void check() {
-        String watchHome = Constants.WATCH_HOME;
+        String watchHome = WATCH_HOME;
         File file;
         try {
             file = new File(watchHome);
         } catch (Exception e) {
-            throw new RuntimeException("Home invalid: " + watchHome, e);
+            throw new RuntimeException("Home path invalid: " + watchHome, e);
         }
 
         if (!file.isDirectory()) {
-            throw new RuntimeException("Home is not directory");
+            throw new RuntimeException("Home path is not directory");
         }
 
-        System.out.println("Wait for connect......");
+        Log.info("Wait for connect......");
         try {
-            URL url = new URL(Constants.PUSH_SERVER_URL);
+            URL url = new URL(PUSH_SERVER_URL);
             url.openConnection();
         } catch (Exception e) {
-            throw new RuntimeException("Url invalid: " + Constants.PUSH_SERVER_URL, e);
+            throw new RuntimeException("Url invalid: " + PUSH_SERVER_URL, e);
         }
 
         try {
-            HttpClient.upload(Constants.PUSH_SERVER_URL, null);
+            HttpClient.upload(PUSH_SERVER_URL, null);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to connect server: " + Constants.PUSH_SERVER_URL);
+            throw new RuntimeException("Failed to connect server: " + PUSH_SERVER_URL, e);
         }
 
-        System.out.println("Server connected");
+        Log.info("Server connected");
+    }
+
+    private static void parse(String[] args) {
+        if (args == null || args.length == 0) {
+            return;
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            if (Arrays.asList("-h", "-H", "--home").contains(args[i])) {
+                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                    continue;
+                }
+                WATCH_HOME = args[i++ + 1];
+            }
+            else if (Arrays.asList("-s", "-S", "--server").contains(args[i])) {
+                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                    continue;
+                }
+                SERVER_URL = args[i++ + 1];
+                PUSH_SERVER_URL = SERVER_URL.endsWith("/") ? SERVER_URL.substring(0, SERVER_URL.length() - 1) + REFRESH_API : SERVER_URL + REFRESH_API;
+            }
+            else if (Arrays.asList("-d", "-D", "--debug").contains(args[i])) {
+                DEBUG = true;
+            }
+        }
+    }
+
+    private static void start() {
+        WatchCenter.registerWatcher(WATCH_HOME, new HttpPushWatcher());
     }
 }

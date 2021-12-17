@@ -23,8 +23,10 @@ public class ExceptionUtil {
 
     public static String getStackMessage(Throwable t) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        t.printStackTrace(ps);
-        return baos.toString();
+        try (PrintStream ps = new PrintStream(baos)) {
+            t.printStackTrace(ps);
+            ps.flush();
+            return baos.toString();
+        }
     }
 }

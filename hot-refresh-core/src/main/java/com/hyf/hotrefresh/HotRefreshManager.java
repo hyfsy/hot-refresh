@@ -1,7 +1,6 @@
 package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.exception.AgentException;
-import com.hyf.hotrefresh.memory.MemoryClassLoader;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class HotRefreshManager {
 
-    private static final HotRefreshTransformer HOT_REFRESH_TRANSFORMER = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
+    private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
 
     private static final Instrumentation INST;
 
@@ -33,23 +32,15 @@ public class HotRefreshManager {
 
     public static void start() {
         stop();
-        getInstrumentation().addTransformer(HOT_REFRESH_TRANSFORMER, true);
+        getInstrumentation().addTransformer(hotRefreshTransformer, true);
     }
 
     public static void stop() {
-        getInstrumentation().removeTransformer(HOT_REFRESH_TRANSFORMER);
+        getInstrumentation().removeTransformer(hotRefreshTransformer);
     }
 
     public static void reset(String className) throws AgentException {
-        Class<?> clazz;
-        try {
-            MemoryClassLoader mcl = Util.getThrowawayMemoryClassLoader();
-            clazz = mcl.loadClass(className);
-            mcl.remove(className);
-        } catch (ClassNotFoundException e) {
-            throw new AgentException("Failed to reset class: " + className, e);
-        }
-
+        Class<?> clazz = Util.getThrowawayMemoryClassLoader().remove(className);
         reTransform(clazz);
     }
 
@@ -66,7 +57,7 @@ public class HotRefreshManager {
         try {
             HotRefreshManager.getInstrumentation().retransformClasses(classes);
         } catch (Throwable e) {
-            String classNames = Arrays.stream(classes).map(Class::getName).collect(Collectors.joining("\n"));
+            String classNames = Arrays.stream(classes).map(Class::getName).collect(Collectors.joining("; "));
             throw new AgentException("Class file structure has been modified: " + classNames, e);
         }
     }

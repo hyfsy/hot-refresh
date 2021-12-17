@@ -16,8 +16,6 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private final PackageFinder packageFinder = new PackageFinder(bcc);
 
-    private final List<MemoryByteCode> tempCache = new ArrayList<>();
-
     public MemoryByteCodeManager(JavaFileManager fileManager) {
         super(fileManager);
     }
@@ -25,15 +23,13 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
     @Override
     public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
 
-        for (MemoryByteCode byteCode : tempCache) {
-            if (byteCode.getClassName().equals(className)) {
-                return byteCode;
-            }
+        MemoryByteCode memoryByteCode = bcc.get(className);
+        if (memoryByteCode != null) {
+            return memoryByteCode;
         }
 
-        MemoryByteCode memoryByteCode = new MemoryByteCode(className);
-        tempCache.add(memoryByteCode);
-        bcc.collect(className, memoryByteCode);
+        memoryByteCode = new MemoryByteCode(className);
+        bcc.collect(memoryByteCode);
         return memoryByteCode;
     }
 

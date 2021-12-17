@@ -42,41 +42,37 @@ public class HotRefreshFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        // set ctx class loader
+        // bind ccl
         MemoryClassLoader.bind();
 
         try {
-            // match
-            if (!uriMatch(req)) {
-                chain.doFilter(req, resp);
-                return;
-            }
+            Throwable t = null;
+            try {
+                // uri match
+                if (!uriMatch(req)) {
+                    chain.doFilter(req, resp);
+                    return;
+                }
 
-            // reset class
-            if ("1".equals(req.getParameter("reset"))) {
-                try {
+                // reset class
+                if ("1".equals(req.getParameter("reset"))) {
                     hotRefreshReset();
                     success(resp);
-                } catch (Exception e) {
-                    error(resp, e);
+                    return;
                 }
-                return;
-            }
 
-            // contentType match
-            String contentType = req.getContentType();
-            if (contentType == null || (!contentType.contains("multipart/form-data")
-                    && !contentType.contains("multipart/mixed stream"))) {
-                success(resp);
-                return;
-            }
+                // contentType match
+                String contentType = req.getContentType();
+                if (contentType == null || (!contentType.contains("multipart/form-data")
+                        && !contentType.contains("multipart/mixed stream"))) {
+                    success(resp);
+                    return;
+                }
 
-            // parse file content
-            Throwable ex = null;
-            try {
+                // parse file content
                 Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
                 if (fileStreamMap == null || fileStreamMap.isEmpty()) {
-                    success(resp);
+                    error(resp, new RefreshException("No file exists"));
                     return;
                 }
 
@@ -105,28 +101,28 @@ public class HotRefreshFilter implements Filter {
                         String content = IOUtil.readAsString(is);
                         hotRefresh(name, content, type);
                     } catch (IOException | RefreshException e) {
-                        if (ex == null) {
-                            ex = e;
+                        if (t == null) {
+                            t = e;
                         }
                         else {
-                            ex.addSuppressed(ex);
+                            t.addSuppressed(e);
                         }
                     }
                 }
             } catch (Throwable e) {
-                if (ex == null) {
-                    ex = e;
+                if (t == null) {
+                    t = e;
                 }
                 else {
-                    ex.addSuppressed(ex);
+                    t.addSuppressed(e);
                 }
             }
 
-            if (ex == null) {
+            if (t == null) {
                 success(resp);
             }
             else {
-                error(resp, ex);
+                error(resp, t);
             }
         } finally {
             MemoryClassLoader.unBind();
@@ -201,7 +197,7 @@ public class HotRefreshFilter implements Filter {
     private void response(HttpServletResponse response, String message) {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("text/plain;charset=" + Constants.MESSAGE_ENCODING);
+            response.setContentType("text/plain;charset=" + Constants.MESSAGE_ENCODING.name());
             PrintWriter writer = response.getWriter();
             writer.write(message);
             writer.flush();

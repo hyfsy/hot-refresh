@@ -10,15 +10,15 @@ import java.nio.charset.StandardCharsets;
  */
 public class Constants {
 
+    public static String WATCH_HOME = System.getProperty("home", System.getProperty("user.dir"));
+
+    public static String SERVER_URL = System.getProperty("server", "http://localhost:8080");
+
+    public static boolean DEBUG = Integer.getInteger("debug", 0) != 0;
+
     public static final String REFRESH_API = "/hot-refresh";
 
-    public static final String WATCH_HOME = System.getProperty("home", System.getProperty("user.dir"));
-
-    public static final String APPLICATION_URL = System.getProperty("url", "http://localhost:8080");
-
-    public static final String PUSH_SERVER_URL = APPLICATION_URL.endsWith("/") ? APPLICATION_URL.substring(0, APPLICATION_URL.length() - 1) + REFRESH_API : APPLICATION_URL + REFRESH_API;
-
-    public static final Integer LOG_DEBUG = Integer.getInteger("debug", 0);
+    public static String PUSH_SERVER_URL = SERVER_URL.endsWith("/") ? SERVER_URL.substring(0, SERVER_URL.length() - 1) + REFRESH_API : SERVER_URL + REFRESH_API;
 
     // ================================================================================
 

@@ -39,6 +39,24 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         return INSTANCE;
     }
 
+    public Instrumentation install() {
+        try {
+            return (Instrumentation) installMethod.invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to install", e);
+        }
+    }
+
+    public String getClassName(byte[] bytes) {
+        try {
+            Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
+            String classNameWithPath = (String) getClassNameMethod.invoke(o);
+            return classNameWithPath.replace("/", ".");
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to getClassName", e);
+        }
+    }
+
     private static InfrastructureJarClassLoader newInstanceByLocal() {
 
         URL byteBuddyResource = Util.getOriginContextClassLoader().getResource(BYTE_BUDDY_LOCAL_PATH);
@@ -61,25 +79,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
             return new InfrastructureJarClassLoader(byteBuddyURL, asmURL);
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Failed to get Get class loader", e);
-        }
-    }
-
-    public Instrumentation install() {
-        try {
-            return (Instrumentation) installMethod.invoke(null);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to install", e);
-        }
-    }
-
-    public String getClassName(byte[] bytes) {
-        try {
-            Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
-            String classNameWithPath = (String) getClassNameMethod.invoke(o);
-            return classNameWithPath.replace("/", ".");
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to getClassName", e);
+            throw new RuntimeException("Failed to create class loader", e);
         }
     }
 
@@ -91,14 +91,6 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private void ensureAsmExist() {
         classReaderClass = forName(CLASS_READER_CLASS);
         getClassNameMethod = getMethod(classReaderClass, "getClassName");
-    }
-
-    private Method getMethod(Class<?> clazz, String methodName, Class<?>... args) {
-        try {
-            return clazz.getDeclaredMethod(methodName, args);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to get method: " + clazz + "#" + methodName, e);
-        }
     }
 
     private Class<?> forName(String className) {
@@ -115,5 +107,13 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         }
 
         return clazz;
+    }
+
+    private Method getMethod(Class<?> clazz, String methodName, Class<?>... args) {
+        try {
+            return clazz.getDeclaredMethod(methodName, args);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to get method: " + clazz + "." + methodName, e);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.memory;
 
 import java.util.Map;
 

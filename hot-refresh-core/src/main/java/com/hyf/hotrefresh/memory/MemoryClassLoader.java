@@ -20,7 +20,7 @@ public class MemoryClassLoader extends ClassLoader {
     /** full class name -> refreshed class */
     private static final Map<String, Class<?>> classCache = new ConcurrentHashMap<>();
 
-    private static final ThreadLocal<ClassLoader> cclPerThread = new ThreadLocal<>();
+    private static final ThreadLocal<ClassLoader> cclPerThreadLocal = new ThreadLocal<>();
 
     private static final Object LOCK = new Object();
 
@@ -37,18 +37,18 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     public static void bind() {
-        if (cclPerThread.get() == null) {
+        if (cclPerThreadLocal.get() == null) {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(Util.getThrowawayMemoryClassLoader());
-            cclPerThread.set(ccl);
+            cclPerThreadLocal.set(ccl);
         }
     }
 
     public static void unBind() {
-        if (cclPerThread.get() != null) {
-            ClassLoader ccl = cclPerThread.get();
+        if (cclPerThreadLocal.get() != null) {
+            ClassLoader ccl = cclPerThreadLocal.get();
             Thread.currentThread().setContextClassLoader(ccl);
-            cclPerThread.remove();
+            cclPerThreadLocal.remove();
         }
     }
 

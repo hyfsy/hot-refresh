@@ -1,8 +1,12 @@
 package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.util.IOUtil;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -41,17 +45,10 @@ class HotRefreshTransformer implements ClassFileTransformer {
     }
 
     private void store(String classResourceName, byte[] bytes) {
-
+        String filePath = "E:\\" + classResourceName.replace("/", File.separator) + ".class";
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("E:\\" + classResourceName.replace("/", File.separator) + ".class"))) {
-
-            int len;
-            byte[] buf = new byte[1024];
-            while ((len = bais.read(buf)) != -1) {
-                bos.write(buf, 0, len);
-            }
-            bos.flush();
-
+             FileOutputStream fos = new FileOutputStream(filePath)) {
+            IOUtil.writeTo(bais, fos);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -51,7 +51,29 @@ public class HttpPushWatcher extends Thread implements Watcher {
         closed = true;
     }
 
-    public void push(Map<String, File> fileMap) {
+    @Override
+    public void run() {
+        while (!closed) {
+            push(purge());
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ignored) {
+            }
+        }
+    }
+
+    // TODO name
+    private synchronized void addFile(File file, ChangeType type) {
+        changedFileMap.put(file.getName() + Constants.FILE_NAME_SEPARATOR + type, file);
+    }
+
+    private synchronized Map<String, File> purge() {
+        Map<String, File> fileMap = new LinkedHashMap<>(changedFileMap);
+        changedFileMap.clear();
+        return fileMap;
+    }
+
+    private void push(Map<String, File> fileMap) {
         if (fileMap.isEmpty()) {
             return;
         }
@@ -60,9 +82,13 @@ public class HttpPushWatcher extends Thread implements Watcher {
         try {
             is = HttpClient.upload(Constants.PUSH_SERVER_URL, fileMap);
         } catch (IOException e) {
-            Log.warn("Upload failed: " + Constants.PUSH_SERVER_URL + Constants.MESSAGE_SEPARATOR + ExceptionUtil.getNestedMessage(e));
+            Log.warn("Upload to " + Constants.PUSH_SERVER_URL + " failed: " + ExceptionUtil.getNestedMessage(e));
             Log.debug(ExceptionUtil.getStackMessage(e));
             return;
+        }
+
+        if (is == null) {
+            return; // no content
         }
 
         try {
@@ -80,33 +106,15 @@ public class HttpPushWatcher extends Thread implements Watcher {
             return;
         }
 
-        if (!Log.isDebugMode()) {
+        if (Log.isDebugMode()) {
+            String debugMessage = content.substring(idx + Constants.MESSAGE_SEPARATOR.length());
+            Log.debug(debugMessage);
+        }
+        else {
             String warnMessage = content.substring(0, idx);
             Log.warn(warnMessage);
-        }
-        String debugMessage = content.substring(idx + Constants.MESSAGE_SEPARATOR.length());
-        Log.debug(debugMessage);
-    }
-
-    // TODO name
-    private synchronized void addFile(File file, ChangeType type) {
-        changedFileMap.put(file.getName() + Constants.FILE_NAME_SEPARATOR + type, file);
-    }
-
-    private synchronized Map<String, File> purge() {
-        Map<String, File> fileMap = new LinkedHashMap<>(changedFileMap);
-        changedFileMap.clear();
-        return fileMap;
-    }
-
-    @Override
-    public void run() {
-        while (!closed) {
-            push(purge());
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException ignored) {
-            }
+            String debugMessage = content.substring(idx + Constants.MESSAGE_SEPARATOR.length());
+            Log.debug(debugMessage);
         }
     }
 }

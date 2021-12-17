@@ -5,7 +5,6 @@ import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
 
 import java.util.Map;
-import java.util.ServiceLoader;
 
 /**
  * @author baB_hyf
@@ -14,9 +13,6 @@ import java.util.ServiceLoader;
 public class HotRefresher {
 
     public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
-
-        ChangeType changeType = ChangeType.valueOf(fileChangeType);
-
         try {
 
             // TODO 多文件处理
@@ -28,17 +24,15 @@ public class HotRefresher {
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
                 String className = entry.getKey();
 
+                ChangeType changeType = ChangeType.valueOf(fileChangeType);
+
                 // 加载 | 转换
                 if (ChangeType.CREATE == changeType || ChangeType.MODIFY == changeType) {
                     Class<?> clazz;
                     try {
                         clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
                     } catch (ClassNotFoundException ignored) {
-                        try {
-                            clazz = Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException("Class not found: " + className, e);
-                        }
+                        clazz = Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
                     }
 
                     if (ChangeType.MODIFY == changeType) {

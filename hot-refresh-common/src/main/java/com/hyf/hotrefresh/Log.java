@@ -2,6 +2,7 @@ package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.util.DateUtil;
 import com.hyf.hotrefresh.util.ExceptionUtil;
+import com.hyf.hotrefresh.util.FileUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,7 +18,7 @@ public class Log {
     public static final String LOG_HOME = Constants.REFRESH_HOME + File.separator + "logs";
 
     public static boolean isDebugMode() {
-        return Constants.LOG_DEBUG == 1;
+        return Constants.DEBUG;
     }
 
     /**
@@ -54,22 +55,22 @@ public class Log {
 
     private static String formatMessage(String message, int level) {
 
-        String time = DateUtil.now();
+        String now = DateUtil.now();
 
         if (level == 3) {
-            return time + " [DEBUG] " + message;
+            return now + " [DEBUG] " + message;
         }
         else if (level == 2) {
-            return time + " [INFO]  " + message;
+            return now + " [INFO]  " + message;
         }
         else if (level == 1) {
-            return time + " [WARN]  " + message;
+            return now + " [WARN]  " + message;
         }
         else if (level == 0) {
-            return time + " [ERROR] " + message;
+            return now + " [ERROR] " + message;
         }
 
-        return message;
+        throw new UnsupportedOperationException("Log level not support: " + level);
     }
 
     private static void appendConsole(String message) {
@@ -85,11 +86,7 @@ public class Log {
     }
 
     private static File getLogFile() {
-        File file = new File(LOG_HOME, "hot-refresh.log." + DateUtil.nowDate() + ".log");
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
-
-        return file;
+        String fileName = "hot-refresh.log." + DateUtil.today() + ".log";
+        return FileUtil.getFile(LOG_HOME + File.separator + fileName);
     }
 }
