@@ -15,20 +15,21 @@ public class HotRefresher {
 
     public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
 
+        ChangeType changeType = ChangeType.valueOf(fileChangeType);
+
         try {
 
-            // TODO 多文件处理顺序
+            // TODO 多文件处理
             // TODO 无需编译，直接class
 
             Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
-            compiledBytes = obfuscation(compiledBytes);
             Util.getThrowawayMemoryClassLoader().store(compiledBytes);
 
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
                 String className = entry.getKey();
 
                 // 加载 | 转换
-                if ("CREATE".equals(fileChangeType) || "MODIFY".equals(fileChangeType)) {
+                if (ChangeType.CREATE == changeType || ChangeType.MODIFY == changeType) {
                     Class<?> clazz;
                     try {
                         clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
@@ -40,12 +41,12 @@ public class HotRefresher {
                         }
                     }
 
-                    if ("MODIFY".equals(fileChangeType)) {
+                    if (ChangeType.MODIFY == changeType) {
                         HotRefreshManager.reTransform(clazz);
                     }
                 }
-                // 类卸载
-                else if ("DELETE".equals(fileChangeType)) {
+                // 卸载
+                else if (ChangeType.DELETE == changeType) {
                     reset(className);
                 }
             }
@@ -62,18 +63,5 @@ public class HotRefresher {
 
     public static void reset() throws RefreshException {
         HotRefreshManager.resetAll();
-    }
-
-    private static Map<String, byte[]> obfuscation(Map<String, byte[]> compiledBytes) throws RefreshException {
-        try {
-            ServiceLoader<ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(ObfuscationHandler.class);
-            for (ObfuscationHandler handler : obfuscationHandlers) {
-                compiledBytes = handler.handle(compiledBytes);
-            }
-        } catch (Exception e) {
-            throw new RefreshException("Obfuscation failed", e);
-        }
-
-        return compiledBytes;
     }
 }

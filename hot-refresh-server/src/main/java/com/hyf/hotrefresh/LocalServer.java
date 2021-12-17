@@ -1,7 +1,6 @@
 package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.http.HttpPushWatcher;
-import com.hyf.hotrefresh.util.HttpUtil;
 import com.hyf.hotrefresh.watch.WatchCenter;
 
 import java.io.File;
@@ -27,8 +26,8 @@ public class LocalServer {
     }
 
     private static void printInfo() {
-        String home = "Watch Home Path:    " + Constants.WATCH_HOME;
-        String url = "Refresh Server Url: " + Constants.PUSH_SERVER_URL;
+        String home = "Watch Home Path: " + Constants.WATCH_HOME;
+        String url = "Refresh Server : " + Constants.PUSH_SERVER_URL;
 
         int max = Math.max(home.length(), url.length());
         StringBuilder sb = new StringBuilder(max);
@@ -62,11 +61,11 @@ public class LocalServer {
             URL url = new URL(Constants.PUSH_SERVER_URL);
             url.openConnection();
         } catch (Exception e) {
-            throw new RuntimeException("Url invalid: " + Constants.PUSH_SERVER_URL);
+            throw new RuntimeException("Url invalid: " + Constants.PUSH_SERVER_URL, e);
         }
 
         try {
-            HttpUtil.upload(Constants.PUSH_SERVER_URL, null);
+            HttpClient.upload(Constants.PUSH_SERVER_URL, null);
         } catch (Exception e) {
             throw new RuntimeException("Failed to connect server: " + Constants.PUSH_SERVER_URL);
         }

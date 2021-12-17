@@ -45,9 +45,11 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     public static void unBind() {
-        ClassLoader ccl = cclPerThread.get();
-        Thread.currentThread().setContextClassLoader(ccl);
-        cclPerThread.remove();
+        if (cclPerThread.get() != null) {
+            ClassLoader ccl = cclPerThread.get();
+            Thread.currentThread().setContextClassLoader(ccl);
+            cclPerThread.remove();
+        }
     }
 
     public void store(Map<String, byte[]> compiledBytes) {

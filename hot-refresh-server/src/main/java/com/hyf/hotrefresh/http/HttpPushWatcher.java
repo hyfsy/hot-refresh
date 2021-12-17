@@ -1,11 +1,13 @@
 package com.hyf.hotrefresh.http;
 
+import com.hyf.hotrefresh.ChangeType;
 import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.log.Log;
-import com.hyf.hotrefresh.util.HttpUtil;
+import com.hyf.hotrefresh.HttpClient;
+import com.hyf.hotrefresh.Log;
+import com.hyf.hotrefresh.util.ExceptionUtil;
+import com.hyf.hotrefresh.util.IOUtil;
 import com.hyf.hotrefresh.watch.Watcher;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @date 2021/12/11
  */
 public class HttpPushWatcher extends Thread implements Watcher {
-
-    public static final String SEPARATOR = "@@@";
 
     private final Map<String, File> changedFileMap = new ConcurrentHashMap<>();
 
@@ -42,7 +42,7 @@ public class HttpPushWatcher extends Thread implements Watcher {
     }
 
     @Override
-    public void onChange(File file, Type type) {
+    public void onChange(File file, ChangeType type) {
         addFile(file, type);
     }
 
@@ -58,51 +58,39 @@ public class HttpPushWatcher extends Thread implements Watcher {
 
         InputStream is;
         try {
-            is = HttpUtil.upload(Constants.PUSH_SERVER_URL, fileMap);
+            is = HttpClient.upload(Constants.PUSH_SERVER_URL, fileMap);
         } catch (IOException e) {
-            Log.error("Upload failed: " + Constants.PUSH_SERVER_URL, e);
+            Log.warn("Upload failed: " + Constants.PUSH_SERVER_URL + Constants.MESSAGE_SEPARATOR + ExceptionUtil.getNestedMessage(e));
+            Log.debug(ExceptionUtil.getStackMessage(e));
             return;
         }
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-            int len;
-            byte[] bytes = new byte[1024];
-            while ((len = is.read(bytes)) != -1) {
-                baos.write(bytes, 0, len);
-            }
-
-            String content = baos.toString("UTF-8");
-            handleResponse(content);
+        try {
+            String content = IOUtil.readAsString(is);
+            handleResponseContent(content);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    private void handleResponse(String content) {
-        int idx = content.indexOf("\r\n");
+    private void handleResponseContent(String content) {
+        int idx = content.indexOf(Constants.MESSAGE_SEPARATOR);
         if (idx == -1) {
             Log.info("success");
             return;
         }
 
-        String infoMessage = content.substring(0, idx);
-        String debugMessage = content.substring(idx + 2);
-        if (!Log.isDebugEnabled()) {
-            Log.warn(infoMessage);
+        if (!Log.isDebugMode()) {
+            String warnMessage = content.substring(0, idx);
+            Log.warn(warnMessage);
         }
+        String debugMessage = content.substring(idx + Constants.MESSAGE_SEPARATOR.length());
         Log.debug(debugMessage);
     }
 
     // TODO name
-    private synchronized void addFile(File file, Type type) {
-        changedFileMap.put(file.getName() + SEPARATOR + type, file);
+    private synchronized void addFile(File file, ChangeType type) {
+        changedFileMap.put(file.getName() + Constants.FILE_NAME_SEPARATOR + type, file);
     }
 
     private synchronized Map<String, File> purge() {

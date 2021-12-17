@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.util;
+package com.hyf.hotrefresh;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -19,11 +19,12 @@ import java.util.Map;
  * @author baB_hyf
  * @date 2021/12/11
  */
-public class HttpUtil {
+public class HttpClient {
 
     // TODO async、ssl
     private static final CloseableHttpClient CLIENT = HttpClients.createMinimal();
 
+    // TODO config
     private static final RequestConfig DEFAULT_CONFIG = RequestConfig.custom().setConnectionRequestTimeout(5000)
             .setConnectTimeout(5000).setSocketTimeout(5000).build();
 

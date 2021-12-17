@@ -1,5 +1,8 @@
 package com.hyf.hotrefresh;
 
+import com.hyf.hotrefresh.util.FileUtil;
+import com.hyf.hotrefresh.util.IOUtil;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,7 +14,7 @@ import java.net.URLConnection;
  */
 public class ResourceUtil {
 
-    public static final String DOWNLOAD_HOME = System.getProperty("user.home") + File.separator + ".hot-refresh" + File.separator + "lib";
+    public static final String DOWNLOAD_HOME = Constants.REFRESH_HOME + File.separator + "lib";
 
     public static URL getResourceURL(URL url) {
         URL localURL = getLocalURL(url);
@@ -46,16 +49,9 @@ public class ResourceUtil {
         try {
             URLConnection connection = url.openConnection();
 
-            try (InputStream bis = new BufferedInputStream(connection.getInputStream());
-                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(localFile))) {
-
-                int len;
-                byte[] buf = new byte[1024];
-                while ((len = bis.read(buf)) != -1) {
-                    bos.write(buf, 0, len);
-                }
-
-                bos.flush();
+            try (InputStream is = connection.getInputStream();
+                 OutputStream os = new FileOutputStream(localFile)) {
+                IOUtil.writeTo(is, os);
             }
 
             try {
@@ -72,10 +68,6 @@ public class ResourceUtil {
     private static File getLocalFile(URL url) {
         String urlFileName = url.toString().substring(url.toString().lastIndexOf("/"));
         String downloadFilePath = DOWNLOAD_HOME + urlFileName;
-        File file = new File(downloadFilePath);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
-        return file;
+        return FileUtil.getFile(downloadFilePath);
     }
 }

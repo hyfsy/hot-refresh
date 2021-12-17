@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh.watch;
 
+import com.hyf.hotrefresh.ChangeType;
+
 import java.io.File;
 
 /**
@@ -12,23 +14,20 @@ public interface Watcher {
         return true;
     }
 
-    default void onChange(File file, Type type) {
+    default void onChange(File file, ChangeType type) {
     }
 
     default void onDelete(File file) {
     }
 
     default void onCreate(File file) {
-        onChange(file, Type.CREATE);
+        onChange(file, ChangeType.CREATE);
     }
 
     default void onModify(File file) {
-        onChange(file, Type.MODIFY);
+        onChange(file, ChangeType.MODIFY);
     }
 
     void stopWatch();
 
-    enum Type {
-        CREATE, MODIFY, DELETE
-    }
 }

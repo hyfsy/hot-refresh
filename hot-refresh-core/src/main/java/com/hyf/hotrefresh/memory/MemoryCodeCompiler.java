@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.memory;
 
+import com.hyf.hotrefresh.ObfuscationHandler;
 import com.hyf.hotrefresh.exception.CompileException;
 
 import javax.tools.*;
@@ -43,7 +44,8 @@ public class MemoryCodeCompiler {
                 handleDiagnosticMessage(collector);
             }
 
-            return memoryCodeManager.getByteCodes();
+            Map<String, byte[]> compiledBytes = memoryCodeManager.getByteCodes();
+            return obfuscation(compiledBytes);
         } catch (CompileException e) {
             throw e;
         } catch (Throwable e) {
@@ -74,5 +76,18 @@ public class MemoryCodeCompiler {
         if (!errors.isEmpty()) {
             throw new CompileException("Compilation Error", errors);
         }
+    }
+
+    private static Map<String, byte[]> obfuscation(Map<String, byte[]> compiledBytes) throws CompileException {
+        try {
+            ServiceLoader<ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(ObfuscationHandler.class);
+            for (ObfuscationHandler handler : obfuscationHandlers) {
+                compiledBytes = handler.handle(compiledBytes);
+            }
+        } catch (Exception e) {
+            throw new CompileException("Obfuscation failed", e);
+        }
+
+        return compiledBytes;
     }
 }

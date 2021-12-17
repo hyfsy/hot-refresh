@@ -1,16 +1,19 @@
 package com.hyf.hotrefresh.servlet;
 
+import com.hyf.hotrefresh.Constants;
 import com.hyf.hotrefresh.HotRefresher;
-import com.hyf.hotrefresh.Result;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.util.ExceptionUtil;
+import com.hyf.hotrefresh.util.IOUtil;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -19,10 +22,6 @@ import java.util.*;
  */
 // @WebFilter("/*")
 public class HotRefreshFilter implements Filter {
-
-    public static final String URL = "/hot-refresh";
-
-    public static final String SEPARATOR = "@@@";
 
     private final List<String> blockList = new ArrayList<String>() {{
         // TODO jar内所有类
@@ -85,7 +84,7 @@ public class HotRefreshFilter implements Filter {
                 for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
                     String name = entry.getKey();
 
-                    String[] split = name.split(SEPARATOR);
+                    String[] split = name.split(Constants.FILE_NAME_SEPARATOR);
                     name = split[0];
                     String type = split[1];
 
@@ -102,15 +101,8 @@ public class HotRefreshFilter implements Filter {
                     }
 
                     // hot refresh
-                    try (InputStream is = entry.getValue(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-                        int len;
-                        byte[] bytes = new byte[1024];
-                        while ((len = is.read(bytes)) != -1) {
-                            baos.write(bytes, 0, len);
-                        }
-
-                        String content = baos.toString();
+                    try (InputStream is = entry.getValue()) {
+                        String content = IOUtil.readAsString(is);
                         hotRefresh(name, content, type);
                     } catch (IOException | RefreshException e) {
                         if (ex == null) {
@@ -163,11 +155,11 @@ public class HotRefreshFilter implements Filter {
         if (servletPath.endsWith("/")) {
             servletPath = servletPath.substring(0, servletPath.length() - 1);
         }
-        if (servletPath.equals(URL)) {
+        if (servletPath.equals(Constants.REFRESH_API)) {
             servletPath = "";
         }
 
-        String requestPath = contextPath + servletPath + URL;
+        String requestPath = contextPath + servletPath + Constants.REFRESH_API;
         return requestURI.equals(requestPath);
     }
 
@@ -198,35 +190,18 @@ public class HotRefreshFilter implements Filter {
     }
 
     private void success(HttpServletResponse response) {
-        response(response, Result.success());
+        response(response, "");
     }
 
     private void error(HttpServletResponse response, Throwable ex) {
-        StringBuilder sb = new StringBuilder();
-        Throwable cur = ex;
-        while (ex != null) {
-            if (sb.length() != 0) {
-                sb.append("; nested exception is ");
-            }
-            sb.append(ex);
-            ex = ex.getCause();
-        }
-        sb.append("\r\n");
-
-        if (cur != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(baos);
-            cur.printStackTrace(ps);
-            sb.append(Result.error(baos.toString()));
-        }
-
-        response(response, sb.toString());
+        String sb = ExceptionUtil.getNestedMessage(ex) + Constants.MESSAGE_SEPARATOR + ExceptionUtil.getStackMessage(ex);
+        response(response, sb);
     }
 
     private void response(HttpServletResponse response, String message) {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json;charset=UTF-8");
+            response.setContentType("text/plain;charset=" + Constants.MESSAGE_ENCODING);
             PrintWriter writer = response.getWriter();
             writer.write(message);
             writer.flush();
