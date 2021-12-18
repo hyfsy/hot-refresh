@@ -34,12 +34,7 @@ public class TestController {
             Method main = clazz.getMethod("main", String[].class);
             main.invoke(null, (Object) null);
             return clazz.getName();
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
         }
 
         return "error";
