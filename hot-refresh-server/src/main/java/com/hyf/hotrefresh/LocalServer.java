@@ -28,6 +28,31 @@ public class LocalServer {
         start();
     }
 
+    private static void parse(String[] args) {
+        if (args == null || args.length == 0) {
+            return;
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            if (Arrays.asList("-h", "-H", "--home").contains(args[i])) {
+                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                    continue;
+                }
+                WATCH_HOME = args[i++ + 1];
+            }
+            else if (Arrays.asList("-s", "-S", "--server").contains(args[i])) {
+                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
+                    continue;
+                }
+                SERVER_URL = args[i++ + 1];
+                PUSH_SERVER_URL = SERVER_URL.endsWith("/") ? SERVER_URL.substring(0, SERVER_URL.length() - 1) + REFRESH_API : SERVER_URL + REFRESH_API;
+            }
+            else if (Arrays.asList("-d", "-D", "--debug").contains(args[i])) {
+                DEBUG = true;
+            }
+        }
+    }
+
     private static void print() {
         String home = "Watch Home Path: " + WATCH_HOME;
         String url = "Refresh Server : " + PUSH_SERVER_URL;
@@ -74,31 +99,6 @@ public class LocalServer {
         }
 
         Log.info("Server connected");
-    }
-
-    private static void parse(String[] args) {
-        if (args == null || args.length == 0) {
-            return;
-        }
-
-        for (int i = 0; i < args.length; i++) {
-            if (Arrays.asList("-h", "-H", "--home").contains(args[i])) {
-                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
-                    continue;
-                }
-                WATCH_HOME = args[i++ + 1];
-            }
-            else if (Arrays.asList("-s", "-S", "--server").contains(args[i])) {
-                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
-                    continue;
-                }
-                SERVER_URL = args[i++ + 1];
-                PUSH_SERVER_URL = SERVER_URL.endsWith("/") ? SERVER_URL.substring(0, SERVER_URL.length() - 1) + REFRESH_API : SERVER_URL + REFRESH_API;
-            }
-            else if (Arrays.asList("-d", "-D", "--debug").contains(args[i])) {
-                DEBUG = true;
-            }
-        }
     }
 
     private static void start() {
