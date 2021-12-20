@@ -2,7 +2,9 @@ package com.hyf.hotrefresh.memory;
 
 import javax.tools.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author baB_hyf
@@ -14,7 +16,7 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private final MemoryByteCodeCollectClassLoader bcc = new MemoryByteCodeCollectClassLoader();
 
-    private final PackageFinder packageFinder = new PackageFinder(bcc);
+    private final DependencyLookup dependencyLookup = new DependencyLookup(bcc);
 
     public MemoryByteCodeManager(JavaFileManager fileManager) {
         super(fileManager);
@@ -40,12 +42,15 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     @Override
     public String inferBinaryName(Location location, JavaFileObject file) {
-        if (file instanceof CustomJavaFileObject) {
-            return ((CustomJavaFileObject) file).binaryName();
+        if (file instanceof URIJavaFileObject) {
+            return ((URIJavaFileObject) file).binaryName();
+        }
+        else if (file instanceof MemoryByteCode) {
+            return ((MemoryByteCode) file).getClassName();
         }
         else {
             /*
-             * if it's not CustomJavaFileObject, then it's coming from standard file manager
+             * if it's not custom JavaFileObject, then it's coming from standard file manager
              * - let it handle the file
              */
             return super.inferBinaryName(location, file);
@@ -65,7 +70,7 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
         // merge JavaFileObjects from specified ClassLoader
         if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
-            return new IterableJoin<>(super.list(location, packageName, kinds, recurse), packageFinder.find(packageName));
+            return new IterableJoin<>(super.list(location, packageName, kinds, recurse), dependencyLookup.find(packageName));
         }
 
         return super.list(location, packageName, kinds, recurse);

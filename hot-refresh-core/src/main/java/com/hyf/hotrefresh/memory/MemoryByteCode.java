@@ -1,9 +1,7 @@
 package com.hyf.hotrefresh.memory;
 
 import javax.tools.SimpleJavaFileObject;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 
 /**
@@ -12,21 +10,31 @@ import java.net.URI;
  */
 class MemoryByteCode extends SimpleJavaFileObject {
 
-    private static final char   PKG_SEPARATOR     = '.';
-    private static final char   DIR_SEPARATOR     = '/';
-
-    private ByteArrayOutputStream baos;
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private final String                className;
+    private final byte[]                bytes;
 
     public MemoryByteCode(String className) {
-        super(URI.create("byte:///" + className.replace(PKG_SEPARATOR, DIR_SEPARATOR)
-                + Kind.CLASS.extension), Kind.CLASS);
+        this(className, null);
+    }
+
+    public MemoryByteCode(String className, byte[] bytes) {
+        super(URI.create("byte:///" + className.replace('.', '/') + Kind.CLASS.extension), Kind.CLASS);
+        this.className = className;
+        this.bytes = bytes;
+    }
+
+    @Override
+    public InputStream openInputStream() throws IOException {
+        if (bytes == null) {
+            throw new IllegalStateException("bytes is null");
+        }
+        return new ByteArrayInputStream(bytes);
     }
 
     @Override
     public OutputStream openOutputStream() throws IOException {
-        if (baos == null) {
-            baos = new ByteArrayOutputStream();
-        }
+        baos.reset();
         return baos;
     }
 
@@ -35,10 +43,6 @@ class MemoryByteCode extends SimpleJavaFileObject {
     }
 
     public String getClassName() {
-        String className = getName();
-        className = className.replace(DIR_SEPARATOR, PKG_SEPARATOR);
-        className = className.substring(1, className.indexOf(Kind.CLASS.extension));
         return className;
     }
-
 }

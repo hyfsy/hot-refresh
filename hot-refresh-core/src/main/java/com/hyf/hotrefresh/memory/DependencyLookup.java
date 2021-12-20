@@ -1,28 +1,27 @@
 package com.hyf.hotrefresh.memory;
 
+import com.hyf.hotrefresh.Util;
+
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 
 /**
  * @author baB_hyf
  * @date 2021/12/12
  */
-class PackageFinder {
+class DependencyLookup {
 
     private static final String CLASS_FILE_EXTENSION = ".class";
 
     private final ClassLoader classLoader;
 
-    PackageFinder(ClassLoader classLoader) {
+    DependencyLookup(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
@@ -30,6 +29,14 @@ class PackageFinder {
         String javaPackageName = packageName.replaceAll("\\.", "/");
 
         List<JavaFileObject> result = new ArrayList<>();
+
+        // memory
+
+        Map<String, byte[]> memoryBytes = Util.getThrowawayMemoryClassLoader().getAll();
+        memoryBytes.forEach((name, bytes) -> result.add(new MemoryByteCode(name, bytes)));
+
+
+        // class file
 
         Enumeration<URL> urlEnumeration = classLoader.getResources(javaPackageName);
         while (urlEnumeration.hasMoreElements()) { // one URL for each jar on the classpath that has the given package
@@ -70,7 +77,7 @@ class PackageFinder {
                     String binaryName = name.replaceAll("/", ".");
                     binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
 
-                    result.add(new CustomJavaFileObject(binaryName, uri));
+                    result.add(new URIJavaFileObject(binaryName, uri));
                 }
             }
         } catch (Exception e) {
@@ -91,7 +98,7 @@ class PackageFinder {
                         String binaryName = packageName + "." + childFile.getName();
                         binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
 
-                        result.add(new CustomJavaFileObject(binaryName, childFile.toURI()));
+                        result.add(new URIJavaFileObject(binaryName, childFile.toURI()));
                     }
                 }
             }

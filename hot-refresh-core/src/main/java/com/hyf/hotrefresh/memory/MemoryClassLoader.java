@@ -2,9 +2,7 @@ package com.hyf.hotrefresh.memory;
 
 import com.hyf.hotrefresh.Util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -61,6 +59,12 @@ public class MemoryClassLoader extends ClassLoader {
     public byte[] get(String className) {
         synchronized (LOCK) {
             return bytesCache.get(className);
+        }
+    }
+
+    public Map<String, byte[]> getAll() {
+        synchronized (LOCK) {
+            return new HashMap<>(bytesCache);
         }
     }
 

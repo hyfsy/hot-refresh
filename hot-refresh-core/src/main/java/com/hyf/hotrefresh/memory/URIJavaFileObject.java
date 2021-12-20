@@ -10,13 +10,13 @@ import java.net.URI;
  * @author baB_hyf
  * @date 2021/12/12
  */
-class CustomJavaFileObject implements JavaFileObject {
+class URIJavaFileObject implements JavaFileObject {
 
     private final String binaryName;
     private final URI    uri;
     private final String name;
 
-    CustomJavaFileObject(String binaryName, URI uri) {
+    URIJavaFileObject(String binaryName, URI uri) {
         this.uri = uri;
         this.binaryName = binaryName;
         // for FS based URI the path is not null, for JAR URI the scheme specific part is not null
