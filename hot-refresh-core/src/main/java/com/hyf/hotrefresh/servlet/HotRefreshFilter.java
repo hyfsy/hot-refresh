@@ -42,90 +42,92 @@ public class HotRefreshFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        // bind ccl
-        MemoryClassLoader.bind();
-
-        try {
-            Throwable t = null;
+        // uri match
+        if (!uriMatch(req)) {
+            // bind ccl
+            MemoryClassLoader.bind();
             try {
-                // uri match
-                if (!uriMatch(req)) {
-                    chain.doFilter(req, resp);
-                    return;
-                }
-
-                // reset class
-                if ("1".equals(req.getParameter("reset"))) {
-                    hotRefreshReset();
-                    success(resp);
-                    return;
-                }
-
-                // contentType match
-                String contentType = req.getContentType();
-                if (contentType == null || (!contentType.contains("multipart/form-data")
-                        && !contentType.contains("multipart/mixed stream"))) {
-                    success(resp);
-                    return;
-                }
-
-                // parse file content
-                Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
-                if (fileStreamMap == null || fileStreamMap.isEmpty()) {
-                    error(resp, new RefreshException("No file exists"));
-                    return;
-                }
-
-                nextPart:
-                for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
-                    String name = entry.getKey();
-
-                    String[] split = name.split(Constants.FILE_NAME_SEPARATOR);
-                    name = split[0];
-                    String type = split[1];
-
-                    // only java file
-                    if (!name.endsWith(".java")) {
-                        continue;
-                    }
-
-                    // illegal file
-                    for (String s : blockList) {
-                        if (name.contains(s)) {
-                            break nextPart;
-                        }
-                    }
-
-                    // hot refresh
-                    try (InputStream is = entry.getValue()) {
-                        String content = IOUtil.readAsString(is);
-                        hotRefresh(name, content, type);
-                    } catch (IOException | RefreshException e) {
-                        if (t == null) {
-                            t = e;
-                        }
-                        else {
-                            t.addSuppressed(e);
-                        }
-                    }
-                }
-            } catch (Throwable e) {
-                if (t == null) {
-                    t = e;
-                }
-                else {
-                    t.addSuppressed(e);
-                }
+                chain.doFilter(req, resp);
+            } finally {
+                MemoryClassLoader.unBind();
             }
+            return;
+        }
 
-            if (t == null) {
+        Throwable t = null;
+        try {
+
+            // reset class
+            if ("1".equals(req.getParameter("reset"))) {
+                HotRefresher.reset();
                 success(resp);
+                return;
             }
-            else {
-                error(resp, t);
+
+            // contentType match
+            String contentType = req.getContentType();
+            if (contentType == null || (!contentType.contains("multipart/form-data")
+                    && !contentType.contains("multipart/mixed stream"))) {
+                success(resp);
+                return;
             }
-        } finally {
-            MemoryClassLoader.unBind();
+
+            // parse file content
+            Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
+            if (fileStreamMap == null || fileStreamMap.isEmpty()) {
+                error(resp, new RefreshException("No file exists"));
+                return;
+            }
+
+            nextPart:
+            for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
+                String name = entry.getKey();
+
+                // illegal name
+                String[] nameInfo = name.split(Constants.FILE_NAME_SEPARATOR);
+                if (nameInfo.length != 2) {
+                    continue;
+                }
+
+                String fileName = nameInfo[0];
+                String type = nameInfo[1];
+
+                // only java file
+                if (!fileName.endsWith(".java")) {
+                    continue;
+                }
+
+                // illegal file
+                for (String s : blockList) {
+                    if (fileName.contains(s)) {
+                        break nextPart;
+                    }
+                }
+
+                // hot refresh
+                try (InputStream is = entry.getValue()) {
+                    String content = IOUtil.readAsString(is);
+                    if (content != null && !"".equals(content.trim())) {
+                        HotRefresher.refresh(fileName, content, type);
+                    }
+                } catch (IOException | RefreshException e) {
+                    if (t == null) {
+                        t = e;
+                    }
+                    else {
+                        t.addSuppressed(e);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            t = e;
+        }
+
+        if (t == null) {
+            success(resp);
+        }
+        else {
+            error(resp, t);
         }
     }
 
@@ -171,18 +173,6 @@ public class HotRefreshFilter implements Filter {
         }
 
         return fileMap;
-    }
-
-    private void hotRefresh(String name, String content, String type) throws RefreshException {
-        if (content == null || "".equals(content.trim())) {
-            throw new RefreshException("No content exist, skip: " + name + " type: " + type);
-        }
-
-        HotRefresher.refresh(name, content, type);
-    }
-
-    private void hotRefreshReset() throws RefreshException {
-        HotRefresher.reset();
     }
 
     private void success(HttpServletResponse response) {

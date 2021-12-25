@@ -37,6 +37,7 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     @Override
     public ClassLoader getClassLoader(Location location) {
+        // annotation processor
         return bcc;
     }
 

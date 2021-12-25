@@ -10,6 +10,7 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -42,7 +43,7 @@ public class HttpClient {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(DEFAULT_CONFIG);
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create().setLaxMode();
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
         if (fileMap != null) {
             fileMap.forEach((n, f) -> {
                 if (f.exists()) {

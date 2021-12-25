@@ -26,17 +26,17 @@ public class HotRefresher {
 
                 ChangeType changeType = ChangeType.valueOf(fileChangeType);
 
-                // 加载 | 转换
-                if (ChangeType.CREATE == changeType || ChangeType.MODIFY == changeType) {
-                    Class<?> clazz;
+                // 加载
+                if (ChangeType.CREATE == changeType) {
+                }
+                // 转换
+                else if (ChangeType.MODIFY == changeType) {
                     try {
-                        clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
-                    } catch (ClassNotFoundException ignored) {
-                        clazz = Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
-                    }
-
-                    if (ChangeType.MODIFY == changeType) {
+                        Class<?> clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
                         HotRefreshManager.reTransform(clazz);
+                    } catch (ClassNotFoundException ignored) {
+                        // prevent modify event but class not exist
+                        Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
                     }
                 }
                 // 卸载

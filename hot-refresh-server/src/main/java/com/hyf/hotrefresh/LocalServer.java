@@ -57,7 +57,7 @@ public class LocalServer {
         String home = "Watch Home Path: " + WATCH_HOME;
         String url = "Refresh Server : " + PUSH_SERVER_URL;
 
-        int max = Math.max(home.length(), url.length());
+        int max = Math.max(home.getBytes(MESSAGE_ENCODING).length, url.getBytes(MESSAGE_ENCODING).length);
         StringBuilder sb = new StringBuilder(max);
         for (int i = 0; i < max; i++) {
             sb.append('=');

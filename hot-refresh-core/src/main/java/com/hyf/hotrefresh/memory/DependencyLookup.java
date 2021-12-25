@@ -1,14 +1,15 @@
 package com.hyf.hotrefresh.memory;
 
-import com.hyf.hotrefresh.Util;
-
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 
 /**
@@ -29,14 +30,6 @@ class DependencyLookup {
         String javaPackageName = packageName.replaceAll("\\.", "/");
 
         List<JavaFileObject> result = new ArrayList<>();
-
-        // memory
-
-        Map<String, byte[]> memoryBytes = Util.getThrowawayMemoryClassLoader().getAll();
-        memoryBytes.forEach((name, bytes) -> result.add(new MemoryByteCode(name, bytes)));
-
-
-        // class file
 
         Enumeration<URL> urlEnumeration = classLoader.getResources(javaPackageName);
         while (urlEnumeration.hasMoreElements()) { // one URL for each jar on the classpath that has the given package

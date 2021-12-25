@@ -30,6 +30,31 @@ public class FileUtil {
         }
     }
 
+    public static boolean safeWrite(File file, InputStream is) {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            IOUtil.writeTo(is, fos);
+            return true;
+        } catch (FileNotFoundException e) {
+            Log.error("Write file not exists: " + file.getAbsolutePath(), e);
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to write file: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public static void delete(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null && files.length != 0) {
+                for (File f : files) {
+                    delete(f);
+                }
+            }
+        }
+
+        file.delete();
+    }
+
     public static File getFile(String path) {
         File file = new File(path);
         if (!file.getParentFile().exists()) {
