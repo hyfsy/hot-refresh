@@ -21,8 +21,6 @@ import java.util.regex.Matcher;
  */
 public class MemoryClassLoader extends ClassLoader {
 
-    private static final String OUTPUT_HOME = Constants.REFRESH_HOME + File.separator + "output";
-
     /** full class name -> class bytes */
     private static final Map<String, byte[]> bytesCache = new ConcurrentHashMap<>();
 
@@ -30,6 +28,8 @@ public class MemoryClassLoader extends ClassLoader {
     private static final Map<String, Class<?>> classCache = new ConcurrentHashMap<>();
 
     private static final ThreadLocal<ClassLoader> cclPerThreadLocal = new ThreadLocal<>();
+
+    private static final ClassFileStorage classFileStorage = new ClassFileStorage();
 
     private static final Object LOCK = new Object();
 
@@ -41,11 +41,15 @@ public class MemoryClassLoader extends ClassLoader {
         addOutputHome();
     }
 
+    private MemoryClassLoader(ClassLoader parent) {
+        super(parent);
+    }
+
     // for scl to load compiled class
     private static void addOutputHome() {
         ClassLoader scl = ClassLoader.getSystemClassLoader();
         if (scl instanceof URLClassLoader) {
-            File outputHome = FileUtil.getFile(OUTPUT_HOME);
+            File outputHome = FileUtil.getFile(classFileStorage.getStorageHome());
             if (outputHome.exists()) {
                 FileUtil.delete(outputHome);
             }
@@ -56,16 +60,12 @@ public class MemoryClassLoader extends ClassLoader {
                     addURLMethod.setAccessible(true);
                     addURLMethod.invoke(scl, outputURL);
                 }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("Failed to invoke method URLClassLoader.addURL", e);
             } catch (MalformedURLException e) {
                 throw new RuntimeException("File url illegal: " + outputHome.getAbsolutePath(), e);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Failed to invoke method URLClassLoader.addURL", e);
             }
         }
-    }
-
-    private MemoryClassLoader(ClassLoader parent) {
-        super(parent);
     }
 
     public static MemoryClassLoader newInstance() {
@@ -91,13 +91,11 @@ public class MemoryClassLoader extends ClassLoader {
     public void store(Map<String, byte[]> compiledBytes) {
         synchronized (LOCK) {
             bytesCache.putAll(compiledBytes);
-            compiledBytes.forEach((name, bytes) -> classCache.remove(name));
+            compiledBytes.forEach((name, bytes) -> {
+                classCache.remove(name);
+                classFileStorage.write(name, bytes);
+            });
         }
-
-        compiledBytes.forEach((name, bytes) -> {
-            String storePath = OUTPUT_HOME + File.separator + name.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + ".class";
-            FileUtil.safeWrite(FileUtil.getFile(storePath), new ByteArrayInputStream(bytes));
-        });
     }
 
     public byte[] get(String className) {
@@ -117,6 +115,7 @@ public class MemoryClassLoader extends ClassLoader {
             Class<?> clazz = getClass(className);
             bytesCache.remove(className);
             classCache.remove(className);
+            classFileStorage.delete(className);
             return clazz;
         }
     }
@@ -136,6 +135,7 @@ public class MemoryClassLoader extends ClassLoader {
             bytesCache.keySet().forEach(className -> classList.add(getClass(className)));
             bytesCache.clear();
             classCache.clear();
+            classFileStorage.clear();
         }
 
         return classList;
@@ -159,5 +159,31 @@ public class MemoryClassLoader extends ClassLoader {
         }
 
         return super.findClass(name);
+    }
+
+    private static class ClassFileStorage {
+
+        private static final String OUTPUT_HOME = Constants.REFRESH_HOME + File.separator + "output";
+
+        public String getStorageHome() {
+            return OUTPUT_HOME;
+        }
+
+        public void write(String className, byte[] bytes) {
+            FileUtil.safeWrite(getClassFile(className), new ByteArrayInputStream(bytes));
+        }
+
+        public void delete(String className) {
+            FileUtil.delete(getClassFile(className));
+        }
+
+        public void clear() {
+            FileUtil.delete(FileUtil.getFile(OUTPUT_HOME));
+        }
+
+        private File getClassFile(String className) {
+            String storePath = OUTPUT_HOME + File.separator + className.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + ".class";
+            return FileUtil.getFile(storePath);
+        }
     }
 }

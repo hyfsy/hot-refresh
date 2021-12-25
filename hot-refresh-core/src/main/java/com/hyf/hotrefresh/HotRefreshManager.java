@@ -20,7 +20,7 @@ public class HotRefreshManager {
     static {
         INST = Util.getInfrastructureJarClassLoader().install();
         start();
-        // System.out.println("Hot refresh infrastructure has been installed");
+        // Log.info("Hot refresh infrastructure has been installed");
     }
 
     public static Instrumentation getInstrumentation() {
