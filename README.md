@@ -8,6 +8,8 @@ IDEA小锤子的远程版
 
 # 使用
 
+> 目前懒得发布maven中央仓库，请自行拉取源代码打包
+
 1、需要热刷新的应用程序引入依赖：
 
 ```xml
@@ -18,7 +20,7 @@ IDEA小锤子的远程版
 </dependency>
 ```
 
-2、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`，请自行拉取源代码打包
+2、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`
 
 3、进入命令行界面，启动本地服务器：
 
@@ -38,7 +40,7 @@ java
 
 - `hot-refresh-common`：客户端、服务端公用的基础模块
 - `hot-refresh-core`：热刷新核心包，应用程序引入
-- `hot-refresh-server`：本地服务包，监听工作目录
+- `hot-refresh-server`：本地服务包，监听本地工作目录
 - `hot-refresh-test-springboot`：本地测试包，模拟需要热刷新的应用程序
 
 # FAQ
@@ -46,7 +48,7 @@ java
 ## 环境限制
 
 1. 暂时只支持SpringBoot环境
-2. 只支持JDK环境，JRE环境不支持
+2. ~~只支持JDK环境，JRE环境不支持~~（待测试）
 
 ## 功能限制
 
