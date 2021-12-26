@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,16 +20,19 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
+    private static final String JAVAC_LOCAL_PATH      = "lib/hyf-javac-8.jar";
 
     private static final String BYTE_BUDDY_AGENT_CLASS = "net.bytebuddy.agent.ByteBuddyAgent";
     private static final String CLASS_READER_CLASS     = "org.objectweb.asm.ClassReader";
+    private static final String JAVAC_TOOL_CLASS       = "com.sun.tools.javac.api.JavacTool";
 
     private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
 
-    private Class<?> agentClass         = null;
-    private Method   installMethod      = null;
-    private Class<?> classReaderClass   = null;
-    private Method   getClassNameMethod = null;
+    private Class<?>     agentClass         = null;
+    private Method       installMethod      = null;
+    private Class<?>     classReaderClass   = null;
+    private Method       getClassNameMethod = null;
+    private JavaCompiler compiler           = null;
 
     private InfrastructureJarClassLoader(URL... urls) {
         super(urls, null);
@@ -39,37 +44,25 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         return INSTANCE;
     }
 
-    public Instrumentation install() {
-        try {
-            return (Instrumentation) installMethod.invoke(null);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to install", e);
-        }
-    }
-
-    public String getClassName(byte[] bytes) {
-        try {
-            Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
-            String classNameWithPath = (String) getClassNameMethod.invoke(o);
-            return classNameWithPath.replace("/", ".");
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to getClassName", e);
-        }
-    }
-
     private static InfrastructureJarClassLoader newInstanceByLocal() {
 
-        URL byteBuddyResource = Util.getOriginContextClassLoader().getResource(BYTE_BUDDY_LOCAL_PATH);
-        URL asmResource = Util.getOriginContextClassLoader().getResource(ASM_LOCAL_PATH);
+        ClassLoader ccl = Util.getOriginContextClassLoader();
+
+        URL byteBuddyResource = ccl.getResource(BYTE_BUDDY_LOCAL_PATH);
+        URL asmResource = ccl.getResource(ASM_LOCAL_PATH);
+        URL javacResource = ccl.getResource(JAVAC_LOCAL_PATH);
 
         URL byteBuddyURL = ResourceUtil.getResourceURL(byteBuddyResource);
         URL asmURL = ResourceUtil.getResourceURL(asmResource);
+        URL javacURL = ResourceUtil.getResourceURL(javacResource);
 
-        return new InfrastructureJarClassLoader(byteBuddyURL, asmURL);
+        return new InfrastructureJarClassLoader(byteBuddyURL, asmURL, javacURL);
     }
 
+    @Deprecated
     private static InfrastructureJarClassLoader newInstanceByNetwork() {
         try {
+            // TODO javac
 
             URL byteBuddyUrl = new URL(BYTE_BUDDY_DOWNLOAD_URL);
             URL asmUrl = new URL(ASM_DOWNLOAD_URL);
@@ -81,6 +74,35 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Failed to create class loader", e);
         }
+    }
+
+    public Instrumentation install() {
+        return invoke(installMethod, null);
+    }
+
+    public String getClassName(byte[] bytes) {
+        try {
+            Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
+            String classNameWithPath = invoke(getClassNameMethod, o);
+            return classNameWithPath.replace("/", ".");
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to getClassName", e);
+        }
+    }
+
+    public JavaCompiler getJavaCompiler() {
+        if (compiler == null) {
+            compiler = ToolProvider.getSystemJavaCompiler();
+
+            // jre
+            if (compiler == null) {
+                Class<?> clazz = forName(JAVAC_TOOL_CLASS);
+                Method createMethod = getMethod(clazz, "create");
+                compiler = invoke(createMethod, null);
+            }
+        }
+
+        return compiler;
     }
 
     private void ensureByteBuddyExist() {
@@ -114,6 +136,15 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
             return clazz.getDeclaredMethod(methodName, args);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Failed to get method: " + clazz + "." + methodName, e);
+        }
+    }
+
+    private <T> T invoke(Method method, Object obj, Object... args) {
+        try {
+            method.setAccessible(true);
+            return (T) method.invoke(obj, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to invoke " + method.getName(), e);
         }
     }
 }

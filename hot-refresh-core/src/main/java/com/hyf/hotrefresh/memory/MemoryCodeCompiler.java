@@ -1,8 +1,12 @@
 package com.hyf.hotrefresh.memory;
 
+import com.hyf.hotrefresh.Util;
 import com.hyf.hotrefresh.exception.CompileException;
 
-import javax.tools.*;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
 import java.util.*;
 
 /**
@@ -13,7 +17,7 @@ import java.util.*;
  */
 public class MemoryCodeCompiler {
 
-    private static final JavaCompiler COMPILER = ToolProvider.getSystemJavaCompiler();
+    private static final JavaCompiler COMPILER = Util.getInfrastructureJarClassLoader().getJavaCompiler();
 
     private static final List<String> OPTIONS = new ArrayList<String>() {{
         add("-Xlint:unchecked");
@@ -28,22 +32,22 @@ public class MemoryCodeCompiler {
             return new HashMap<>();
         }
 
-        // check
+        // TODO check?
         if (COMPILER == null) {
             throw new IllegalStateException("Cannot load JavaCompiler, please confirm the application running in JDK not JRE.");
         }
 
         try {
-            MemoryByteCodeManager memoryCodeManager = new MemoryByteCodeManager(COMPILER.getStandardFileManager(null, null, null));
+            MemoryByteCodeManager memoryByteCodeManager = new MemoryByteCodeManager(COMPILER.getStandardFileManager(null, null, null));
             DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
-            boolean success = COMPILER.getTask(null, memoryCodeManager, collector, OPTIONS, null, memoryCodeList).call();
+            boolean success = COMPILER.getTask(null, memoryByteCodeManager, collector, OPTIONS, null, memoryCodeList).call();
 
             if (!success || collector.getDiagnostics().size() > 0) {
                 handleDiagnosticMessage(collector);
             }
 
-            Map<String, byte[]> compiledBytes = memoryCodeManager.getByteCodes();
+            Map<String, byte[]> compiledBytes = memoryByteCodeManager.getByteCodes();
             return obfuscation(compiledBytes);
         } catch (CompileException e) {
             throw e;
@@ -84,7 +88,7 @@ public class MemoryCodeCompiler {
                 compiledBytes = handler.handle(compiledBytes);
             }
         } catch (Throwable t) {
-            throw new CompileException("Obfuscation failed", t);
+            throw new CompileException("Obfuscation failed: " + compiledBytes.keySet(), t);
         }
 
         return compiledBytes;
