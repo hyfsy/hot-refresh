@@ -60,7 +60,7 @@ public class HotRefreshFilter implements Filter {
             // reset class
             if ("1".equals(req.getParameter("reset"))) {
                 HotRefresher.reset();
-                success(resp);
+                success(req, resp);
                 return;
             }
 
@@ -68,14 +68,14 @@ public class HotRefreshFilter implements Filter {
             String contentType = req.getContentType();
             if (contentType == null || (!contentType.contains("multipart/form-data")
                     && !contentType.contains("multipart/mixed stream"))) {
-                success(resp);
+                success(req, resp);
                 return;
             }
 
             // parse file content
             Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
             if (fileStreamMap == null || fileStreamMap.isEmpty()) {
-                error(resp, new RefreshException("No file exists"));
+                error(req, resp, new RefreshException("No file exists"));
                 return;
             }
 
@@ -124,10 +124,10 @@ public class HotRefreshFilter implements Filter {
         }
 
         if (t == null) {
-            success(resp);
+            success(req, resp);
         }
         else {
-            error(resp, t);
+            error(req, resp, t);
         }
     }
 
@@ -175,16 +175,16 @@ public class HotRefreshFilter implements Filter {
         return fileMap;
     }
 
-    private void success(HttpServletResponse response) {
-        response(response, "");
+    protected void success(HttpServletRequest request, HttpServletResponse response) {
+        response(request, response, "");
     }
 
-    private void error(HttpServletResponse response, Throwable ex) {
+    protected void error(HttpServletRequest request, HttpServletResponse response, Throwable ex) {
         String sb = ExceptionUtil.getNestedMessage(ex) + Constants.MESSAGE_SEPARATOR + ExceptionUtil.getStackMessage(ex);
-        response(response, sb);
+        response(request, response, sb);
     }
 
-    private void response(HttpServletResponse response, String message) {
+    private void response(HttpServletRequest request, HttpServletResponse response, String message) {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("text/plain;charset=" + Constants.MESSAGE_ENCODING.name());

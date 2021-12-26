@@ -26,10 +26,10 @@ public class HotRefresher {
 
                 ChangeType changeType = ChangeType.valueOf(fileChangeType);
 
-                // 加载
+                // loaded
                 if (ChangeType.CREATE == changeType) {
                 }
-                // 转换
+                // transform
                 else if (ChangeType.MODIFY == changeType) {
                     try {
                         Class<?> clazz = Class.forName(className, false, Util.getOriginContextClassLoader());
@@ -39,14 +39,14 @@ public class HotRefresher {
                         Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
                     }
                 }
-                // 卸载
+                // unload
                 else if (ChangeType.DELETE == changeType) {
                     reset(className);
                 }
             }
         } catch (RefreshException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new RefreshException("Hot refresh failed", e);
         }
     }
