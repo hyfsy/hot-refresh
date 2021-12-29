@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh;
 
+import com.hyf.hotrefresh.agent.AgentHelper;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
@@ -15,7 +16,17 @@ import java.util.Map;
 public class AgentTests {
 
     @Test
+    public void testGetAttachmentProvider() {
+        Assertions.assertNotNull(AgentHelper.getAttachmentProvider());
+    }
+
+    @Test
     public void testInstall() {
+        Assertions.assertNotNull(Util.getInfrastructureJarClassLoader().install());
+    }
+
+    @Test
+    public void testGetInstrumentation() {
         Assertions.assertNotNull(HotRefreshManager.getInstrumentation());
     }
 
