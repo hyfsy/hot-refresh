@@ -27,7 +27,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
-    private static final String JAVAC_LOCAL_PATH      = "lib/tools.jar";
+    private static final String TOOLS_LOCAL_PATH      = "lib/tools.jar";
 
     private static final String BYTE_BUDDY_AGENT_CLASS    = "net.bytebuddy.agent.ByteBuddyAgent";
     private static final String CLASS_READER_CLASS        = "org.objectweb.asm.ClassReader";
@@ -69,17 +69,19 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         URL asmURL = ResourceUtil.getResourceURL(asmResource);
         urls.add(asmURL);
 
-        // optional javac
+        // optional tools
         try {
             Class.forName(JAVAC_TOOL_CLASS, false, ccl);
         } catch (ClassNotFoundException ignored) {
             // TODO 先查询本地lib目录
             String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
-            try {
-                URL javacURL = ResourceUtil.getResourceURL(new File(toolsJarPath).toURI().toURL());
-                urls.add(javacURL);
-            } catch (MalformedURLException e) {
-                Log.error("Failed to add javac source url", e);
+            if (toolsJarPath != null) {
+                try {
+                    URL javacURL = ResourceUtil.getResourceURL(new File(toolsJarPath).toURI().toURL());
+                    urls.add(javacURL);
+                } catch (MalformedURLException e) {
+                    Log.error("Failed to add javac source url", e);
+                }
             }
         }
 
@@ -107,9 +109,12 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
             // jre
             if (compiler == null) {
-                Class<?> clazz = forName(JAVAC_TOOL_CLASS);
-                Method createMethod = getMethod(clazz, "create");
-                compiler = invokeMethod(createMethod, null);
+                try {
+                    Class<?> clazz = forName(JAVAC_TOOL_CLASS);
+                    Method createMethod = getMethod(clazz, "create");
+                    compiler = invokeMethod(createMethod, null);
+                } catch (Throwable ignored) {
+                }
             }
         }
 
