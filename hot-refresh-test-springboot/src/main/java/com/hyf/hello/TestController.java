@@ -44,4 +44,9 @@ public class TestController {
     public String modifySelf() {
         return "3";
     }
+
+    @RequestMapping("4")
+    public String testCompileParameters(String param) {
+        return "4";
+    }
 }

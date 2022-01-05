@@ -21,6 +21,7 @@ public class MemoryCodeCompiler {
 
     private static final List<String> OPTIONS = new ArrayList<String>() {{
         add("-Xlint:unchecked");
+        add("-parameters");
     }};
 
     public static Map<String, byte[]> compile(MemoryCode memoryCode) throws CompileException {
