@@ -43,8 +43,8 @@ java
 - `hot-refresh-common`：客户端、服务端公用的基础模块
 - `hot-refresh-core`：热刷新核心包，应用系统引入
 - `hot-refresh-server`：本地服务包，监听本地工作目录
-- `test/hot-refresh-test-springboot`：本地测试包，模拟需要热刷新的应用系统
-- `test/hot-refresh-test-jar-file`：直接打jar包，方便测试jar包的热刷新功能
+- `test-case/hot-refresh-test-springboot`：本地测试包，模拟需要热刷新的应用系统
+- `test-case/hot-refresh-test-jar-file`：直接打jar包，方便测试jar包的热刷新功能
 
 # 注意事项
 
