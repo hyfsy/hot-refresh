@@ -1,4 +1,4 @@
-package com.hyf.hello;
+package com.hyf.hotrefresh.hello;
 
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
