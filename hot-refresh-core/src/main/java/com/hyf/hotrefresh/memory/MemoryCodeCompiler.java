@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.memory;
 
-import com.hyf.hotrefresh.Util;
+import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.exception.CompileException;
 
 import javax.tools.Diagnostic;

@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.play;
 
-import com.hyf.hotrefresh.Util;
+import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.util.FileUtil;
 
 import java.io.ByteArrayInputStream;

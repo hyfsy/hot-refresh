@@ -1,7 +1,7 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.refresh;
 
+import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.exception.AgentException;
-import com.hyf.hotrefresh.transform.HotRefreshTransformer;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @author baB_hyf
  * @date 2021/12/11
  */
-public class HotRefreshManager {
+class HotRefreshManager {
 
     private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
 

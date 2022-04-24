@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.agent;
 
-import com.hyf.hotrefresh.InfrastructureJarClassLoader;
-import com.hyf.hotrefresh.Util;
+import com.hyf.hotrefresh.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.util.Util;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;

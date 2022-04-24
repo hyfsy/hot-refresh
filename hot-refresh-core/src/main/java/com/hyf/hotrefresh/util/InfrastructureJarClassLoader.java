@@ -1,5 +1,6 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.util;
 
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.agent.AgentHelper;
 import com.hyf.hotrefresh.agent.ToolsJarProcessor;
 

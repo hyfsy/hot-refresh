@@ -4,7 +4,8 @@ import com.hyf.hotrefresh.agent.AgentHelper;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
-import com.hyf.hotrefresh.transform.HotRefresher;
+import com.hyf.hotrefresh.refresh.HotRefresher;
+import com.hyf.hotrefresh.util.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

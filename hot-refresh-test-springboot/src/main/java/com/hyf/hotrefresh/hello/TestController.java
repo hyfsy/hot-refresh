@@ -1,10 +1,11 @@
 package com.hyf.hotrefresh.hello;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -15,6 +16,9 @@ import java.lang.reflect.Method;
 @RestController
 @RequestMapping("test")
 public class TestController {
+
+    @Resource
+    private ApplicationContext context;
 
     @RequestMapping("1")
     public String loadOuterClass() {

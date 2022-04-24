@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.util;
 
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 

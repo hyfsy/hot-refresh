@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.servlet;
 
 import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.transform.HotRefresher;
+import com.hyf.hotrefresh.refresh.HotRefresher;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.util.ExceptionUtil;
@@ -93,6 +93,7 @@ public class HotRefreshFilter implements Filter {
                 String type = nameInfo[1];
 
                 // only java file
+                // TODO support jar file
                 if (!fileName.endsWith(".java")) {
                     continue;
                 }

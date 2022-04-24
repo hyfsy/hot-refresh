@@ -57,6 +57,7 @@ java
 # 未来规划
 
 - 提供IDEA插件
+- jar包热刷新支持
 - 集成Spring
 - 集成MyBatis
 

@@ -52,7 +52,7 @@ public class ToolsJarProcessor {
         return toolsJarPath;
     }
 
-    public void processResult(Process process) {
+    private void processResult(Process process) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {

@@ -17,7 +17,9 @@
         <module>hot-refresh-common</module>
         <module>hot-refresh-core</module>
         <module>hot-refresh-server</module>
+
         <module>hot-refresh-test-springboot</module>
+        <module>hot-refresh-test-jar-file</module>
     </modules>
 
     <dependencyManagement>

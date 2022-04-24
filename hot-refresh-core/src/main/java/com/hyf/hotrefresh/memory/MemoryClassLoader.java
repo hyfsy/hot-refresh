@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.memory;
 
 import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.Util;
+import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.util.FileUtil;
 
 import java.io.ByteArrayInputStream;
