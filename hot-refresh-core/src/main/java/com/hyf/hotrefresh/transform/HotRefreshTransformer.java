@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.transform;
 
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.util.IOUtil;
@@ -15,7 +15,7 @@ import java.security.ProtectionDomain;
  * @author baB_hyf
  * @date 2021/12/12
  */
-class HotRefreshTransformer implements ClassFileTransformer {
+public class HotRefreshTransformer implements ClassFileTransformer {
 
     private final MemoryClassLoader placeHolderMemoryClassLoader;
 

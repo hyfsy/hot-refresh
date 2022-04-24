@@ -1,5 +1,8 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.transform;
 
+import com.hyf.hotrefresh.ChangeType;
+import com.hyf.hotrefresh.HotRefreshManager;
+import com.hyf.hotrefresh.Util;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;

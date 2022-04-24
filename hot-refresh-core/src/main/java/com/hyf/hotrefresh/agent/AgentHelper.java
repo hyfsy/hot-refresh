@@ -4,6 +4,7 @@ import com.hyf.hotrefresh.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.Util;
 
 import java.io.File;
+import java.lang.instrument.Instrumentation;
 import java.lang.reflect.*;
 
 /**
@@ -61,5 +62,17 @@ public class AgentHelper {
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException("Failed to get ext attachmentProvider instance");
         }
+    }
+
+    public static void installSpringLoaded(Instrumentation instrumentation) {
+
+        // TODO SpringLoaded is not compatible
+        // InfrastructureJarClassLoader cl = Util.getInfrastructureJarClassLoader();
+        //
+        // Class<?> SpringLoadedAgentClass = cl.forName("org.springsource.loaded.agent.SpringLoadedAgent");
+        //
+        // Method premainMethod = cl.getMethod(SpringLoadedAgentClass, "premain", String.class, Instrumentation.class);
+        //
+        // cl.invokeMethod(premainMethod, null, null, instrumentation);
     }
 }

@@ -25,9 +25,9 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private static final String BYTE_BUDDY_DOWNLOAD_URL = "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent/1.8.17/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_DOWNLOAD_URL        = "https://repo1.maven.org/maven2/org/ow2/asm/asm/5.2/asm-5.2.jar";
 
-    private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
-    private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
-    private static final String TOOLS_LOCAL_PATH      = "lib/tools.jar";
+    private static final String BYTE_BUDDY_LOCAL_PATH    = "lib/byte-buddy-agent-1.8.17.jar";
+    private static final String ASM_LOCAL_PATH           = "lib/asm-5.2.jar";
+    private static final String SPRING_LOADED_LOCAL_PATH = "lib/springloaded-1.3.0.BUILD-SNAPSHOT.jar";
 
     private static final String BYTE_BUDDY_AGENT_CLASS    = "net.bytebuddy.agent.ByteBuddyAgent";
     private static final String CLASS_READER_CLASS        = "org.objectweb.asm.ClassReader";
@@ -43,6 +43,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private Method   getClassNameMethod      = null;
 
     private JavaCompiler compiler = null;
+    private Instrumentation instrumentation = null;
 
     private InfrastructureJarClassLoader(URL... urls) {
         super(urls, null);
@@ -69,6 +70,11 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         URL asmURL = ResourceUtil.getResourceURL(asmResource);
         urls.add(asmURL);
 
+        // spring-loaded
+        URL springLoadedResource = ccl.getResource(SPRING_LOADED_LOCAL_PATH);
+        URL springLoadedURL = ResourceUtil.getResourceURL(springLoadedResource);
+        urls.add(springLoadedURL);
+
         // optional tools
         try {
             Class.forName(JAVAC_TOOL_CLASS, false, ccl);
@@ -88,9 +94,13 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         return new InfrastructureJarClassLoader(urls.toArray(new URL[0]));
     }
 
-    public Instrumentation install() {
-        Object attachmentProvider = AgentHelper.getAttachmentProvider();
-        return invokeMethod(installMethod, null, attachmentProvider);
+    public Instrumentation getInstrumentation() {
+        if (instrumentation == null) {
+            Object attachmentProvider = AgentHelper.getAttachmentProvider();
+            instrumentation = invokeMethod(installMethod, null, attachmentProvider);
+            AgentHelper.installSpringLoaded(instrumentation);
+        }
+        return instrumentation;
     }
 
     public String getClassName(byte[] bytes) {

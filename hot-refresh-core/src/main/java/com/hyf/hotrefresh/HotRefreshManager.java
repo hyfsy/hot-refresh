@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.exception.AgentException;
+import com.hyf.hotrefresh.transform.HotRefreshTransformer;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class HotRefreshManager {
     private static final Instrumentation INST;
 
     static {
-        INST = Util.getInfrastructureJarClassLoader().install();
+        INST = Util.getInstrumentation();
         start();
         // Log.info("Hot refresh infrastructure has been installed");
     }
@@ -30,20 +31,28 @@ public class HotRefreshManager {
         return INST;
     }
 
+    //---------------------------------------------------------------------
+    // 针对于SpringLoaded的情况，处理方法已无效
+    //---------------------------------------------------------------------
+
+    @Deprecated
     public static void start() {
         stop();
         getInstrumentation().addTransformer(hotRefreshTransformer, true);
     }
 
+    @Deprecated
     public static void stop() {
         getInstrumentation().removeTransformer(hotRefreshTransformer);
     }
 
+    @Deprecated
     public static void reset(String className) throws AgentException {
         Class<?> clazz = Util.getThrowawayMemoryClassLoader().remove(className);
         reTransform(clazz);
     }
 
+    @Deprecated
     public static void resetAll() throws AgentException {
         List<Class<?>> classList = Util.getThrowawayMemoryClassLoader().clear();
         reTransform(classList.toArray(new Class[0]));
@@ -55,7 +64,7 @@ public class HotRefreshManager {
         }
 
         try {
-            HotRefreshManager.getInstrumentation().retransformClasses(classes);
+            getInstrumentation().retransformClasses(classes);
         } catch (Throwable e) {
             String classNames = Arrays.stream(classes).map(Class::getName).collect(Collectors.joining("; "));
             throw new AgentException("Class file structure has been modified: " + classNames, e);

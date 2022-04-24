@@ -53,3 +53,13 @@ java
 4. 热刷新功能基于JVMTI，所以不能添加类字段、方法、修改类的方法签名等信息，推荐只修改方法内代码
 5. **无法热刷新混淆的字节码**，提供扩展可自行添加混淆功能
 
+
+# 未来规划
+
+- 提供IDEA插件
+- 集成Spring
+- 集成MyBatis
+
+
+# 自测
+https://tech.meituan.com/2022/03/17/java-hotswap-sonic.html

@@ -47,7 +47,7 @@ public class ToolsJarProcessor {
 
         // make sure not null
         if (toolsJarPath == null) {
-            System.out.println(toolsJarPath);
+            // System.out.println(toolsJarPath);
         }
         return toolsJarPath;
     }

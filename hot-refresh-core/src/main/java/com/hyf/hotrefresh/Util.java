@@ -2,6 +2,8 @@ package com.hyf.hotrefresh;
 
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
 
+import java.lang.instrument.Instrumentation;
+
 /**
  * @author baB_hyf
  * @date 2021/12/12
@@ -28,5 +30,14 @@ public class Util {
 
     public static InfrastructureJarClassLoader getInfrastructureJarClassLoader() {
         return InfrastructureJarClassLoader.getInstance();
+    }
+
+    public static Instrumentation getInstrumentation() {
+        try {
+            return getInfrastructureJarClassLoader().getInstrumentation();
+        } catch (Throwable e) {
+            // throw new IllegalStateException(e);
+            return null;
+        }
     }
 }
