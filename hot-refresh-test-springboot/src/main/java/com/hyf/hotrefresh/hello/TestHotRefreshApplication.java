@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LearnSpringbootHelloInitializrApplication {
+public class TestHotRefreshApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LearnSpringbootHelloInitializrApplication.class, args);
+        SpringApplication.run(TestHotRefreshApplication.class, args);
     }
 
 }

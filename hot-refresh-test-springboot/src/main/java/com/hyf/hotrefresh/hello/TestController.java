@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.hello;
 
 import org.springframework.util.ClassUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +31,7 @@ public class TestController {
     @RequestMapping("2")
     public String invokeOuterClass() {
         try {
-            Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.Test", null);
+            Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
             Method main = clazz.getMethod("main", String[].class);
             main.invoke(null, (Object) null);
             return clazz.getName();
