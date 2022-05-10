@@ -28,7 +28,6 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
 
     private static final String BYTE_BUDDY_LOCAL_PATH    = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH           = "lib/asm-5.2.jar";
-    private static final String SPRING_LOADED_LOCAL_PATH = "lib/springloaded-1.3.0.BUILD-SNAPSHOT.jar";
 
     private static final String BYTE_BUDDY_AGENT_CLASS    = "net.bytebuddy.agent.ByteBuddyAgent";
     private static final String CLASS_READER_CLASS        = "org.objectweb.asm.ClassReader";
@@ -70,11 +69,6 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         URL asmResource = ccl.getResource(ASM_LOCAL_PATH);
         URL asmURL = ResourceUtil.getResourceURL(asmResource);
         urls.add(asmURL);
-
-        // spring-loaded
-        URL springLoadedResource = ccl.getResource(SPRING_LOADED_LOCAL_PATH);
-        URL springLoadedURL = ResourceUtil.getResourceURL(springLoadedResource);
-        urls.add(springLoadedURL);
 
         // optional tools
         try {

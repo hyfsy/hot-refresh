@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 
 /**
  * @author baB_hyf
@@ -18,6 +19,10 @@ public class ResourceUtil {
     public static final String DOWNLOAD_HOME = Constants.REFRESH_HOME + File.separator + "lib";
 
     public static URL getResourceURL(URL url) {
+        if (url == null) {
+            throw new IllegalArgumentException("url must not be null");
+        }
+
         URL localURL = getLocalURL(url);
 
         if (localURL == null) {
@@ -37,8 +42,7 @@ public class ResourceUtil {
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Failed to get file url", e);
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -51,7 +55,7 @@ public class ResourceUtil {
             URLConnection connection = url.openConnection();
 
             try (InputStream is = connection.getInputStream();
-                 OutputStream os = new FileOutputStream(localFile)) {
+                 OutputStream os = Files.newOutputStream(localFile.toPath())) {
                 IOUtil.writeTo(is, os);
             }
 
