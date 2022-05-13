@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
 import com.hyf.hotrefresh.install.Installer;
+import com.hyf.hotrefresh.memory.AnnotationProcessorCompositeClassLoader;
 import com.hyf.hotrefresh.util.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.util.Util;
 
@@ -18,7 +19,8 @@ public class LombokAdapterInstaller implements Installer {
     @Override
     public void install() {
 
-        // make sure lombok lib load
+        // though lombok lib must ShadowClassLoader to load
+        // but this action used to make sure some .class file in lombok lib can be load by infrastructure class loader
         InfrastructureJarClassLoader.getInstance().registerInfrastructureJar("lombok", LOMBOK_LOCAL_PATH);
 
         // when lombok lib and javac lib not loaded by the same class loader,
@@ -27,8 +29,9 @@ public class LombokAdapterInstaller implements Installer {
         replaceParent(shadowClassLoader, Util.getInfrastructureJarClassLoader());
 
         // load lombok lib
-//        LombokShadowClassLoaderDelegate delegate = new LombokShadowClassLoaderDelegate(shadowClassLoader);
-//        AnnotationProcessorCompositeClassLoader.getInstance().addClassLoader(delegate);
+        LombokShadowClassLoaderDelegate delegate = new LombokShadowClassLoaderDelegate(shadowClassLoader);
+        delegate.addPath(LOMBOK_LOCAL_PATH);
+        AnnotationProcessorCompositeClassLoader.getInstance().addClassLoader(delegate);
     }
 
     public ClassLoader getShadowClassLoader() {
