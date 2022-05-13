@@ -141,6 +141,11 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     public JavaCompiler getJavaCompiler() {
         if (compiler == null) {
             compiler = ToolProvider.getSystemJavaCompiler();
+            // if tools.jar not on the classpath then default to use URLClassLoader$FactoryURLClassLoader load
+            if (compiler != null && compiler.getClass().getClassLoader() != ClassLoader.getSystemClassLoader()) {
+                // use our class loader to load to avoid ClassNotFoundException at compile phase
+                compiler = null;
+            }
 
             // jre
             if (compiler == null) {
@@ -154,6 +159,25 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         }
 
         return compiler;
+    }
+
+    public boolean canLoad(Class clazz) {
+        ClassLoader cl = clazz.getClassLoader();
+
+        // bootstrap class loader loaded
+        if (cl == null) {
+            return true;
+        }
+
+        ClassLoader p = this;
+        while (p != null) {
+            if (cl == p) {
+                return true;
+            }
+            p = p.getParent();
+        }
+
+        return false;
     }
 
     private void ensureByteBuddyExist() {
