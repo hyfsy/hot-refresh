@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.refresh;
 
 import com.hyf.hotrefresh.ChangeType;
+import com.hyf.hotrefresh.install.CoreInstaller;
 import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryCode;
@@ -15,6 +16,9 @@ import java.util.Map;
 public class HotRefresher {
 
     public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
+
+        if (!CoreInstaller.enable()) return;
+
         try {
 
             // TODO 多文件处理

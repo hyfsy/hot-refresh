@@ -8,7 +8,7 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>hot-refresh-test-springboot</artifactId>
+    <artifactId>hot-refresh-test-spring-boot</artifactId>
 
     <properties>
         <java.version>1.8</java.version>

@@ -16,6 +16,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author baB_hyf
@@ -23,9 +25,7 @@ import java.util.List;
  */
 public class InfrastructureJarClassLoader extends URLClassLoader {
 
-    private static final String BYTE_BUDDY_DOWNLOAD_URL = "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent/1.8.17/byte-buddy-agent-1.8.17.jar";
-    private static final String ASM_DOWNLOAD_URL        = "https://repo1.maven.org/maven2/org/ow2/asm/asm/5.2/asm-5.2.jar";
-
+    // TODO 支持外部指定
     private static final String BYTE_BUDDY_LOCAL_PATH    = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH           = "lib/asm-5.2.jar";
 
@@ -35,6 +35,8 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private static final String ATTACHMENT_PROVIDER_CLASS = "net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider";
 
     private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
+
+    private static final Map<String, String> registeredInfrastructureJarMap = new ConcurrentHashMap<>(4);
 
     private Class<?> agentClass              = null;
     private Class<?> attachmentProviderClass = null;
@@ -46,7 +48,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private Instrumentation instrumentation = null;
 
     private InfrastructureJarClassLoader(URL... urls) {
-        super(urls, null);
+        super(urls, Util.getOriginContextClassLoader());
         ensureByteBuddyExist();
         ensureAsmExist();
     }
@@ -87,6 +89,33 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         }
 
         return new InfrastructureJarClassLoader(urls.toArray(new URL[0]));
+    }
+
+    public void registerInfrastructureJar(String identity, String location) {
+
+        registeredInfrastructureJarMap.put(identity, location);
+
+        URL resource = transferToResourceURL(location);
+        if (resource == null) {
+            Log.warn("Failed to register infrastructure jar: " + location);
+        }
+        URL url = ResourceUtil.getResourceURL(resource);
+        // TODO 是否替换原有的？如何替换？
+        super.addURL(url);
+    }
+
+    private URL transferToResourceURL(String location) {
+        URL resource = null;
+        if (location.startsWith("http")) {
+            try {
+                resource = new URL(location);
+            } catch (MalformedURLException ignore) {
+            }
+        } else {
+            resource = Util.getOriginContextClassLoader().getResource(location);
+        }
+
+        return resource;
     }
 
     public Instrumentation getInstrumentation() {

@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh.memory;
 
+import com.hyf.hotrefresh.classloader.CompositeClassLoader;
+
 import javax.tools.*;
 import java.io.IOException;
 import java.util.Iterator;
@@ -38,7 +40,7 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
     @Override
     public ClassLoader getClassLoader(Location location) {
         // annotation processor
-        return bcc;
+        return AnnotationProcessorCompositeClassLoader.getInstance();
     }
 
     @Override
