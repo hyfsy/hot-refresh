@@ -34,6 +34,10 @@ public class HotRefreshFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        String blocks = filterConfig.getInitParameter("blocks");
+        if (blocks != null) {
+            blockList.addAll(Arrays.asList(blocks.split(",")));
+        }
     }
 
     @Override

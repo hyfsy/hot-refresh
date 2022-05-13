@@ -23,6 +23,10 @@ public class CompositeClassLoader extends ExtendClassLoader {
         classLoaders.add(classLoader);
     }
 
+    public List<ClassLoader> getClassLoaders() {
+        return classLoaders;
+    }
+
     @Override
     protected Class<?> brokenLoadClass(String name) throws ClassNotFoundException {
         for (ClassLoader cl : classLoaders) {

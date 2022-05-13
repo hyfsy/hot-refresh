@@ -35,7 +35,7 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
                 throw new ClassNotFoundException(name);
             }
         } catch (ClassNotFoundException e) {
-            c = super.findClass(name);
+            c = getParent().loadClass(name);
         }
 
         if (resolve) {

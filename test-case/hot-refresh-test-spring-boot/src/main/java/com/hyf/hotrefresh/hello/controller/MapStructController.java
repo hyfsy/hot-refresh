@@ -10,4 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("test/mapstruct")
 public class MapStructController {
+
+
+    @RequestMapping("1")
+    public void _1() {
+    }
 }
