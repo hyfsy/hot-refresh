@@ -98,6 +98,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         URL resource = transferToResourceURL(location);
         if (resource == null) {
             Log.warn("Failed to register infrastructure jar: " + location);
+            return;
         }
         URL url = ResourceUtil.getResourceURL(resource);
         // TODO 是否替换原有的？如何替换？
