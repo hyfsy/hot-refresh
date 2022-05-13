@@ -15,7 +15,7 @@ IDEA小锤子的远程版
 ```xml
 <dependency>
     <groupId>com.hyf.hotrefresh</groupId>
-    <artifactId>hot-refresh-core</artifactId>
+    <artifactId>hot-refresh-client</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -43,7 +43,8 @@ java
 - `hot-refresh-common`：客户端、服务端公用的基础模块
 - `hot-refresh-core`：热刷新核心包，应用系统引入
 - `hot-refresh-server`：本地服务包，监听本地工作目录
-- `test-case/hot-refresh-test-springboot`：本地测试包，模拟需要热刷新的应用系统
+- `adapter/hot-refresh-adapter-lombok`：编译时的lombok功能适配
+- `test-case/hot-refresh-test-spring-boot`：本地测试包，模拟需要热刷新的应用系统
 - `test-case/hot-refresh-test-jar-file`：直接打jar包，方便测试jar包的热刷新功能
 
 # 注意事项
@@ -57,8 +58,10 @@ java
 
 # 未来规划
 
-- 服务端提供IDEA插件
-- jar包热刷新支持
-- 集成Spring
-- 集成MyBatis
+- [ ] 服务端提供IDEA插件
+- [ ] jar包热刷新支持
+- [x] 集成Lombok
+- [ ] 集成MapStruct
+- [ ] 集成Spring
+- [ ] 集成MyBatis
 
