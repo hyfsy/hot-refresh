@@ -39,7 +39,7 @@ public class LombokAdapterInstaller implements Installer {
             Class<?> mainClass = InfrastructureJarClassLoader.getInstance().loadClass("lombok.launch.Main");
             Method getShadowClassLoaderMethod = mainClass.getDeclaredMethod("getShadowClassLoader");
             getShadowClassLoaderMethod.setAccessible(true);
-            return (ClassLoader)getShadowClassLoaderMethod.invoke(null);
+            return (ClassLoader) getShadowClassLoaderMethod.invoke(null);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -49,9 +49,8 @@ public class LombokAdapterInstaller implements Installer {
         try {
             Field parentField = ClassLoader.class.getDeclaredField("parent");
             parentField.setAccessible(true);
-            ClassLoader oldClassLoader = (ClassLoader)parentField.get(source);
+            ClassLoader oldClassLoader = (ClassLoader) parentField.get(source);
             parentField.set(source, parent);
-
             return oldClassLoader;
         } catch (Exception e) {
             throw new RuntimeException(e);

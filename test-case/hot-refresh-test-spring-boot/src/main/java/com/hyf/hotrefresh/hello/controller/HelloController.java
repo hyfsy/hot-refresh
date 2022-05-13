@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.hello;
+package com.hyf.hotrefresh.hello.controller;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 @RestController
 @RequestMapping("test")
-public class TestController {
+public class HelloController {
 
     @Resource
     private ApplicationContext context;
@@ -24,7 +24,7 @@ public class TestController {
     public String loadOuterClass() {
         try {
             // see resource directory
-            Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.Test", null);
+            Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
             return clazz.getName();
         } catch (ClassNotFoundException e) {
         }

@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InfrastructureJarClassLoader extends URLClassLoader {
 
     // TODO 支持外部指定
-    private static final String BYTE_BUDDY_LOCAL_PATH    = "lib/byte-buddy-agent-1.8.17.jar";
-    private static final String ASM_LOCAL_PATH           = "lib/asm-5.2.jar";
+    private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
+    private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
 
     private static final String BYTE_BUDDY_AGENT_CLASS    = "net.bytebuddy.agent.ByteBuddyAgent";
     private static final String CLASS_READER_CLASS        = "org.objectweb.asm.ClassReader";
@@ -44,7 +44,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private Class<?> classReaderClass        = null;
     private Method   getClassNameMethod      = null;
 
-    private JavaCompiler compiler = null;
+    private JavaCompiler    compiler        = null;
     private Instrumentation instrumentation = null;
 
     private InfrastructureJarClassLoader(URL... urls) {
@@ -112,7 +112,8 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
                 resource = new URL(location);
             } catch (MalformedURLException ignore) {
             }
-        } else {
+        }
+        else {
             resource = Util.getOriginContextClassLoader().getResource(location);
         }
 

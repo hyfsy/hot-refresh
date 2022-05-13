@@ -44,6 +44,10 @@ java
 - `hot-refresh-core`：热刷新核心包，应用系统引入
 - `hot-refresh-server`：本地服务包，监听本地工作目录
 - `adapter/hot-refresh-adapter-lombok`：编译时的lombok功能适配
+- `adapter/hot-refresh-adapter-mapstruct`：编译时的mapstruct功能适配
+- `adapter/hot-refresh-adapter-web`：web功能集成
+- `adapter/hot-refresh-adapter-spring-boot`：编译时的spring功能适配
+- `adapter/hot-refresh-adapter-mybatis`：编译时的mybatis功能适配
 - `test-case/hot-refresh-test-spring-boot`：本地测试包，模拟需要热刷新的应用系统
 - `test-case/hot-refresh-test-jar-file`：直接打jar包，方便测试jar包的热刷新功能
 

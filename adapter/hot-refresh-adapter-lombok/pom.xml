@@ -5,21 +5,28 @@
     <parent>
         <groupId>com.hyf.hotrefresh</groupId>
         <artifactId>hot-refresh-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>hot-refresh-adapter-lombok</artifactId>
 
+    <properties>
+        <!-- avoid low version compile idea bug -->
+        <lombok.version>1.18.14</lombok.version>
+    </properties>
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

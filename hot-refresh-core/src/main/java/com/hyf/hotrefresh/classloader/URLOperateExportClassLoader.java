@@ -8,6 +8,8 @@ import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 
 /**
+ * 暴露额外类加载路径的添加功能
+ *
  * @author baB_hyf
  * @date 2022/05/12
  */

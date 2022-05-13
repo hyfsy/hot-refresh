@@ -4,6 +4,8 @@ import java.net.URL;
 import java.net.URLStreamHandlerFactory;
 
 /**
+ * 破坏双亲委派的类加载模型
+ *
  * @author baB_hyf
  * @date 2022/05/12
  */

@@ -4,24 +4,34 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hyf.hotrefresh</groupId>
     <artifactId>hot-refresh-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <!-- https://tech.meituan.com/2022/03/17/java-hotswap-sonic.html -->
 
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <revision>1.0.0-SNAPSHOT</revision>
+        <junit.version>4.12</junit.version>
+        <mockito.version>2.23.4</mockito.version>
+        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
     </properties>
 
     <modules>
         <module>hot-refresh-common</module>
         <module>hot-refresh-core</module>
-        <module>hot-refresh-server</module>
         <module>hot-refresh-client</module>
+        <module>hot-refresh-server</module>
 
         <module>adapter/hot-refresh-adapter-lombok</module>
+        <module>adapter/hot-refresh-adapter-mapstruct</module>
+        <module>adapter/hot-refresh-adapter-web</module>
+        <module>adapter/hot-refresh-adapter-spring-boot</module>
+        <module>adapter/hot-refresh-adapter-mybatis</module>
 
         <module>test-case/hot-refresh-test-spring-boot</module>
         <module>test-case/hot-refresh-test-jar-file</module>
@@ -30,20 +40,99 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.hyf.hotrefresh</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-common</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hyf.hotrefresh</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-core</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hyf.hotrefresh</groupId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-adapter-lombok</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-mapstruct</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-spring-boot</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-mybatis</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- 所有的子项目默认依赖 -->
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <pomElements>
+                        <dependencies>expand</dependencies>
+                    </pomElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

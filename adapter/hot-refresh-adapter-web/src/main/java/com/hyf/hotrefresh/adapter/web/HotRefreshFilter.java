@@ -1,13 +1,14 @@
-package com.hyf.hotrefresh.servlet;
+package com.hyf.hotrefresh.adapter.web;
 
 import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.refresh.HotRefresher;
 import com.hyf.hotrefresh.exception.RefreshException;
 import com.hyf.hotrefresh.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.refresh.HotRefresher;
 import com.hyf.hotrefresh.util.ExceptionUtil;
 import com.hyf.hotrefresh.util.IOUtil;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -20,7 +21,7 @@ import java.util.*;
  * @author baB_hyf
  * @date 2021/12/11
  */
-// @WebFilter("/*")
+@WebFilter("/*")
 public class HotRefreshFilter implements Filter {
 
     private final List<String> blockList = new ArrayList<String>() {{

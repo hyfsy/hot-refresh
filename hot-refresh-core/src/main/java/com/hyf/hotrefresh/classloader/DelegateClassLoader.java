@@ -3,6 +3,8 @@ package com.hyf.hotrefresh.classloader;
 import java.net.URL;
 
 /**
+ * 仅当前委托类加载器的类加载，无父类加载器的机制
+ *
  * @author baB_hyf
  * @date 2022/05/12
  */
@@ -11,7 +13,7 @@ public class DelegateClassLoader extends URLOperateExportClassLoader {
     private ClassLoader delegate;
 
     public DelegateClassLoader(ClassLoader delegate) {
-        super(new URL[] {});
+        super(new URL[]{});
         this.delegate = delegate;
     }
 

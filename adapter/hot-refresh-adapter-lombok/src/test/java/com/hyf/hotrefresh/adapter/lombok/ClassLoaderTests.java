@@ -2,7 +2,7 @@ package com.hyf.hotrefresh.adapter.lombok;
 
 import com.hyf.hotrefresh.install.CoreInstaller;
 import com.hyf.hotrefresh.memory.AnnotationProcessorCompositeClassLoader;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class ClassLoaderTests {
 

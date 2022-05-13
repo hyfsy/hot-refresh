@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh;
+package com.hyf.hotrefresh.hello;
 
 /**
  * @author baB_hyf

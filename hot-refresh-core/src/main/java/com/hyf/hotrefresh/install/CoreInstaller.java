@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.install;
 
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.exception.InstallException;
 import com.hyf.hotrefresh.util.Util;
 
@@ -35,7 +36,7 @@ public class CoreInstaller {
 
                 return true;
             } catch (Throwable e) {
-                e.printStackTrace();
+                Log.error("Hot refresh plugin install failed", e);
                 return false;
             }
         }
