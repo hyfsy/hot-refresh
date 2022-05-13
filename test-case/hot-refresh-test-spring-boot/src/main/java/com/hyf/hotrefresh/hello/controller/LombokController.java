@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("test/lombok")
-public class TestLombokController {
+public class LombokController {
 
     @RequestMapping("1")
     public void logUse() {
