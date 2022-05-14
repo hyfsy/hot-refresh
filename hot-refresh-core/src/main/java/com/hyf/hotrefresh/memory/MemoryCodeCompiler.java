@@ -1,12 +1,18 @@
 package com.hyf.hotrefresh.memory;
 
-import com.hyf.hotrefresh.util.Util;
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.exception.CompileException;
+import com.hyf.hotrefresh.util.Util;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -19,10 +25,11 @@ public class MemoryCodeCompiler {
 
     private static final JavaCompiler COMPILER = Util.getInfrastructureJarClassLoader().getJavaCompiler();
 
-    private static final List<String> OPTIONS = new ArrayList<String>() {{
-        add("-Xlint:unchecked");
-        add("-g");
-    }};
+    private static final List<String> OPTIONS = new ArrayList<>();
+
+    static {
+        initOptions();
+    }
 
     public static Map<String, byte[]> compile(MemoryCode memoryCode) throws CompileException {
         return compile(Collections.singletonList(memoryCode));
@@ -54,6 +61,27 @@ public class MemoryCodeCompiler {
             throw e;
         } catch (Throwable t) {
             throw new CompileException("Compilation Error", t);
+        }
+    }
+
+    private static void initOptions() {
+        try {
+            Set<String> options = new HashSet<>();
+            Enumeration<URL> resources = Util.getOriginContextClassLoader().getResources("META-INF/options.properties");
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                try (BufferedReader reader = new LineNumberReader(new InputStreamReader(url.openStream()))) {
+                    String option;
+                    while ((option = reader.readLine()) != null) {
+                        if (!"".equals(option.trim())) {
+                            options.add(option.trim());
+                        }
+                    }
+                }
+            }
+            OPTIONS.addAll(options);
+        } catch (IOException e) {
+            Log.error("Get options.properties file failed", e);
         }
     }
 
