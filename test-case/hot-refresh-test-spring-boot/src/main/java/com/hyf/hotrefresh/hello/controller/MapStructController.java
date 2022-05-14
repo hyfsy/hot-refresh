@@ -4,8 +4,6 @@ import com.hyf.hotrefresh.hello.convert.HelloConverter;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Method;
-
 /**
  * @author baB_hyf
  * @date 2022/05/13
@@ -15,10 +13,8 @@ import java.lang.reflect.Method;
 public class MapStructController {
 
     @RequestMapping("1")
-    public void _1() {
+    public boolean addCompiledMethod() {
         HelloConverter converter = HelloConverter.INSTANCE;
-        for (Method declaredMethod : converter.getClass().getDeclaredMethods()) {
-            System.out.println(declaredMethod.getName());
-        }
+        return converter.getClass().getDeclaredMethods().length > 0;
     }
 }

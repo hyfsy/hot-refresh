@@ -15,6 +15,7 @@ class MemoryByteCodeCollectClassLoader extends ClassLoader {
         registerAsParallelCapable();
     }
 
+    /** className -> classBytes */
     private final Map<String, MemoryByteCode> collectedByteCode = new HashMap<>();
 
     MemoryByteCodeCollectClassLoader() {

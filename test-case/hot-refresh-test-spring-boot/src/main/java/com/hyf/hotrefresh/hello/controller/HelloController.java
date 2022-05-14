@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -21,37 +20,36 @@ public class HelloController {
     private ApplicationContext context;
 
     @RequestMapping("1")
-    public String loadOuterClass() {
+    public boolean loadOuterClass() {
         try {
             // see resource directory
-            Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
-            return clazz.getName();
-        } catch (ClassNotFoundException e) {
+            ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
+            return true;
+        } catch (Throwable e) {
         }
 
-        return "error";
+        return false;
     }
 
     @RequestMapping("2")
-    public String invokeOuterClass() {
+    public boolean invokeOuterClass() {
         try {
             Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
-            Method main = clazz.getMethod("main", String[].class);
-            main.invoke(null, (Object) null);
-            return clazz.getName();
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            Method getMethod = clazz.getMethod("get");
+            return (boolean) getMethod.invoke(null);
+        } catch (Throwable e) {
         }
 
-        return "error";
+        return false;
     }
 
     @RequestMapping("3")
-    public String modifySelf() {
-        return "3";
+    public boolean modifySelf() {
+        return false;
     }
 
     @RequestMapping("4")
-    public String testCompileParameters(String param) {
+    public String compileParameters(String param) {
         return "4";
     }
 }

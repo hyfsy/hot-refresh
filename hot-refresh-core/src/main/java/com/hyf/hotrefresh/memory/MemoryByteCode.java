@@ -1,6 +1,8 @@
 package com.hyf.hotrefresh.memory;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author baB_hyf
@@ -37,5 +39,24 @@ class MemoryByteCode extends IOAwareJavaFileObject {
 
     public String getClassName() {
         return className;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MemoryByteCode code = (MemoryByteCode) o;
+        return Objects.equals(className, code.className) && Arrays.equals(bytes, code.bytes);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(className);
+        result = 31 * result + Arrays.hashCode(bytes);
+        return result;
     }
 }

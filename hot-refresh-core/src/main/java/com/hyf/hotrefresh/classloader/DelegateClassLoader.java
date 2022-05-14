@@ -14,6 +14,9 @@ public class DelegateClassLoader extends URLOperateExportClassLoader {
 
     public DelegateClassLoader(ClassLoader delegate) {
         super(new URL[]{});
+        if (delegate == null) {
+            throw new IllegalArgumentException("delegate is null");
+        }
         this.delegate = delegate;
     }
 

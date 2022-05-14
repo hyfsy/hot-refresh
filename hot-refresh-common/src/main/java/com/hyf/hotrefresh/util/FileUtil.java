@@ -32,13 +32,22 @@ public class FileUtil {
 
     public static boolean safeWrite(File file, InputStream is) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            IOUtil.writeTo(is, fos);
+            safeWrite(is, fos);
             return true;
         } catch (FileNotFoundException e) {
             Log.error("Write file not exists: " + file.getAbsolutePath(), e);
             return false;
         } catch (IOException e) {
             throw new RuntimeException("Fail to write file: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public static boolean safeWrite(InputStream is, OutputStream os) {
+        try {
+            IOUtil.writeTo(is, os);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to write", e);
         }
     }
 

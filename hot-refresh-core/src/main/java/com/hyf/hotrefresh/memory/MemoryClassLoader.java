@@ -1,11 +1,10 @@
 package com.hyf.hotrefresh.memory;
 
-import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.util.Util;
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.util.FileUtil;
+import com.hyf.hotrefresh.util.Util;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -13,7 +12,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 
 /**
  * @author baB_hyf
@@ -28,16 +26,15 @@ public class MemoryClassLoader extends ClassLoader {
     private static final Map<String, Class<?>> classCache = new ConcurrentHashMap<>();
 
     private static final ThreadLocal<ClassLoader> cclPerThreadLocal = new ThreadLocal<>();
-
-    private static final ClassFileStorage classFileStorage = new ClassFileStorage();
-
     private static final Object LOCK = new Object();
+    private static ClassFileStorage classFileStorage;
 
     static {
         registerAsParallelCapable();
     }
 
     static {
+        initClassFileStorage();
         addOutputHome();
     }
 
@@ -49,7 +46,12 @@ public class MemoryClassLoader extends ClassLoader {
     private static void addOutputHome() {
         ClassLoader scl = ClassLoader.getSystemClassLoader();
         if (scl instanceof URLClassLoader) {
-            File outputHome = FileUtil.getFile(classFileStorage.getStorageHome());
+            String storageHome = classFileStorage.getStorageHome();
+            if (storageHome == null || "".equals(storageHome.trim())) {
+                Log.warn("class file storage home must not be null");
+                return;
+            }
+            File outputHome = FileUtil.getFile(storageHome);
             if (outputHome.exists()) {
                 FileUtil.delete(outputHome);
             }
@@ -65,6 +67,16 @@ public class MemoryClassLoader extends ClassLoader {
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Failed to invoke method URLClassLoader.addURL", e);
             }
+        }
+    }
+
+    private static void initClassFileStorage() {
+        ServiceLoader<ClassFileStorage> classFileStorages = ServiceLoader.load(ClassFileStorage.class);
+        if (classFileStorages.iterator().hasNext()) {
+            classFileStorage = classFileStorages.iterator().next();
+        }
+        else {
+            classFileStorage = new MemoryClassFileStorage();
         }
     }
 
@@ -161,29 +173,4 @@ public class MemoryClassLoader extends ClassLoader {
         return super.findClass(name);
     }
 
-    private static class ClassFileStorage {
-
-        private static final String OUTPUT_HOME = Constants.REFRESH_HOME + File.separator + "output";
-
-        public String getStorageHome() {
-            return OUTPUT_HOME;
-        }
-
-        public void write(String className, byte[] bytes) {
-            FileUtil.safeWrite(getClassFile(className), new ByteArrayInputStream(bytes));
-        }
-
-        public void delete(String className) {
-            FileUtil.delete(getClassFile(className));
-        }
-
-        public void clear() {
-            FileUtil.delete(FileUtil.getFile(OUTPUT_HOME));
-        }
-
-        private File getClassFile(String className) {
-            String storePath = OUTPUT_HOME + File.separator + className.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + ".class";
-            return FileUtil.getFile(storePath);
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
 import com.hyf.hotrefresh.memory.AnnotationProcessorCompositeClassLoader;
+import com.hyf.hotrefresh.util.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.util.Util;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,11 @@ public class LombokAdapterInstallerTests {
     public void testReplaceParent() {
         ClassLoader cl = installer.getShadowClassLoader().getClass().getClassLoader();
         assertEquals(cl, Util.getInfrastructureJarClassLoader());
+    }
+
+    @Test
+    public void testLoadLombokClass() throws ClassNotFoundException {
+        InfrastructureJarClassLoader.getInstance().loadClass("lombok.launch.Main");
     }
 
     @Test(expected = ClassNotFoundException.class)

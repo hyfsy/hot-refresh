@@ -4,12 +4,17 @@ import com.hyf.hotrefresh.Constants;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author baB_hyf
  * @date 2021/12/12
  */
 public class MemoryCode extends IOAwareJavaFileObject {
+
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("package (.*?);");
 
     private final String fileName;
     private       String content;
@@ -47,6 +52,32 @@ public class MemoryCode extends IOAwareJavaFileObject {
     }
 
     public String getContent() {
+        return content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MemoryCode that = (MemoryCode) o;
+        return Objects.equals(fileName, that.fileName) && Objects.equals(extractContentIdentity(), that.extractContentIdentity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileName, extractContentIdentity());
+    }
+
+    private String extractContentIdentity() {
+        Matcher matcher = PACKAGE_PATTERN.matcher(content);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
         return content;
     }
 }

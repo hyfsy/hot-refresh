@@ -8,14 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
  * @author baB_hyf
  * @date 2022/05/13
  */
-@Slf4j
+// @Slf4j
 @RestController
 @RequestMapping("test/lombok")
 public class LombokController {
 
     @RequestMapping("1")
-    public void logUse() {
-
-        log.info("log is enabled");
+    public boolean hasLogField() {
+        try {
+            LombokController.class.getDeclaredField("log");
+            return true;
+        } catch (Throwable e) {
+        }
+        return false;
     }
 }

@@ -23,19 +23,21 @@ import java.util.*;
  */
 public class MemoryCodeCompiler {
 
-    private static final JavaCompiler COMPILER = Util.getInfrastructureJarClassLoader().getJavaCompiler();
+    public static final String OPTIONS_FILE_RESOURCE_PATH = "compile-options.properties";
 
     private static final List<String> OPTIONS = new ArrayList<>();
+
+    private static final JavaCompiler COMPILER = Util.getInfrastructureJarClassLoader().getJavaCompiler();
 
     static {
         initOptions();
     }
 
     public static Map<String, byte[]> compile(MemoryCode memoryCode) throws CompileException {
-        return compile(Collections.singletonList(memoryCode));
+        return compile(Collections.singleton(memoryCode));
     }
 
-    public static Map<String, byte[]> compile(List<MemoryCode> memoryCodeList) throws CompileException {
+    public static Map<String, byte[]> compile(Set<MemoryCode> memoryCodeList) throws CompileException {
         if (memoryCodeList == null || memoryCodeList.isEmpty()) {
             return new HashMap<>();
         }
@@ -64,10 +66,14 @@ public class MemoryCodeCompiler {
         }
     }
 
+    public static List<String> getCompileOptions() {
+        return Collections.unmodifiableList(OPTIONS);
+    }
+
     private static void initOptions() {
         try {
             Set<String> options = new HashSet<>();
-            Enumeration<URL> resources = Util.getOriginContextClassLoader().getResources("META-INF/options.properties");
+            Enumeration<URL> resources = Util.getOriginContextClassLoader().getResources(OPTIONS_FILE_RESOURCE_PATH);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 try (BufferedReader reader = new LineNumberReader(new InputStreamReader(url.openStream()))) {

@@ -8,7 +8,7 @@ import java.net.URI;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public abstract class IOAwareJavaFileObject extends SimpleJavaFileObject {
+abstract class IOAwareJavaFileObject extends SimpleJavaFileObject {
 
     protected final ByteArrayOutputStream baos = new AutoSyncByteArrayOutputStream();
 

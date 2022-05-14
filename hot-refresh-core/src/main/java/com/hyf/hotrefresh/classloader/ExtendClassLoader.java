@@ -11,12 +11,12 @@ import java.net.URLStreamHandlerFactory;
  */
 public class ExtendClassLoader extends URLOperateExportClassLoader {
 
-    public ExtendClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, parent);
+    public ExtendClassLoader(ClassLoader parent) {
+        this(new URL[]{}, parent);
     }
 
-    public ExtendClassLoader(URL[] urls) {
-        super(urls);
+    public ExtendClassLoader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
     }
 
     public ExtendClassLoader(URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
@@ -28,14 +28,24 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
 
         // break
 
-        Class<?> c;
+        // child load
+        Class<?> c = null;
         try {
             c = this.brokenLoadClass(name);
             if (c == null) {
                 throw new ClassNotFoundException(name);
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignore) {
+        }
+
+        // parent load
+        if (c == null) {
             c = getParent().loadClass(name);
+        }
+
+        // all class loader cannot load
+        if (c == null) {
+            throw new ClassNotFoundException();
         }
 
         if (resolve) {

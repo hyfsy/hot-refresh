@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ToolsJarProcessor {
 
-    public static final String TOOLS_JAR_PATH = System.getProperty("toolsJarPath");
+    public static final String TOOLS_JAR_PATH_PROPERTY = "toolsJarPath";
+    public static final String TOOLS_JAR_PATH = System.getProperty(TOOLS_JAR_PATH_PROPERTY);
 
     private static volatile String toolsJarPath = null;
 

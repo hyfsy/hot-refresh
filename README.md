@@ -65,7 +65,7 @@ java
 - [ ] 服务端提供IDEA插件
 - [ ] jar包热刷新支持
 - [x] 集成Lombok
-- [ ] 集成MapStruct
+- [x] 集成MapStruct
 - [ ] 集成Spring
 - [ ] 集成MyBatis
 

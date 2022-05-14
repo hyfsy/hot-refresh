@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
 
 /**
  * @author baB_hyf
@@ -48,6 +49,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private Instrumentation instrumentation = null;
 
     private InfrastructureJarClassLoader(URL... urls) {
+        // TODO 是否会因为ccl变化而产生问题？
         super(urls, Util.getOriginContextClassLoader());
         ensureByteBuddyExist();
         ensureAsmExist();
@@ -91,6 +93,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         return new InfrastructureJarClassLoader(urls.toArray(new URL[0]));
     }
 
+    // TODO 不仅jar，还要class
     public void registerInfrastructureJar(String identity, String location) {
 
         registeredInfrastructureJarMap.put(identity, location);
@@ -162,7 +165,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         return compiler;
     }
 
-    public boolean canLoad(Class clazz) {
+    public boolean canLoad(Class<?> clazz) {
         ClassLoader cl = clazz.getClassLoader();
 
         // bootstrap class loader loaded

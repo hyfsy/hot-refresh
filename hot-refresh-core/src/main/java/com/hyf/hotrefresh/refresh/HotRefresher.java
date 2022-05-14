@@ -1,11 +1,12 @@
 package com.hyf.hotrefresh.refresh;
 
 import com.hyf.hotrefresh.ChangeType;
-import com.hyf.hotrefresh.install.CoreInstaller;
-import com.hyf.hotrefresh.util.Util;
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.exception.RefreshException;
+import com.hyf.hotrefresh.install.CoreInstaller;
 import com.hyf.hotrefresh.memory.MemoryCode;
 import com.hyf.hotrefresh.memory.MemoryCodeCompiler;
+import com.hyf.hotrefresh.util.Util;
 
 import java.util.Map;
 
@@ -17,7 +18,9 @@ public class HotRefresher {
 
     public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
 
-        if (!CoreInstaller.enable()) return;
+        if (!CoreInstaller.enable()) {
+            return;
+        }
 
         try {
 
@@ -25,6 +28,11 @@ public class HotRefresher {
             // TODO 无需编译，直接class
 
             Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
+            if (compiledBytes == null || compiledBytes.isEmpty()) {
+                Log.info("Non class compiled: " + javaFileName);
+                return;
+            }
+
             Util.getThrowawayMemoryClassLoader().store(compiledBytes);
 
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
@@ -57,10 +65,12 @@ public class HotRefresher {
         }
     }
 
+    @Deprecated
     public static void reset(String className) throws RefreshException {
         HotRefreshManager.reset(className);
     }
 
+    @Deprecated
     public static void reset() throws RefreshException {
         HotRefreshManager.resetAll();
     }

@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -39,7 +39,7 @@ public class HotRefreshFilterTests {
     @Test
     public void testSuccessRefresh() throws Exception {
 
-        assertEquals(com.hyf.hotrefresh.adapter.web.Test.get(), "error");
+        assertFalse(Supplier.get());
 
         when(request.getRequestURI()).thenReturn("/ctxPath/rest/hot-refresh");
         when(request.getContextPath()).thenReturn("/ctxPath");
@@ -48,7 +48,7 @@ public class HotRefreshFilterTests {
         when(request.getParameter("reset")).thenReturn(null);
         when(request.getParts()).thenReturn(Collections.singletonList(part));
         when(part.getInputStream()).thenReturn(getJavaFileInputStream());
-        when(part.getName()).thenReturn("Test.java" + Constants.FILE_NAME_SEPARATOR + "MODIFY");
+        when(part.getName()).thenReturn("Supplier.java" + Constants.FILE_NAME_SEPARATOR + "MODIFY");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(baos);
@@ -59,7 +59,7 @@ public class HotRefreshFilterTests {
 
         assertEquals(baos.toString(), "");
 
-        assertEquals(com.hyf.hotrefresh.adapter.web.Test.get(), "success");
+        assertTrue(Supplier.get());
     }
 
     private InputStream getJavaFileInputStream() {
@@ -69,10 +69,10 @@ public class HotRefreshFilterTests {
                 " * @author baB_hyf\n" +
                 " * @date 2022/05/14\n" +
                 " */\n" +
-                "public class Test {\n" +
+                "public class Supplier {\n" +
                 "\n" +
-                "    public static String get() {\n" +
-                "        return \"success\";\n" +
+                "    public static boolean get() {\n" +
+                "        return true;\n" +
                 "    }\n" +
                 "}";
 

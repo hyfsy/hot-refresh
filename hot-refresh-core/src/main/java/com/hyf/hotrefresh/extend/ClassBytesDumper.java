@@ -1,11 +1,9 @@
-package com.hyf.hotrefresh.play;
+package com.hyf.hotrefresh.extend;
 
-import com.hyf.hotrefresh.util.Util;
 import com.hyf.hotrefresh.util.FileUtil;
+import com.hyf.hotrefresh.util.Util;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
@@ -16,7 +14,13 @@ import java.util.Collections;
  */
 public class ClassBytesDumper {
 
-    public static void dump(Class<?> clazz, String storePath) {
+    public static void dump(Class<?> clazz, String storePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(storePath)) {
+            dump(clazz, fos);
+        }
+    }
+
+    public static void dump(Class<?> clazz, OutputStream os) {
         Instrumentation instrumentation = Util.getInfrastructureJarClassLoader().getInstrumentation();
 
         ClassBytesDumpTransformer classDumpTransformer = new ClassBytesDumpTransformer(Collections.singleton(clazz), new File("E:\\test\\"));
@@ -31,14 +35,17 @@ public class ClassBytesDumper {
         }
 
         byte[] bytes = classDumpTransformer.getDumpResult().get(clazz);
-        dump(bytes, storePath);
+        dump(bytes, os);
     }
 
-    public static void dump(byte[] bytes, String storePath) {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
-            FileUtil.safeWrite(new File(storePath), bais);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void dump(byte[] bytes, String storePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(storePath)) {
+            dump(bytes, fos);
         }
+    }
+
+    public static void dump(byte[] bytes, OutputStream os) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        FileUtil.safeWrite(bais, os);
     }
 }
