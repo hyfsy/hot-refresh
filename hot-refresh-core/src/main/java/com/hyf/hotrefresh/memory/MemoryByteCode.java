@@ -1,18 +1,15 @@
 package com.hyf.hotrefresh.memory;
 
-import javax.tools.SimpleJavaFileObject;
-import java.io.*;
 import java.net.URI;
 
 /**
  * @author baB_hyf
  * @date 2021/12/12
  */
-class MemoryByteCode extends SimpleJavaFileObject {
+class MemoryByteCode extends IOAwareJavaFileObject {
 
-    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    private final String                className;
-    private final byte[]                bytes;
+    private final String className;
+    private       byte[] bytes;
 
     public MemoryByteCode(String className) {
         this(className, null);
@@ -25,21 +22,17 @@ class MemoryByteCode extends SimpleJavaFileObject {
     }
 
     @Override
-    public InputStream openInputStream() throws IOException {
-        if (bytes == null) {
-            throw new IllegalStateException("bytes is null");
-        }
-        return new ByteArrayInputStream(bytes);
+    protected byte[] inputStreamSource() {
+        return getByteCode();
     }
 
     @Override
-    public OutputStream openOutputStream() throws IOException {
-        baos.reset();
-        return baos;
+    protected void outputStreamClosed(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public byte[] getByteCode() {
-        return baos.toByteArray();
+        return bytes;
     }
 
     public String getClassName() {

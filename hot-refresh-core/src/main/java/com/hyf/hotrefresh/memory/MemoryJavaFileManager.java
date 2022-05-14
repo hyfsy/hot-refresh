@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.memory;
 
+import com.hyf.hotrefresh.Log;
 import com.hyf.hotrefresh.classloader.CompositeClassLoader;
 
 import javax.tools.*;
@@ -12,7 +13,7 @@ import java.util.Set;
  * @author baB_hyf
  * @date 2021/12/12
  */
-class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
+class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private static final String[] LOCATION_NAMES = {StandardLocation.PLATFORM_CLASS_PATH.name(), /* JPMS StandardLocation.SYSTEM_MODULES **/ "SYSTEM_MODULES"};
 
@@ -20,21 +21,29 @@ class MemoryByteCodeManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private final DependencyLookup dependencyLookup = new DependencyLookup(bcc);
 
-    public MemoryByteCodeManager(JavaFileManager fileManager) {
+    public MemoryJavaFileManager(JavaFileManager fileManager) {
         super(fileManager);
     }
 
     @Override
     public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
 
-        MemoryByteCode memoryByteCode = bcc.get(className);
-        if (memoryByteCode != null) {
-            return memoryByteCode;
-        }
+        switch (kind) {
+            case SOURCE:
+                return new MemoryCode(className.substring(className.lastIndexOf(".") + 1) + JavaFileObject.Kind.SOURCE.extension, null);
+            case CLASS:
+                MemoryByteCode memoryByteCode = bcc.get(className);
+                if (memoryByteCode != null) {
+                    return memoryByteCode;
+                }
 
-        memoryByteCode = new MemoryByteCode(className);
-        bcc.collect(memoryByteCode);
-        return memoryByteCode;
+                memoryByteCode = new MemoryByteCode(className);
+                bcc.collect(memoryByteCode);
+                return memoryByteCode;
+            default:
+                Log.warn(String.format("not process java file for output:%nlocation{%s}%nclassName{%s}%nkind{%s}", location, className, kind));
+                return new MemoryCode(className, null);
+        }
     }
 
     @Override

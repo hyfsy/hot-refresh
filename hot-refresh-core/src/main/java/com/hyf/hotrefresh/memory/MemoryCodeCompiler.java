@@ -46,7 +46,7 @@ public class MemoryCodeCompiler {
         }
 
         try {
-            MemoryByteCodeManager memoryByteCodeManager = new MemoryByteCodeManager(COMPILER.getStandardFileManager(null, null, null));
+            MemoryJavaFileManager memoryByteCodeManager = new MemoryJavaFileManager(COMPILER.getStandardFileManager(null, null, null));
             DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
             boolean success = COMPILER.getTask(null, memoryByteCodeManager, collector, OPTIONS, null, memoryCodeList).call();
