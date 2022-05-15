@@ -24,6 +24,7 @@
     <modules>
         <module>hot-refresh-common</module>
         <module>hot-refresh-core</module>
+        <module>hot-refresh-remoting</module>
         <module>hot-refresh-client</module>
         <module>hot-refresh-server</module>
 
@@ -35,7 +36,6 @@
 
         <module>test-case/hot-refresh-test-spring-boot</module>
         <module>test-case/hot-refresh-test-jar-file</module>
-        <module>hot-refresh-remoting</module>
     </modules>
 
     <dependencyManagement>

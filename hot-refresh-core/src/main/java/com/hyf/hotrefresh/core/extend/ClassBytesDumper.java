@@ -23,7 +23,7 @@ public class ClassBytesDumper {
     public static void dump(Class<?> clazz, OutputStream os) {
         Instrumentation instrumentation = Util.getInfrastructureJarClassLoader().getInstrumentation();
 
-        com.hyf.hotrefresh.core.extend.ClassBytesDumpTransformer classDumpTransformer = new com.hyf.hotrefresh.core.extend.ClassBytesDumpTransformer(Collections.singleton(clazz), new File("E:\\test\\"));
+        ClassBytesDumpTransformer classDumpTransformer = new ClassBytesDumpTransformer(Collections.singleton(clazz), new File("E:\\test\\"));
         instrumentation.addTransformer(classDumpTransformer, true);
 
         try {

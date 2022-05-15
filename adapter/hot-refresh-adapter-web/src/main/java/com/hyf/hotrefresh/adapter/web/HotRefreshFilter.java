@@ -1,11 +1,14 @@
 package com.hyf.hotrefresh.adapter.web;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.core.refresh.HotRefresher;
+import com.hyf.hotrefresh.remoting.constants.RpcMessageConstants;
+import com.hyf.hotrefresh.remoting.message.Message;
+import com.hyf.hotrefresh.remoting.message.MessageCodec;
+import com.hyf.hotrefresh.remoting.message.handler.DefaultServerMessageHandler;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -23,6 +26,8 @@ import java.util.*;
  */
 @WebFilter("/*")
 public class HotRefreshFilter implements Filter {
+
+    private final DefaultServerMessageHandler serverMessageHandler = new DefaultServerMessageHandler();
 
     private final List<String> blockList = new ArrayList<String>() {{
         // TODO jar内所有类
@@ -59,82 +64,111 @@ public class HotRefreshFilter implements Filter {
             return;
         }
 
-        Throwable t = null;
-        try {
+        // reset class
+        // if ("1".equals(req.getParameter("reset"))) {
+        //     try {
+        //         HotRefresher.reset();
+        //         success(req, resp);
+        //     } catch (RefreshException e) {
+        //         error(req, resp, e);
+        //     }
+        //     return;
+        // }
 
-            // reset class
-            if ("1".equals(req.getParameter("reset"))) {
-                HotRefresher.reset();
-                success(req, resp);
-                return;
-            }
-
-            // contentType match
-            String contentType = req.getContentType();
-            if (contentType == null || (!contentType.contains("multipart/form-data")
-                    && !contentType.contains("multipart/mixed stream"))) {
-                success(req, resp);
-                return;
-            }
-
-            // parse file content
-            Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
-            if (fileStreamMap == null || fileStreamMap.isEmpty()) {
-                error(req, resp, new RefreshException("No file exists"));
-                return;
-            }
-
-            nextPart:
-            for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
-                String name = entry.getKey();
-
-                // illegal name
-                String[] nameInfo = name.split(Constants.FILE_NAME_SEPARATOR);
-                if (nameInfo.length != 2) {
-                    continue;
-                }
-
-                String fileName = nameInfo[0];
-                String type = nameInfo[1];
-
-                // only java file
-                // TODO support jar file
-                if (!fileName.endsWith(".java")) {
-                    continue;
-                }
-
-                // illegal file
-                for (String s : blockList) {
-                    if (fileName.contains(s)) {
-                        break nextPart;
-                    }
-                }
-
-                // hot refresh
-                try (InputStream is = entry.getValue()) {
-                    String content = IOUtils.readAsString(is);
-                    if (content != null && !"".equals(content.trim())) {
-                        HotRefresher.refresh(fileName, content, type);
-                    }
-                } catch (IOException | RefreshException e) {
-                    if (t == null) {
-                        t = e;
-                    }
-                    else {
-                        t.addSuppressed(e);
-                    }
-                }
-            }
-        } catch (Throwable e) {
-            t = e;
-        }
-
-        if (t == null) {
+        // contentType match
+        String contentType = req.getContentType();
+        if (contentType == null || (!contentType.equals(RpcMessageConstants.DEFAULT_CONTENT_TYPE))) {
             success(req, resp);
+            return;
         }
-        else {
-            error(req, resp, t);
+
+        try (InputStream is = req.getInputStream();
+             ServletOutputStream os = resp.getOutputStream()) {
+            Message data = MessageCodec.decode(IOUtils.readAsByteArray(is));
+            Message message = serverMessageHandler.handle(data);
+            byte[] rtn = MessageCodec.encode(message);
+            os.write(rtn);
+            os.flush();
+        } catch (Throwable t) {
+            Log.error("Handle message failed", t);
         }
+
+        // Throwable t = null;
+        // try {
+        //
+        //     // reset class
+        //     if ("1".equals(req.getParameter("reset"))) {
+        //         HotRefresher.reset();
+        //         success(req, resp);
+        //         return;
+        //     }
+        //
+        //     // contentType match
+        //     String contentType = req.getContentType();
+        //     if (contentType == null || (!contentType.contains("multipart/form-data")
+        //             && !contentType.contains("multipart/mixed stream"))) {
+        //         success(req, resp);
+        //         return;
+        //     }
+        //
+        //     // parse file content
+        //     Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
+        //     if (fileStreamMap == null || fileStreamMap.isEmpty()) {
+        //         error(req, resp, new RefreshException("No file exists"));
+        //         return;
+        //     }
+        //
+        //     nextPart:
+        //     for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
+        //         String name = entry.getKey();
+        //
+        //         // illegal name
+        //         String[] nameInfo = name.split(Constants.FILE_NAME_SEPARATOR);
+        //         if (nameInfo.length != 2) {
+        //             continue;
+        //         }
+        //
+        //         String fileName = nameInfo[0];
+        //         String type = nameInfo[1];
+        //
+        //         // only java file
+        //         // TODO support jar file
+        //         if (!fileName.endsWith(".java")) {
+        //             continue;
+        //         }
+        //
+        //         // illegal file
+        //         for (String s : blockList) {
+        //             if (fileName.contains(s)) {
+        //                 break nextPart;
+        //             }
+        //         }
+        //
+        //         // hot refresh
+        //         try (InputStream is = entry.getValue()) {
+        //             String content = IOUtils.readAsString(is);
+        //             if (content != null && !"".equals(content.trim())) {
+        //                 HotRefresher.refresh(fileName, content, type);
+        //             }
+        //         } catch (IOException | RefreshException e) {
+        //             if (t == null) {
+        //                 t = e;
+        //             }
+        //             else {
+        //                 t.addSuppressed(e);
+        //             }
+        //         }
+        //     }
+        // } catch (Throwable e) {
+        //     t = e;
+        // }
+
+        // if (t == null) {
+        //     success(req, resp);
+        // }
+        // else {
+        //     error(req, resp, t);
+        // }
     }
 
     protected boolean uriMatch(HttpServletRequest req) {

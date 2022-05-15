@@ -15,14 +15,14 @@ IDEA小锤子的远程版
 ```xml
 <dependency>
     <groupId>com.hyf.hotrefresh</groupId>
-    <artifactId>hot-refresh-client</artifactId>
+    <artifactId>hot-refresh-server</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 2、启动应用系统
 
-3、获取本地服务器jar包：`hot-refresh-server-1.0.0-SNAPSHOT`
+3、获取本地服务器jar包：`hot-refresh-client-1.0.0-SNAPSHOT`
 
 4、进入命令行界面，启动本地服务器：
 
@@ -38,18 +38,6 @@ java
 
 5、修改`-h`指定的工作目录下的java文件可看到应用系统热刷新
 
-# 模块介绍
-
-- `hot-refresh-common`：客户端、服务端公用的基础模块
-- `hot-refresh-core`：热刷新核心包，应用系统引入
-- `hot-refresh-server`：本地服务包，监听本地工作目录
-- `adapter/hot-refresh-adapter-lombok`：编译时的lombok功能适配
-- `adapter/hot-refresh-adapter-mapstruct`：编译时的mapstruct功能适配
-- `adapter/hot-refresh-adapter-web`：web功能集成
-- `adapter/hot-refresh-adapter-spring-boot`：编译时的spring功能适配
-- `adapter/hot-refresh-adapter-mybatis`：编译时的mybatis功能适配
-- `test-case/hot-refresh-test-spring-boot`：本地测试包，模拟需要热刷新的应用系统
-- `test-case/hot-refresh-test-jar-file`：直接打jar包，方便测试jar包的热刷新功能
 
 # 注意事项
 
