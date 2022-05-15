@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.adapter.spring;
 
-import com.hyf.hotrefresh.install.Installer;
+import com.hyf.hotrefresh.core.install.Installer;
 
 /**
  * @author baB_hyf

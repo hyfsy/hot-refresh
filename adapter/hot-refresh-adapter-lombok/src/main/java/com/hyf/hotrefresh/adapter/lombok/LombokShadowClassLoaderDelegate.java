@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
-import com.hyf.hotrefresh.classloader.DelegateClassLoader;
+import com.hyf.hotrefresh.core.classloader.DelegateClassLoader;
 
 /**
  * 仅加载lombok相关依赖

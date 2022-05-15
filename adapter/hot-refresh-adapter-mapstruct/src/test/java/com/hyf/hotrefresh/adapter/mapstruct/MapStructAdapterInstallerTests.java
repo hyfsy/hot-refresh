@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.adapter.mapstruct;
 
-import com.hyf.hotrefresh.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.adapter.web;
 
-import com.hyf.hotrefresh.Constants;
+import com.hyf.hotrefresh.common.Constants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

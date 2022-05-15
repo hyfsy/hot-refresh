@@ -1,9 +1,9 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
-import com.hyf.hotrefresh.install.Installer;
-import com.hyf.hotrefresh.memory.AnnotationProcessorCompositeClassLoader;
-import com.hyf.hotrefresh.util.InfrastructureJarClassLoader;
-import com.hyf.hotrefresh.util.Util;
+import com.hyf.hotrefresh.core.install.Installer;
+import com.hyf.hotrefresh.core.memory.AnnotationProcessorCompositeClassLoader;
+import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.util.Util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

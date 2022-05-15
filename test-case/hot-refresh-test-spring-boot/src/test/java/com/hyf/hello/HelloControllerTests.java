@@ -1,13 +1,13 @@
 package com.hyf.hello;
 
-import com.hyf.hotrefresh.ChangeType;
-import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.exception.RefreshException;
+import com.hyf.hotrefresh.common.ChangeType;
+import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.util.IOUtils;
+import com.hyf.hotrefresh.core.exception.RefreshException;
+import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefresher;
+import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.hello.controller.HelloController;
-import com.hyf.hotrefresh.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.refresh.HotRefresher;
-import com.hyf.hotrefresh.util.IOUtil;
-import com.hyf.hotrefresh.util.Util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = HelloController.class)
@@ -34,7 +34,7 @@ public class HelloControllerTests {
         assertFalse(helloController.loadOuterClass());
         try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream("Test.java");
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            IOUtil.writeTo(is, baos);
+            IOUtils.writeTo(is, baos);
             HotRefresher.refresh("Test.java", baos.toString(Constants.MESSAGE_ENCODING.name()), ChangeType.MODIFY.name());
         }
         MemoryClassLoader.bind();
@@ -47,7 +47,7 @@ public class HelloControllerTests {
         assertFalse(helloController.invokeOuterClass());
         try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream("Test.java");
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            IOUtil.writeTo(is, baos);
+            IOUtils.writeTo(is, baos);
             HotRefresher.refresh("Test.java", baos.toString(Constants.MESSAGE_ENCODING.name()), ChangeType.MODIFY.name());
         }
         MemoryClassLoader.bind();

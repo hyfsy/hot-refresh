@@ -1,11 +1,11 @@
 package com.hyf.hotrefresh.adapter.web;
 
-import com.hyf.hotrefresh.Constants;
-import com.hyf.hotrefresh.exception.RefreshException;
-import com.hyf.hotrefresh.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.refresh.HotRefresher;
-import com.hyf.hotrefresh.util.ExceptionUtil;
-import com.hyf.hotrefresh.util.IOUtil;
+import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.util.ExceptionUtils;
+import com.hyf.hotrefresh.common.util.IOUtils;
+import com.hyf.hotrefresh.core.exception.RefreshException;
+import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefresher;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -112,7 +112,7 @@ public class HotRefreshFilter implements Filter {
 
                 // hot refresh
                 try (InputStream is = entry.getValue()) {
-                    String content = IOUtil.readAsString(is);
+                    String content = IOUtils.readAsString(is);
                     if (content != null && !"".equals(content.trim())) {
                         HotRefresher.refresh(fileName, content, type);
                     }
@@ -186,7 +186,7 @@ public class HotRefreshFilter implements Filter {
     }
 
     protected void error(HttpServletRequest request, HttpServletResponse response, Throwable ex) {
-        String sb = ExceptionUtil.getNestedMessage(ex) + Constants.MESSAGE_SEPARATOR + ExceptionUtil.getStackMessage(ex);
+        String sb = ExceptionUtils.getNestedMessage(ex) + Constants.MESSAGE_SEPARATOR + ExceptionUtils.getStackMessage(ex);
         response(request, response, sb);
     }
 

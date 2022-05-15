@@ -16,6 +16,10 @@
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-adapter-lombok</artifactId>
         </dependency>
         <dependency>

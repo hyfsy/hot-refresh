@@ -26,5 +26,9 @@
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+        </dependency>
     </dependencies>
 </project>

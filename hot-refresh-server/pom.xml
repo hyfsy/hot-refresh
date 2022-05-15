@@ -24,7 +24,10 @@
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -38,7 +41,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.hyf.hotrefresh.LocalServer</mainClass>
+                            <mainClass>com.hyf.hotrefresh.server.LocalServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

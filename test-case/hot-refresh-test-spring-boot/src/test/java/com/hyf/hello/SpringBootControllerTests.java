@@ -1,6 +1,6 @@
 package com.hyf.hello;
 
-import com.hyf.hotrefresh.exception.RefreshException;
+import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.hello.controller.SpringBootController;
 import org.junit.Test;
 import org.junit.runner.RunWith;

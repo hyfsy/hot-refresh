@@ -1,10 +1,9 @@
 package com.hyf.hello;
 
-import com.hyf.hotrefresh.ChangeType;
-import com.hyf.hotrefresh.exception.RefreshException;
+import com.hyf.hotrefresh.common.ChangeType;
+import com.hyf.hotrefresh.core.exception.RefreshException;
+import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.hello.controller.LombokController;
-import com.hyf.hotrefresh.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.refresh.HotRefresher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author baB_hyf
