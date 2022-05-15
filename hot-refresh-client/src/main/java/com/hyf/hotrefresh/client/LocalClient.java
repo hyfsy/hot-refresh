@@ -23,8 +23,8 @@ public class LocalClient {
     // TODO IDEA plugin
     public static void main(String[] args) {
 
-        System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh");
-        System.setProperty("server", "http://localhost:8082");
+        // System.setProperty("home", "C:\\Users\\baB_hyf\\Desktop\\test");
+        // System.setProperty("server", "http://localhost:8082");
 
         // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
