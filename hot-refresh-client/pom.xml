@@ -41,7 +41,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.hyf.hotrefresh.server.LocalClient</mainClass>
+                            <mainClass>com.hyf.hotrefresh.client.LocalClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

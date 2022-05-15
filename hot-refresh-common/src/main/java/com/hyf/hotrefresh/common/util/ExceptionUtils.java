@@ -22,6 +22,10 @@ public class ExceptionUtils {
     }
 
     public static String getStackMessage(Throwable t) {
+        if (t == null) {
+            throw new IllegalArgumentException("t is null");
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (PrintStream ps = new PrintStream(baos)) {
             t.printStackTrace(ps);

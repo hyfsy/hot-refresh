@@ -68,7 +68,7 @@
 
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-client</artifactId>
+            <artifactId>hot-refresh-server</artifactId>
         </dependency>
 
         <dependency>

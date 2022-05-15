@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.remoting.message;
 
+import com.hyf.hotrefresh.remoting.exception.CodecException;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCompression;
@@ -34,19 +35,14 @@ public class MessageCodec {
 
     public static final byte VERSION = 1;
 
-    public static final int FIXED_LENGTH = MAGIC.length + 1 + 4 + 4 + 1 + 1 + 1 + 1 + 4;
+    public static final int FIXED_LENGTH = MAGIC.length + 1 + 4 + 4 + 1 + 1 + 1 + 1 + 4 + 4;
 
     public static byte[] encode(Message message) {
-
-        Object body = message.getBody();
-        if (body == null) {
-            throw new IllegalArgumentException("Body is null");
-        }
-        if (!(body instanceof RpcMessage)) {
-            throw new IllegalArgumentException("Body not support: " + body.getClass());
+        if (message == null) {
+            throw new IllegalArgumentException("message is null");
         }
 
-        RpcMessage rpcMessage = (RpcMessage) body;
+        RpcMessage rpcMessage = (RpcMessage) message.getBody();
 
         RpcMessageCodec codec = RpcMessageCodec.getCodec(message.getCodec());
         RpcMessageEncoding encoding = RpcMessageEncoding.getEncoding(message.getEncoding());
@@ -54,15 +50,18 @@ public class MessageCodec {
 
         // header
         Map<String, Object> headMap = message.getHeaderMap();
-        byte[] headerData = encodeMap(headMap, encoding, codec);
+        byte[] headerData = encodeObject(headMap, encoding, codec);
         headerData = compression.compress(headerData);
 
         // body
-        byte[] data = rpcMessage.encode(encoding, codec);
+        byte[] data = new byte[0];
+        if (rpcMessage != null) {
+            data = rpcMessage.encode(encoding, codec);
+        }
         data = compression.compress(data);
 
         if (FIXED_LENGTH + headerData.length + data.length > Integer.MAX_VALUE) {
-            throw new IllegalStateException("Message size reaches limit");
+            throw new CodecException("Message size reaches limit");
         }
 
         int messageLength = FIXED_LENGTH + headerData.length + data.length;
@@ -83,17 +82,21 @@ public class MessageCodec {
     }
 
     public static Message decode(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            throw new IllegalArgumentException("bytes is null");
+        }
+
         ByteBuffer buf = ByteBuffer.wrap(bytes);
 
         byte[] magic = new byte[MAGIC.length];
         buf.get(magic);
-        if (magic != MAGIC) {
-            throw new IllegalArgumentException("Unknown message: " + Arrays.toString(bytes));
+        if (!Arrays.equals(magic, MAGIC)) {
+            throw new CodecException("Unknown message magic: " + Arrays.toString(magic));
         }
 
         byte version = buf.get();
         if (version != VERSION) {
-            throw new IllegalArgumentException("Unknown message version: " + version);
+            throw new CodecException("Unknown message version: " + version);
         }
 
         int messageLength = buf.getInt();
@@ -114,7 +117,7 @@ public class MessageCodec {
         byte[] headerData = new byte[headerLength];
         buf.get(headerData);
         headerData = compression.decompress(headerData);
-        Map<String, Object> headerMap = decodeMap(headerData, encoding, codec);
+        Map<String, Object> headerMap = decodeObject(headerData, encoding, codec);
 
         // body
         int bodyLength = buf.getInt();
@@ -135,12 +138,20 @@ public class MessageCodec {
         return message;
     }
 
-    public static byte[] encodeMap(Map<String, Object> map, RpcMessageEncoding encoding, RpcMessageCodec codec) {
+    public static byte[] encodeObject(Object obj, RpcMessageEncoding encoding, RpcMessageCodec codec) {
+        if (obj == null) {
+            return new byte[0];
+        }
+
         RpcMessageCodec.JdkCodec jdkCodec = new RpcMessageCodec.JdkCodec();
-        return jdkCodec.encode(map);
+        return jdkCodec.encode(obj);
     }
 
-    public static Map<String, Object> decodeMap(byte[] data, RpcMessageEncoding encoding, RpcMessageCodec codec) {
+    public static <T> T decodeObject(byte[] data, RpcMessageEncoding encoding, RpcMessageCodec codec) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+
         RpcMessageCodec.JdkCodec jdkCodec = new RpcMessageCodec.JdkCodec();
         return jdkCodec.decode(data);
     }

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author baB_hyf
@@ -30,10 +31,11 @@ public class RpcRequest implements RpcMessage {
     // content length(4byte)
     // content
 
-    public static final int FIXED_LENGTH = 4 + 4 + 4 + 1;
+    public static final int FIXED_LENGTH = 4 + 4 + 4 + 1 + 4;
 
     private Map<String, Object> headers = new HashMap<>();
     private String              fileName;
+    // @Nullable
     private String              fileLocation;
     private RpcRequestInst      inst;
     private InputStream         content;
@@ -42,14 +44,25 @@ public class RpcRequest implements RpcMessage {
     public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         byte[] fileNameBytes = fileName.getBytes(encoding.getCharset());
-        byte[] fileLocationBytes = fileLocation.getBytes(encoding.getCharset());
-        byte[] headerBytes = MessageCodec.encodeMap(headers, encoding, codec);
+
+        byte[] fileLocationBytes = new byte[0];
+        if (fileLocation != null) {
+            fileLocationBytes = fileLocation.getBytes(encoding.getCharset());
+        }
+
+        byte[] headerBytes = MessageCodec.encodeObject(headers, encoding, codec);
 
         byte[] contentBytes;
         try {
             contentBytes = IOUtils.readAsByteArray(content);
         } catch (IOException e) {
             throw new RuntimeException("Read input stream failed", e);
+        } finally {
+            try {
+                content.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Close input stream failed", e);
+            }
         }
 
         int messageLength = FIXED_LENGTH + headerBytes.length + fileNameBytes.length + fileLocationBytes.length + contentBytes.length;
@@ -92,7 +105,7 @@ public class RpcRequest implements RpcMessage {
         byte[] contentBytes = new byte[contentLength];
         buf.get(contentBytes);
 
-        this.setHeaders(MessageCodec.decodeMap(headerBytes, encoding, codec));
+        this.setHeaders(MessageCodec.decodeObject(headerBytes, encoding, codec));
         this.setFileName(new String(fileNameBytes, encoding.getCharset()));
         this.setFileLocation(new String(fileLocationBytes, encoding.getCharset()));
         this.setInst(RpcRequestInst.getInst(instCode));
@@ -142,5 +155,22 @@ public class RpcRequest implements RpcMessage {
 
     public void setContent(InputStream content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RpcRequest that = (RpcRequest) o;
+        return Objects.equals(headers, that.headers) && Objects.equals(fileName, that.fileName) && Objects.equals(fileLocation, that.fileLocation) && inst == that.inst;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(headers, fileName, fileLocation, inst);
     }
 }

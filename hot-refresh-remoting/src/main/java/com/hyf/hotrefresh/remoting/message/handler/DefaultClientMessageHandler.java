@@ -1,7 +1,6 @@
 package com.hyf.hotrefresh.remoting.message.handler;
 
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
-import com.hyf.hotrefresh.remoting.rpc.handler.RpcResponseHandler;
 
 /**
  * @author baB_hyf
@@ -10,7 +9,11 @@ import com.hyf.hotrefresh.remoting.rpc.handler.RpcResponseHandler;
 public class DefaultClientMessageHandler extends AbstractMessageHandler {
 
     @Override
-    protected void initHandler() {
-        addHandler(RpcMessageType.RESPONSE.getCode(), new RpcResponseHandler());
+    public void init() {
+        registerMessageHandler(RpcMessageType.RESPONSE);
+        registerMessageHandler(RpcMessageType.BATCH_RESPONSE);
+        registerMessageHandler(RpcMessageType.HEARTBEAT_RESPONSE);
+        registerMessageHandler(RpcMessageType.SUCCESS_RESPONSE);
+        registerMessageHandler(RpcMessageType.ERROR_RESPONSE);
     }
 }

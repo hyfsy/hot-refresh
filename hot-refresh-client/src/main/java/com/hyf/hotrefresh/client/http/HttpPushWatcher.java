@@ -6,30 +6,24 @@ import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.remoting.message.Message;
-import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.RpcRequest;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author baB_hyf
  * @date 2021/12/11
  */
+@Deprecated
 public class HttpPushWatcher extends Thread implements Watcher {
 
     private final Map<String, File> changedFileMap = new ConcurrentHashMap<>();
-
-    private final BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
-
-    private final HttpClient client = HttpClient.getInstance();
 
     private volatile boolean closed = false;
 
@@ -60,46 +54,16 @@ public class HttpPushWatcher extends Thread implements Watcher {
     @Override
     public void run() {
         while (!closed) {
-            sendRequest();
-
-            // push(purge());
-            // try {
-            //     TimeUnit.SECONDS.sleep(1);
-            // } catch (InterruptedException ignored) {
-            // }
+            push(purge());
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
-    // TODO name
     private void addRequest(File file, ChangeType type) {
-        try {
-            RpcRequest request = new RpcRequest();
-            request.setFileName(file.getName());
-            request.setFileLocation(file.getAbsolutePath());
-            request.setInst(RpcRequestInst.valueOf(type.name()));
-            request.setContent(new FileInputStream(file));
-
-            Message message = MessageFactory.createMessage(request);
-            messageQueue.put(message);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Add request failed", e);
-        }
-
-        // changedFileMap.put(file.getName() + Constants.FILE_NAME_SEPARATOR + type, file);
-    }
-
-    private void sendRequest() {
-        try {
-            Message message = messageQueue.take();
-            client.sync(Constants.PUSH_SERVER_URL, message);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (Exception e) {
-            Log.warn("Request to " + Constants.PUSH_SERVER_URL + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
-        }
+        changedFileMap.put(file.getName() + Constants.FILE_NAME_SEPARATOR + type, file);
     }
 
     private Map<String, File> purge() {
@@ -115,7 +79,7 @@ public class HttpPushWatcher extends Thread implements Watcher {
 
         InputStream is;
         try {
-            is = client.upload(Constants.PUSH_SERVER_URL, fileMap);
+            is = HttpClient.upload(Constants.PUSH_SERVER_URL, fileMap);
         } catch (IOException e) {
             Log.warn("Upload to " + Constants.PUSH_SERVER_URL + " failed: " + ExceptionUtils.getNestedMessage(e));
             Log.debug(ExceptionUtils.getStackMessage(e));

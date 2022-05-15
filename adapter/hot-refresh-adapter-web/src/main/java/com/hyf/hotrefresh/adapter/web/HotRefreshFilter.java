@@ -4,21 +4,27 @@ import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
+import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.remoting.constants.RpcMessageConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
-import com.hyf.hotrefresh.remoting.message.handler.DefaultServerMessageHandler;
+import com.hyf.hotrefresh.remoting.message.MessageFactory;
+import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
+import com.hyf.hotrefresh.remoting.message.handler.MessageHandlerFactory;
+import com.hyf.hotrefresh.remoting.rpc.RpcErrorResponse;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author baB_hyf
@@ -27,7 +33,7 @@ import java.util.*;
 @WebFilter("/*")
 public class HotRefreshFilter implements Filter {
 
-    private final DefaultServerMessageHandler serverMessageHandler = new DefaultServerMessageHandler();
+    private final MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
 
     private final List<String> blockList = new ArrayList<String>() {{
         // TODO jar内所有类
@@ -65,15 +71,17 @@ public class HotRefreshFilter implements Filter {
         }
 
         // reset class
-        // if ("1".equals(req.getParameter("reset"))) {
-        //     try {
-        //         HotRefresher.reset();
-        //         success(req, resp);
-        //     } catch (RefreshException e) {
-        //         error(req, resp, e);
-        //     }
-        //     return;
-        // }
+        if ("1".equals(req.getParameter("reset"))) {
+            try {
+                HotRefresher.reset();
+                success(req, resp);
+            } catch (RefreshException e) {
+                if (Log.isDebugMode()) {
+                    Log.error("Reset class failed", e);
+                }
+            }
+            return;
+        }
 
         // contentType match
         String contentType = req.getContentType();
@@ -83,92 +91,23 @@ public class HotRefreshFilter implements Filter {
         }
 
         try (InputStream is = req.getInputStream();
-             ServletOutputStream os = resp.getOutputStream()) {
-            Message data = MessageCodec.decode(IOUtils.readAsByteArray(is));
-            Message message = serverMessageHandler.handle(data);
-            byte[] rtn = MessageCodec.encode(message);
-            os.write(rtn);
-            os.flush();
+             ServletOutputStream sos = resp.getOutputStream()) {
+            Message message = MessageCodec.decode(IOUtils.readAsByteArray(is));
+            Message rtn = serverMessageHandler.handle(message);
+            sos.write(MessageCodec.encode(rtn));
+            sos.flush();
         } catch (Throwable t) {
-            Log.error("Handle message failed", t);
+            if (Log.isDebugMode()) {
+                Log.error("Handle message failed", t);
+            }
+            RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
+            rpcErrorResponse.setThrowable(t);
+            Message rtn = MessageFactory.createMessage(rpcErrorResponse);
+            try (ServletOutputStream sos = resp.getOutputStream()) {
+                sos.write(MessageCodec.encode(rtn));
+                sos.flush();
+            }
         }
-
-        // Throwable t = null;
-        // try {
-        //
-        //     // reset class
-        //     if ("1".equals(req.getParameter("reset"))) {
-        //         HotRefresher.reset();
-        //         success(req, resp);
-        //         return;
-        //     }
-        //
-        //     // contentType match
-        //     String contentType = req.getContentType();
-        //     if (contentType == null || (!contentType.contains("multipart/form-data")
-        //             && !contentType.contains("multipart/mixed stream"))) {
-        //         success(req, resp);
-        //         return;
-        //     }
-        //
-        //     // parse file content
-        //     Map<String, InputStream> fileStreamMap = getFileStreamMap(req);
-        //     if (fileStreamMap == null || fileStreamMap.isEmpty()) {
-        //         error(req, resp, new RefreshException("No file exists"));
-        //         return;
-        //     }
-        //
-        //     nextPart:
-        //     for (Map.Entry<String, InputStream> entry : fileStreamMap.entrySet()) {
-        //         String name = entry.getKey();
-        //
-        //         // illegal name
-        //         String[] nameInfo = name.split(Constants.FILE_NAME_SEPARATOR);
-        //         if (nameInfo.length != 2) {
-        //             continue;
-        //         }
-        //
-        //         String fileName = nameInfo[0];
-        //         String type = nameInfo[1];
-        //
-        //         // only java file
-        //         // TODO support jar file
-        //         if (!fileName.endsWith(".java")) {
-        //             continue;
-        //         }
-        //
-        //         // illegal file
-        //         for (String s : blockList) {
-        //             if (fileName.contains(s)) {
-        //                 break nextPart;
-        //             }
-        //         }
-        //
-        //         // hot refresh
-        //         try (InputStream is = entry.getValue()) {
-        //             String content = IOUtils.readAsString(is);
-        //             if (content != null && !"".equals(content.trim())) {
-        //                 HotRefresher.refresh(fileName, content, type);
-        //             }
-        //         } catch (IOException | RefreshException e) {
-        //             if (t == null) {
-        //                 t = e;
-        //             }
-        //             else {
-        //                 t.addSuppressed(e);
-        //             }
-        //         }
-        //     }
-        // } catch (Throwable e) {
-        //     t = e;
-        // }
-
-        // if (t == null) {
-        //     success(req, resp);
-        // }
-        // else {
-        //     error(req, resp, t);
-        // }
     }
 
     protected boolean uriMatch(HttpServletRequest req) {
@@ -199,20 +138,6 @@ public class HotRefreshFilter implements Filter {
 
         String requestPath = contextPath + servletPath + Constants.REFRESH_API;
         return requestURI.equals(requestPath);
-    }
-
-    protected Map<String, InputStream> getFileStreamMap(HttpServletRequest req) throws IOException, ServletException {
-
-        Map<String, InputStream> fileMap = new HashMap<>();
-
-        Collection<Part> parts = req.getParts();
-
-        for (Part part : parts) {
-            String name = part.getName();
-            fileMap.put(name, part.getInputStream());
-        }
-
-        return fileMap;
     }
 
     protected void success(HttpServletRequest request, HttpServletResponse response) {

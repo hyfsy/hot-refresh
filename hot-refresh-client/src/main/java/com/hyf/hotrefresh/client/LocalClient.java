@@ -1,9 +1,12 @@
 package com.hyf.hotrefresh.client;
 
-import com.hyf.hotrefresh.client.http.HttpClient;
-import com.hyf.hotrefresh.client.http.HttpPushWatcher;
+import com.hyf.hotrefresh.client.rpc.RpcClient;
+import com.hyf.hotrefresh.client.rpc.RpcPushWatcher;
 import com.hyf.hotrefresh.client.watch.WatchCenter;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.remoting.message.Message;
+import com.hyf.hotrefresh.remoting.message.MessageFactory;
+import com.hyf.hotrefresh.remoting.rpc.RpcHeartbeatRequest;
 
 import java.io.File;
 import java.net.URL;
@@ -20,8 +23,8 @@ public class LocalClient {
     // TODO IDEA plugin
     public static void main(String[] args) {
 
-        // System.setProperty("home", "C:\\Users\\baB_hyf\\Desktop\\test");
-        // System.setProperty("server", "http://localhost:8082");
+        System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh");
+        System.setProperty("server", "http://localhost:8082");
 
         // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
@@ -96,7 +99,9 @@ public class LocalClient {
         }
 
         try {
-            HttpClient.getInstance().upload(PUSH_SERVER_URL, null);
+            RpcHeartbeatRequest request = new RpcHeartbeatRequest();
+            Message message = MessageFactory.createMessage(request);
+            RpcClient.getInstance().sync(PUSH_SERVER_URL, message);
         } catch (Exception e) {
             throw new RuntimeException("Failed to connect server: " + PUSH_SERVER_URL, e);
         }
@@ -105,6 +110,6 @@ public class LocalClient {
     }
 
     private static void start() {
-        WatchCenter.registerWatcher(WATCH_HOME, new HttpPushWatcher());
+        WatchCenter.registerWatcher(WATCH_HOME, new RpcPushWatcher());
     }
 }

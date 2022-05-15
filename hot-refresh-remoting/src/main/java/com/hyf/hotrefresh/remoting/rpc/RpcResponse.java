@@ -7,8 +7,10 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcResponseInst;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author baB_hyf
@@ -25,15 +27,15 @@ public class RpcResponse implements RpcMessage {
 
     public static final int FIXED_LENGTH = 4 + 4 + 1 + 4;
 
-    private Map<String, Object> extra = new HashMap<>();
-    private int                 status;
-    private byte[]              data;
-    private RpcResponseInst     inst  = RpcResponseInst.NONE;
+    private Map<String, Object> extra  = new HashMap<>();
+    private int                 status = -1;
+    private byte[]              data   = new byte[0];
+    private RpcResponseInst     inst   = RpcResponseInst.NONE;
 
     @Override
     public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
-        byte[] extraBytes = MessageCodec.encodeMap(extra, encoding, codec);
+        byte[] extraBytes = MessageCodec.encodeObject(extra, encoding, codec);
 
         int messageLength = FIXED_LENGTH + data.length + extraBytes.length;
 
@@ -50,6 +52,9 @@ public class RpcResponse implements RpcMessage {
     @Override
     public void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec) {
         ByteBuffer buf = ByteBuffer.wrap(bytes);
+        if (!buf.hasRemaining()) {
+            return;
+        }
 
         int status = buf.getInt();
         int dataLength = buf.getInt();
@@ -63,7 +68,7 @@ public class RpcResponse implements RpcMessage {
         this.setStatus(status);
         this.setData(dataBytes);
         this.setInst(RpcResponseInst.getInst(instCode));
-        this.setExtra(MessageCodec.decodeMap(extraBytes, encoding, codec));
+        this.setExtra(MessageCodec.decodeObject(extraBytes, encoding, codec));
     }
 
     @Override
@@ -101,5 +106,24 @@ public class RpcResponse implements RpcMessage {
 
     public void setExtra(Map<String, Object> extra) {
         this.extra = extra;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RpcResponse that = (RpcResponse) o;
+        return status == that.status && Objects.equals(extra, that.extra) && Arrays.equals(data, that.data) && inst == that.inst;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(extra, status, inst);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
     }
 }

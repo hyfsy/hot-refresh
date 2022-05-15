@@ -38,7 +38,7 @@ public enum RpcMessageCompression implements EnumCodeAware {
 
     @Override
     public byte getCode() {
-        return 0;
+        return code;
     }
 
     public byte[] compress(byte[] bytes) {
@@ -59,7 +59,7 @@ public enum RpcMessageCompression implements EnumCodeAware {
 
         @Override
         public byte[] compress(byte[] bytes) {
-            if (bytes == null || bytes.length == 0) {
+            if (bytes == null) {
                 throw new NullPointerException("Bytes is null");
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -90,7 +90,7 @@ public enum RpcMessageCompression implements EnumCodeAware {
 
         @Override
         public byte[] compress(byte[] bytes) {
-            if (bytes == null || bytes.length == 0) {
+            if (bytes == null) {
                 throw new NullPointerException("Bytes is null");
             }
             Deflater deflater = new Deflater();
@@ -139,7 +139,7 @@ public enum RpcMessageCompression implements EnumCodeAware {
 
         @Override
         public byte[] compress(byte[] bytes) {
-            if (bytes == null || bytes.length == 0) {
+            if (bytes == null) {
                 throw new NullPointerException("Bytes is null");
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

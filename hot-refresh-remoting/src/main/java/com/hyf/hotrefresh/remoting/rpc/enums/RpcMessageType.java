@@ -1,9 +1,7 @@
 package com.hyf.hotrefresh.remoting.rpc.enums;
 
-import com.hyf.hotrefresh.remoting.rpc.RpcBatchRequest;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
-import com.hyf.hotrefresh.remoting.rpc.RpcRequest;
-import com.hyf.hotrefresh.remoting.rpc.RpcResponse;
+import com.hyf.hotrefresh.remoting.rpc.handler.*;
 
 import java.util.function.Supplier;
 
@@ -13,17 +11,23 @@ import java.util.function.Supplier;
  */
 public enum RpcMessageType implements EnumCodeAware {
 
-    REQUEST((byte) 1, RpcRequest::new), //
-    BATCH_REQUEST((byte) 2, RpcBatchRequest::new), //
-    RESPONSE((byte) 3, RpcResponse::new), //
+    REQUEST((byte) 1, RpcRequestHandler::new), //
+    RESPONSE((byte) 2, RpcResponseHandler::new), //
+    BATCH_REQUEST((byte) 3, RpcBatchRequestHandler::new), //
+    BATCH_RESPONSE((byte) 4, RpcBatchResponseHandler::new), //
+    HEARTBEAT_REQUEST((byte) 5, RpcHeartbeatRequestHandler::new), //
+    HEARTBEAT_RESPONSE((byte) 6, RpcHeartbeatResponseHandler::new), //
+    ERROR_RESPONSE((byte) 7, RpcErrorResponseHandler::new), //
+    SUCCESS_RESPONSE((byte) 8, RpcResponseHandler::new), //
     ;
 
-    private byte                 code;
-    private Supplier<RpcMessage> messageSupplier;
+    private final    Supplier<RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage>> rpcMessageHandlerSupplier;
+    private final    byte                                                                    code;
+    private volatile RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage>           rpcMessageHandler;
 
-    RpcMessageType(byte code, Supplier<RpcMessage> messageSupplier) {
+    RpcMessageType(byte code, Supplier<RpcMessageHandler<?, ?>> rpcMessageHandlerSupplier) {
         this.code = code;
-        this.messageSupplier = messageSupplier;
+        this.rpcMessageHandlerSupplier = rpcMessageHandlerSupplier;
     }
 
     public static RpcMessageType getMessageType(byte code) {
@@ -37,11 +41,19 @@ public enum RpcMessageType implements EnumCodeAware {
     }
 
     public <T extends RpcMessage> T createMessage() {
-        return (T) messageSupplier.get();
+        return (T) rpcMessageHandler.createEmptyRpcMessage();
     }
 
     @Override
     public byte getCode() {
         return code;
+    }
+
+    // lazy init to avoid cyclic dependencies during initialization
+    public synchronized RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage> getRpcMessageHandler() {
+        if (rpcMessageHandler == null) {
+            rpcMessageHandler = rpcMessageHandlerSupplier.get();
+        }
+        return rpcMessageHandler;
     }
 }
