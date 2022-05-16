@@ -32,15 +32,15 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>${java.version}</version>
-            <scope>system</scope>
-            <!--<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
-            <systemPath>${java_home}/lib/tools.jar</systemPath>
-            <optional>true</optional>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.sun</groupId>-->
+<!--            <artifactId>tools</artifactId>-->
+<!--            <version>${java.version}</version>-->
+<!--            <scope>system</scope>-->
+<!--            &lt;!&ndash;<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>&ndash;&gt;-->
+<!--            <systemPath>${java_home}/lib/tools.jar</systemPath>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
