@@ -28,7 +28,7 @@ IDEA小锤子的远程版
 
 ```bash
 java 
-  -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
+  -jar hot-refresh-client-1.0.0-SNAPSHOT.jar
   -h C:\\Users\\baB_hyf\\Desktop\\test 
   -s http://localhost:8082/rest 
 ```
