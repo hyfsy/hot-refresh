@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.hyf.hotrefresh</groupId>
+        <groupId>io.github.hyfsy</groupId>
         <artifactId>hot-refresh-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -19,14 +19,17 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <version>4.5.13</version>
+            <optional>true</optional>
         </dependency>
 
+        <!-- TODO netty -->
+
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
     </dependencies>

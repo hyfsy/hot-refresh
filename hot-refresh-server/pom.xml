@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.hyf.hotrefresh</groupId>
+        <groupId>io.github.hyfsy</groupId>
         <artifactId>hot-refresh-parent</artifactId>
         <version>${revision}</version>
     </parent>
@@ -11,31 +11,31 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-mapstruct</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-spring-boot</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-mybatis</artifactId>
         </dependency>
     </dependencies>

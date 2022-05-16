@@ -2,22 +2,87 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.hyf.hotrefresh</groupId>
+    <groupId>io.github.hyfsy</groupId>
     <artifactId>hot-refresh-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
+    <!-- 项目基本信息 -->
+    <name>Hot Refresh ${project.version}</name>
+    <description>Hot refresh the class on the production environment</description>
+    <url>https://github.com/hyfsy/hot-refresh</url>
+    <prerequisites>
+        <maven>3.5.4</maven>
+    </prerequisites>
+
+    <!-- 授权协议 -->
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <!-- SCM地址 -->
+    <scm>
+        <url>https://github.com/hyfsy/hot-refresh</url>
+        <connection>scm:git:https://github.com/hyfsy/hot-refresh.git</connection>
+        <developerConnection>scm:git:https://github.com/hyfsy/hot-refresh.git</developerConnection>
+        <tag>hot-refresh-${revision}</tag>
+    </scm>
+
+    <developers>
+        <!-- 个人信息，可选 -->
+        <developer>
+            <id>hyfsy</id>
+            <name>hyfsy</name>
+            <email>1577975140@qq.com</email>
+            <url>https://github.com/hyfsy</url>
+            <roles>
+                <role>Developer</role>
+                <role>Project Manager</role>
+            </roles>
+            <organization>Hyfsy</organization>
+            <organizationUrl>http://hyfsy.github.io</organizationUrl>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>Hyfsy Group</name>
+        <url>https://github.com/hyfsy</url>
+    </organization>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/hyfsy/hot-refresh/issues</url>
+    </issueManagement>
+
     <!-- https://tech.meituan.com/2022/03/17/java-hotswap-sonic.html -->
 
     <properties>
+        <!-- basic properties -->
+        <revision>1.0.0</revision>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <javadoc.skip>false</javadoc.skip>
+        <gpg.skip>false</gpg.skip>
+        <auto.close.and.release>false</auto.close.and.release>
 
-        <revision>1.0.0</revision>
+        <!-- dependency version -->
         <junit.version>4.12</junit.version>
         <mockito.version>2.23.4</mockito.version>
+
+        <!-- plugin version -->
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
     </properties>
 
@@ -25,7 +90,6 @@
         <module>hot-refresh-common</module>
         <module>hot-refresh-core</module>
         <module>hot-refresh-remoting</module>
-        <module>hot-refresh-client</module>
         <module>hot-refresh-server</module>
 
         <module>adapter/hot-refresh-adapter-lombok</module>
@@ -36,6 +100,11 @@
 
         <module>test-case/hot-refresh-test-spring-boot</module>
         <module>test-case/hot-refresh-test-jar-file</module>
+
+        <!-- TODO -->
+        <!-- maven-assembly-plugin conflict with maven-clean-plugin -->
+        <!-- the module after assembly plugin execution, that clean plugin will be failed because target directory is in use -->
+        <module>hot-refresh-client</module>
     </modules>
 
     <dependencyManagement>
@@ -108,6 +177,110 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <!-- 推荐在Release环境中添加这些插件和仓库，防止开发时打包慢 -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source 打源码包 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                    </plugin>
+                    <!-- JavaDoc 打JavaDoc包 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- 忽略打包报错（文档不符合规范） -->
+                            <failOnError>false</failOnError>
+                            <doclint>none</doclint>
+                            <skip>${javadoc.skip}</skip>
+                            <show>public</show>
+                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <links>
+                                <link>http://docs.oracle.com/javase/8/docs/api</link>
+                            </links>
+                        </configuration>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <!-- 进行验签 -->
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skip>${gpg.skip}</skip>
+                        </configuration>
+                    </plugin>
+                    <!-- 上传到Nexus中自动Close并Release，无需再进入Nexus操作 -->
+                    <plugin>
+                        <!-- 爆红不管 -->
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <!-- id要与settings.xml里的server指定的id保持一致 -->
+                            <serverId>sonatype-oss</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <!-- 发布到阶段存储库成功后是否自动Release，进行中央仓库的同步，这里我们默认去网页上手动进行同步 -->
+                            <autoReleaseAfterClose>${auto.close.and.release}</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <!-- Upload repository -->
+            <distributionManagement>
+                <!-- id要与settings.xml里的server指定的id保持一致 -->
+                <snapshotRepository>
+                    <id>sonatype-oss</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonatype-oss</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
