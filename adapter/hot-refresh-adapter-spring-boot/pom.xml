@@ -44,10 +44,12 @@
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-web</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

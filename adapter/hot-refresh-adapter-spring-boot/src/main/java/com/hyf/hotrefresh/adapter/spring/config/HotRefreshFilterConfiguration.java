@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.adapter.spring.config;
 
 import com.hyf.hotrefresh.adapter.web.HotRefreshFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import java.util.Collections;
  * @author baB_hyf
  * @date 2021/12/12
  */
+@ConditionalOnBean(HotRefreshFilter.class)
 public class HotRefreshFilterConfiguration {
 
     @Bean
