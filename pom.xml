@@ -84,6 +84,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
+        <maven-assembly-plugin.version>3.0.0</maven-assembly-plugin.version>
     </properties>
 
     <modules>
@@ -91,6 +92,7 @@
         <module>hot-refresh-core</module>
         <module>hot-refresh-remoting</module>
         <module>hot-refresh-server</module>
+        <module>hot-refresh-client</module>
 
         <module>adapter/hot-refresh-adapter-lombok</module>
         <module>adapter/hot-refresh-adapter-mapstruct</module>
@@ -100,11 +102,6 @@
 
         <module>test-case/hot-refresh-test-spring-boot</module>
         <module>test-case/hot-refresh-test-jar-file</module>
-
-        <!-- TODO -->
-        <!-- maven-assembly-plugin conflict with maven-clean-plugin -->
-        <!-- the module after assembly plugin execution, that clean plugin will be failed because target directory is in use -->
-        <module>hot-refresh-client</module>
     </modules>
 
     <dependencyManagement>
@@ -283,6 +280,15 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
