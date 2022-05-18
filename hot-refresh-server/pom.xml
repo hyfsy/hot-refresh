@@ -28,15 +28,27 @@
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-adapter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-adapter-spring-boot</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-adapter-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-execute</artifactId>
         </dependency>
     </dependencies>
 </project>
