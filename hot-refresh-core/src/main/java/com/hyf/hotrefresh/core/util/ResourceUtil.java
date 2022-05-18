@@ -16,7 +16,7 @@ import java.nio.file.Files;
  * @author baB_hyf
  * @date 2021/12/11
  */
-public class ResourceUtil {
+public abstract class ResourceUtil {
 
     public static final String DOWNLOAD_HOME = Constants.REFRESH_HOME + File.separator + "lib";
 

@@ -1,6 +1,5 @@
 package com.hyf.hotrefresh.common;
 
-
 import com.hyf.hotrefresh.common.util.DateUtils;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.FileUtils;
@@ -18,10 +17,10 @@ import java.io.IOException;
  */
 public class Log {
 
-    public static final String LOG_HOME = com.hyf.hotrefresh.common.Constants.REFRESH_HOME + File.separator + "logs";
+    public static final String LOG_HOME = Constants.REFRESH_HOME + File.separator + "logs";
 
     public static boolean isDebugMode() {
-        return com.hyf.hotrefresh.common.Constants.DEBUG;
+        return Constants.DEBUG;
     }
 
     /**
@@ -82,7 +81,7 @@ public class Log {
 
     private static void appendFile(String message) {
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getLogFile(), true))) {
-            bos.write(message.getBytes(Constants.MESSAGE_ENCODING), 0, message.getBytes(com.hyf.hotrefresh.common.Constants.MESSAGE_ENCODING).length);
+            bos.write(message.getBytes(Constants.MESSAGE_ENCODING), 0, message.getBytes(Constants.MESSAGE_ENCODING).length);
         } catch (IOException e) {
             e.printStackTrace();
         }

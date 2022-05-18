@@ -2,10 +2,10 @@ package com.hyf.hotrefresh.remoting.message;
 
 import com.hyf.hotrefresh.remoting.exception.CodecException;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCompression;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -110,7 +110,6 @@ public class MessageCodec {
         byte compressionCode = buf.get();
         RpcMessageCompression compression = RpcMessageCompression.getCompression(compressionCode);
         byte messageTypeCode = buf.get();
-        RpcMessageType messageType = RpcMessageType.getMessageType(messageTypeCode);
 
         // header
         int headerLength = buf.getInt();
@@ -125,7 +124,7 @@ public class MessageCodec {
         buf.get(data);
         data = compression.decompress(data);
 
-        RpcMessage rpcMessage = messageType.createMessage();
+        RpcMessage rpcMessage = RpcMessageFactory.createRpcMessage(messageTypeCode);
         rpcMessage.decode(data, encoding, codec);
 
         Message message = MessageFactory.createEmptyMessage();

@@ -3,10 +3,11 @@ package com.hyf.hotrefresh.remoting.message.handler;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.RpcErrorResponse;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageFactory;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
-import com.hyf.hotrefresh.remoting.rpc.handler.RpcMessageHandler;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +19,16 @@ import java.util.Map;
 public abstract class AbstractMessageHandler implements MessageHandler {
 
     /** message type -> handler */
-    private final Map<Byte, RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage>> handlers = new HashMap<>();
+    private Map<Byte, RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage>> handlers = new HashMap<>();
 
-    public void registerMessageHandler(RpcMessageType messageType) {
-        handlers.put(messageType.getCode(), messageType.getRpcMessageHandler());
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public Message handle(Message request) throws Exception {
         try {
             RpcMessage rpcMessage = (RpcMessage) request.getBody();
-            RpcMessageHandler<RpcMessage, RpcMessage> rpcMessageHandler = (RpcMessageHandler<RpcMessage, RpcMessage>) handlers.get(request.getMessageType());
-            if (!rpcMessageHandler.getRpcMessageClassType().isInstance(rpcMessage)) {
+            RpcMessageHandler<RpcMessage, RpcMessage> rpcMessageHandler = (RpcMessageHandler<RpcMessage, RpcMessage>) getHandlers().get(request.getMessageType());
+            Class<RpcMessage> rpcMessageClassType = RpcMessageFactory.getRpcMessageClassType((Class<? extends RpcMessageHandler<?, ?>>) rpcMessageHandler.getClass());
+            if (!(rpcMessageClassType == rpcMessage.getClass())) {
                 throw new IllegalStateException("Rpc message type related handler not exist: " + rpcMessage.getClass());
             }
             RpcMessage response = rpcMessageHandler.handle(rpcMessage);
@@ -42,5 +41,9 @@ public abstract class AbstractMessageHandler implements MessageHandler {
             rpcErrorResponse.setThrowable(t);
             return MessageFactory.createMessage(rpcErrorResponse);
         }
+    }
+
+    protected Map<Byte, RpcMessageHandler<? extends RpcMessage, ? extends RpcMessage>> getHandlers() {
+        return handlers;
     }
 }

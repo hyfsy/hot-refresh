@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.remoting.message;
 
-import com.hyf.hotrefresh.remoting.constants.RpcMessageConstants;
+import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,15 +21,15 @@ public class MessageFactory {
 
         Message message = new Message();
         message.setId(idGenerator.incrementAndGet());
-        message.setEncoding(RpcMessageConstants.DEFAULT_ENCODING.getCode());
-        message.setCodec(RpcMessageConstants.DEFAULT_CODEC.getCode());
-        message.setCompress(RpcMessageConstants.DEFAULT_COMPRESSION.getCode());
+        message.setEncoding(RemotingConstants.DEFAULT_ENCODING.getCode());
+        message.setCodec(RemotingConstants.DEFAULT_CODEC.getCode());
+        message.setCompress(RemotingConstants.DEFAULT_COMPRESSION.getCode());
 
         if (rpcMessage == null) {
             return message;
         }
 
-        message.setMessageType(rpcMessage.getMessageType().getCode());
+        message.setMessageType(rpcMessage.getMessageCode());
         message.setBody(rpcMessage);
         return message;
     }

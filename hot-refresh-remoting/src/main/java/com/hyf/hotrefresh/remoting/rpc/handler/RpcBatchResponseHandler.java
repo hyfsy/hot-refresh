@@ -5,8 +5,8 @@ import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandlerFactory;
-import com.hyf.hotrefresh.remoting.rpc.RpcBatchResponse;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcBatchResponse;
 
 import java.util.List;
 
@@ -17,16 +17,6 @@ import java.util.List;
 public class RpcBatchResponseHandler extends RpcMessageResponseHandler<RpcBatchResponse> {
 
     private final MessageHandler clientMessageHandler = MessageHandlerFactory.getClientMessageHandler();
-
-    @Override
-    public Class<RpcBatchResponse> getRpcMessageClassType() {
-        return RpcBatchResponse.class;
-    }
-
-    @Override
-    public RpcBatchResponse createEmptyRpcMessage() {
-        return new RpcBatchResponse();
-    }
 
     @Override
     public void handleResponse(RpcBatchResponse response) throws Exception {

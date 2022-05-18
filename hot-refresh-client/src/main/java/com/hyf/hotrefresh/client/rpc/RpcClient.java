@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.client.rpc;
 
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.remoting.constants.RpcMessageConstants;
+import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
@@ -86,7 +86,7 @@ public class RpcClient {
         httpPost.setConfig(config);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(MessageCodec.encode(request));
-        httpPost.setEntity(new InputStreamEntity(bais, bais.available(), ContentType.create(RpcMessageConstants.DEFAULT_CONTENT_TYPE)));
+        httpPost.setEntity(new InputStreamEntity(bais, bais.available(), ContentType.create(RemotingConstants.DEFAULT_CONTENT_TYPE)));
 
         client.execute(httpPost, response -> {
             StatusLine sl = response.getStatusLine();

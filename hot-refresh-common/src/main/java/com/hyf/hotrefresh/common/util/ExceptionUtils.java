@@ -7,7 +7,7 @@ import java.io.PrintStream;
  * @author baB_hyf
  * @date 2021/12/12
  */
-public class ExceptionUtils {
+public abstract class ExceptionUtils {
 
     public static String getNestedMessage(Throwable t) {
         StringBuilder sb = new StringBuilder();

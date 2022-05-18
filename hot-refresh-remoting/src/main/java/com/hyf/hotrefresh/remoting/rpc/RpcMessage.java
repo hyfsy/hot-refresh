@@ -14,5 +14,7 @@ public interface RpcMessage {
 
     void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec);
 
-    RpcMessageType getMessageType();
+    default RpcMessageType getMessageType() {return null;}
+
+    byte getMessageCode();
 }

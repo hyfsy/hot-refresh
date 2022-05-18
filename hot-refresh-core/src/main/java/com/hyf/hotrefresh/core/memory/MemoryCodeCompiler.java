@@ -34,11 +34,11 @@ public class MemoryCodeCompiler {
         initOptions();
     }
 
-    public static Map<String, byte[]> compile(com.hyf.hotrefresh.core.memory.MemoryCode memoryCode) throws CompileException {
+    public static Map<String, byte[]> compile(MemoryCode memoryCode) throws CompileException {
         return compile(Collections.singleton(memoryCode));
     }
 
-    public static Map<String, byte[]> compile(Set<com.hyf.hotrefresh.core.memory.MemoryCode> memoryCodeList) throws CompileException {
+    public static Map<String, byte[]> compile(Set<MemoryCode> memoryCodeList) throws CompileException {
         if (memoryCodeList == null || memoryCodeList.isEmpty()) {
             return new HashMap<>();
         }
@@ -49,7 +49,7 @@ public class MemoryCodeCompiler {
         }
 
         try {
-            com.hyf.hotrefresh.core.memory.MemoryJavaFileManager memoryByteCodeManager = new com.hyf.hotrefresh.core.memory.MemoryJavaFileManager(COMPILER.getStandardFileManager(null, null, null));
+            MemoryJavaFileManager memoryByteCodeManager = new MemoryJavaFileManager(COMPILER.getStandardFileManager(null, null, null));
             DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
             boolean success = COMPILER.getTask(null, memoryByteCodeManager, collector, OPTIONS, null, memoryCodeList).call();
@@ -63,7 +63,7 @@ public class MemoryCodeCompiler {
         } catch (CompileException e) {
             throw e;
         } catch (Throwable t) {
-            String fileNames = memoryCodeList.stream().map(com.hyf.hotrefresh.core.memory.MemoryCode::getFileName).collect(Collectors.joining(",", "[", "]"));
+            String fileNames = memoryCodeList.stream().map(MemoryCode::getFileName).collect(Collectors.joining(",", "[", "]"));
             throw new CompileException("Compilation Error: " + fileNames, t);
         }
     }
@@ -120,8 +120,8 @@ public class MemoryCodeCompiler {
 
     private static Map<String, byte[]> obfuscation(Map<String, byte[]> compiledBytes) throws CompileException {
         try {
-            ServiceLoader<com.hyf.hotrefresh.core.memory.ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(com.hyf.hotrefresh.core.memory.ObfuscationHandler.class);
-            for (com.hyf.hotrefresh.core.memory.ObfuscationHandler handler : obfuscationHandlers) {
+            ServiceLoader<ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(ObfuscationHandler.class);
+            for (ObfuscationHandler handler : obfuscationHandlers) {
                 compiledBytes = handler.handle(compiledBytes);
             }
         } catch (Throwable t) {

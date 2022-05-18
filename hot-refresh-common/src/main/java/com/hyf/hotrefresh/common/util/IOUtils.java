@@ -8,7 +8,7 @@ import java.io.*;
  * @author baB_hyf
  * @date 2021/12/12
  */
-public class IOUtils {
+public abstract class IOUtils {
 
     public static byte[] readAsByteArray(InputStream is) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

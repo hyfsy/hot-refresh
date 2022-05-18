@@ -1,8 +1,6 @@
 package com.hyf.hotrefresh.remoting.message.handler;
 
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
-
-import java.util.List;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandlerRegistry;
 
 /**
  * 方便过早暴露处理器，解决循环依赖问题
@@ -12,8 +10,6 @@ import java.util.List;
  */
 public class MessageHandlerFactory {
 
-    // eagerly expose to avoid cyclic dependencies during initialization
-
     private static volatile MessageHandler clientMessageHandler;
     private static volatile MessageHandler serverMessageHandler;
 
@@ -21,9 +17,8 @@ public class MessageHandlerFactory {
         if (clientMessageHandler != null) {
             return clientMessageHandler;
         }
-        DefaultClientMessageHandler messageHandler = new DefaultClientMessageHandler();
+        DefaultClientMessageHandler messageHandler = new DefaultClientMessageHandler(RpcMessageHandlerRegistry.getInstance());
         clientMessageHandler = messageHandler;
-        messageHandler.init();
         return messageHandler;
     }
 
@@ -31,15 +26,8 @@ public class MessageHandlerFactory {
         if (serverMessageHandler != null) {
             return serverMessageHandler;
         }
-        DefaultServerMessageHandler messageHandler = new DefaultServerMessageHandler();
+        DefaultServerMessageHandler messageHandler = new DefaultServerMessageHandler(RpcMessageHandlerRegistry.getInstance());
         serverMessageHandler = messageHandler;
-        messageHandler.init();
-        return messageHandler;
-    }
-
-    public static MessageHandler createMessageHandler(List<RpcMessageType> rpcMessageTypes) {
-        DefaultMessageHandler messageHandler = new DefaultMessageHandler(rpcMessageTypes);
-        messageHandler.init();
         return messageHandler;
     }
 }
