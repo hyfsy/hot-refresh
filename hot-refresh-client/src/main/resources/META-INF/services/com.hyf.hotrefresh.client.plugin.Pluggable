@@ -1,0 +1,2 @@
+com.hyf.hotrefresh.client.watch.FileWatcherPlugin
+com.hyf.hotrefresh.client.command.CommandLinePlugin

@@ -1,6 +1,6 @@
-package com.hyf.hotrefresh.client.http;
+package com.hyf.hotrefresh.client.core.http;
 
-import com.hyf.hotrefresh.client.rpc.RpcClient;
+import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;

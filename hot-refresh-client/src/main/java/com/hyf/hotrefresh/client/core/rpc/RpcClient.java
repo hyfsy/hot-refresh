@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.rpc;
+package com.hyf.hotrefresh.client.core.rpc;
 
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;

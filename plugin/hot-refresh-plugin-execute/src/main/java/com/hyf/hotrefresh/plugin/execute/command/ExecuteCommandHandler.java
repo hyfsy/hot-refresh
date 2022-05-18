@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.plugin.execute.command;
 
-import com.hyf.hotrefresh.client.HotRefreshClient;
+import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.command.CommandHandler;
 import com.hyf.hotrefresh.common.util.FileUtils;
 import com.hyf.hotrefresh.plugin.execute.payload.RpcExecutableRequest;
