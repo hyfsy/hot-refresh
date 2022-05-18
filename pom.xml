@@ -38,8 +38,8 @@
         <module>plugin/hot-refresh-plugin-fastjson</module>
         <module>plugin/hot-refresh-plugin-execute</module>
 
-        <module>test-case/hot-refresh-test-spring-boot</module>
-        <module>test-case/hot-refresh-test-jar-file</module>
+        <module>test-cases/hot-refresh-test-spring-boot</module>
+        <module>test-cases/hot-refresh-test-jar-file</module>
     </modules>
 
     <dependencyManagement>
