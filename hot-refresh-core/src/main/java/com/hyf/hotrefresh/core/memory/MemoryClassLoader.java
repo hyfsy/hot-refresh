@@ -38,7 +38,7 @@ public class MemoryClassLoader extends ClassLoader {
         addOutputHome();
     }
 
-    private MemoryClassLoader(ClassLoader parent) {
+    protected MemoryClassLoader(ClassLoader parent) {
         super(parent);
     }
 
@@ -97,6 +97,14 @@ public class MemoryClassLoader extends ClassLoader {
             ClassLoader ccl = cclPerThreadLocal.get();
             Thread.currentThread().setContextClassLoader(ccl);
             cclPerThreadLocal.remove();
+        }
+    }
+
+    public void store(String className, byte[] bytes) {
+        synchronized (LOCK) {
+            bytesCache.put(className, bytes);
+            classCache.remove(className);
+            classFileStorage.write(className, bytes);
         }
     }
 

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.hyf.hotrefresh.adapter.spring.config.HotRefreshAutoConfiguration

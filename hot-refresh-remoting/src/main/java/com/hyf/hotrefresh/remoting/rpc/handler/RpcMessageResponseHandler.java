@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.remoting.rpc.handler;
 
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
 
 /**
  * @author baB_hyf

@@ -9,7 +9,7 @@ import java.nio.file.Path;
  * @author baB_hyf
  * @date 2021/12/11
  */
-public class FileUtils {
+public abstract class FileUtils {
 
     public static String safeRead(Path path) {
         return safeRead(path.toFile());

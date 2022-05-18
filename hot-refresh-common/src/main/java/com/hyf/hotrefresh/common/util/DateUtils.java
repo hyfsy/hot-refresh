@@ -7,7 +7,7 @@ import java.util.Date;
  * @author baB_hyf
  * @date 2021/12/12
  */
-public class DateUtils {
+public abstract class DateUtils {
 
     public static String now() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

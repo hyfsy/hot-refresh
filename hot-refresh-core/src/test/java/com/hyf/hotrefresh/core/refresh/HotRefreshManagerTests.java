@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.refresh;
 
+import com.hyf.hotrefresh.common.util.ReflectUtils;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
 import com.hyf.hotrefresh.core.exception.AgentException;
 import com.hyf.hotrefresh.core.exception.CompileException;
@@ -49,7 +50,7 @@ public class HotRefreshManagerTests {
     }
 
     private boolean invokeMethod(Class<?> clazz) {
-        Method getMethod = InfrastructureJarClassLoader.getInstance().getMethod(clazz, "get");
-        return InfrastructureJarClassLoader.getInstance().invokeMethod(getMethod, null);
+        Method getMethod = ReflectUtils.getMethod(clazz, "get");
+        return ReflectUtils.invokeMethod(getMethod, null);
     }
 }

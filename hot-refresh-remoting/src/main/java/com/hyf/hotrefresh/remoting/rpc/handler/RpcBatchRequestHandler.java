@@ -5,10 +5,11 @@ import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandlerFactory;
-import com.hyf.hotrefresh.remoting.rpc.RpcBatchRequest;
-import com.hyf.hotrefresh.remoting.rpc.RpcBatchResponse;
-import com.hyf.hotrefresh.remoting.rpc.RpcErrorResponse;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
+import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcBatchRequest;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcBatchResponse;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +21,6 @@ import java.util.List;
 public class RpcBatchRequestHandler implements RpcMessageHandler<RpcBatchRequest, RpcBatchResponse> {
 
     private final MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
-
-    @Override
-    public Class<RpcBatchRequest> getRpcMessageClassType() {
-        return RpcBatchRequest.class;
-    }
-
-    @Override
-    public RpcBatchRequest createEmptyRpcMessage() {
-        return new RpcBatchRequest();
-    }
 
     @Override
     public RpcBatchResponse handle(RpcBatchRequest request) throws Exception {

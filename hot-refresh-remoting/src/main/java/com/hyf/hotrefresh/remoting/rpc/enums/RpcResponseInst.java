@@ -11,6 +11,7 @@ public enum RpcResponseInst implements EnumCodeAware {
     MODIFY((byte) 2), //
     DELETE((byte) 3), //
     LOG((byte) 4), //
+    OUTPUT((byte) 5), //
     ;
 
     private byte code;

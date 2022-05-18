@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.util;
 
+import com.hyf.hotrefresh.common.util.ReflectUtils;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
 import org.junit.Test;
 
@@ -30,12 +31,12 @@ public class InfrastructureJarClassLoaderTests {
 
         assertEquals(TestJavaFileUtils.getClassName(), infra.getClassName(TestJavaFileUtils.getClassBytes()));
 
-        Method getMethod = infra.getMethod(InfrastructureJarClassLoaderTests.class, "get");
+        Method getMethod = ReflectUtils.getMethod(InfrastructureJarClassLoaderTests.class, "get");
         assertNotNull(getMethod);
-        Field fieldField = infra.getField(InfrastructureJarClassLoaderTests.class, "field");
+        Field fieldField = ReflectUtils.getField(InfrastructureJarClassLoaderTests.class, "field");
         assertNotNull(fieldField);
-        assertNotNull(infra.invokeMethod(getMethod, this));
-        assertNotNull(infra.invokeField(fieldField, this));
+        assertNotNull(ReflectUtils.invokeMethod(getMethod, this));
+        assertNotNull(ReflectUtils.invokeField(fieldField, this));
     }
 
     // TODO current not support register class file

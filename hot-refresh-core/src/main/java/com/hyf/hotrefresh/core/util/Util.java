@@ -8,7 +8,7 @@ import java.lang.instrument.Instrumentation;
  * @author baB_hyf
  * @date 2021/12/12
  */
-public class Util {
+public abstract class Util {
 
     public static ClassLoader getOriginContextClassLoader() {
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();

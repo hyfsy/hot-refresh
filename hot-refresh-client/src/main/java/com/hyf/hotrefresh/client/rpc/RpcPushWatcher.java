@@ -1,16 +1,11 @@
 package com.hyf.hotrefresh.client.rpc;
 
+import com.hyf.hotrefresh.client.HotRefreshClient;
 import com.hyf.hotrefresh.client.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
-import com.hyf.hotrefresh.common.Constants;
-import com.hyf.hotrefresh.common.Log;
-import com.hyf.hotrefresh.common.util.ExceptionUtils;
-import com.hyf.hotrefresh.remoting.message.Message;
-import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.RpcBatchRequest;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
-import com.hyf.hotrefresh.remoting.rpc.RpcRequest;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcRequest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,9 +23,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class RpcPushWatcher extends Thread implements Watcher {
 
-    private final BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<RpcMessage> rpcMessageQueue = new LinkedBlockingQueue<>();
 
-    private final RpcClient client = RpcClient.getInstance();
+    private final HotRefreshClient client = HotRefreshClient.getInstance();
 
     private volatile boolean closed = false;
 
@@ -79,9 +74,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
             request.setFileLocation(file.getAbsolutePath());
             request.setInst(RpcRequestInst.valueOf(type.name()));
             request.setContent(new FileInputStream(file));
-
-            Message message = MessageFactory.createMessage(request);
-            messageQueue.put(message);
+            rpcMessageQueue.put(request);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (FileNotFoundException e) {
@@ -90,51 +83,19 @@ public class RpcPushWatcher extends Thread implements Watcher {
     }
 
     private void handleFileChangeRequest() {
-        List<Message> messages = new ArrayList<>();
-        int i = messageQueue.drainTo(messages);
+        List<RpcMessage> messages = new ArrayList<>();
+        int i = rpcMessageQueue.drainTo(messages);
         if (i == 0) {
             return;
         }
 
         messages = new ArrayList<>(new HashSet<>(messages));
 
-        if (i == 1) {
-            sendRequest(messages.get(0));
+        if (messages.size() == 1) {
+            client.sendRequest(messages.get(0));
         }
         else {
-            sendBatchRequest(messages);
-        }
-    }
-
-    private void sendRequest(Message message) {
-        try {
-            client.sync(Constants.PUSH_SERVER_URL, message);
-        } catch (Exception e) {
-            Log.warn("Request to " + Constants.PUSH_SERVER_URL + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
-        }
-    }
-
-    private void sendBatchRequest(List<Message> messages) {
-        List<RpcMessage> rpcRequests = new ArrayList<>();
-        for (Message message : messages) {
-            Object body = message.getBody();
-            if (body instanceof RpcMessage) {
-                rpcRequests.add((RpcMessage) body);
-            }
-            else {
-                Log.warn("Current message not RpcMessage instance, so it's cannot use RpcBatchRequest to send request: " + body.toString());
-            }
-        }
-
-        try {
-            RpcBatchRequest rpcBatchRequest = new RpcBatchRequest();
-            rpcBatchRequest.setRpcMessages(rpcRequests);
-            Message message = MessageFactory.createMessage(rpcBatchRequest);
-            client.sync(Constants.PUSH_SERVER_URL, message);
-        } catch (Exception e) {
-            Log.warn("Request to " + Constants.PUSH_SERVER_URL + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
+            client.sendBatchRequest(messages);
         }
     }
 }

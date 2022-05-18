@@ -1,13 +1,15 @@
 package com.hyf.hotrefresh.core.util;
 
+import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.util.ReflectUtils;
 import com.hyf.hotrefresh.core.agent.AgentHelper;
 import com.hyf.hotrefresh.core.agent.ToolsJarProcessor;
-import com.hyf.hotrefresh.common.Log;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,9 +17,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author baB_hyf
@@ -125,7 +129,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     public Instrumentation getInstrumentation() {
         if (instrumentation == null) {
             Object attachmentProvider = AgentHelper.getAttachmentProvider();
-            instrumentation = invokeMethod(installMethod, null, attachmentProvider);
+            instrumentation = ReflectUtils.invokeMethod(installMethod, null, attachmentProvider);
             AgentHelper.installSpringLoaded(instrumentation);
         }
         return instrumentation;
@@ -134,7 +138,7 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     public String getClassName(byte[] bytes) {
         try {
             Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
-            String classNameWithPath = invokeMethod(getClassNameMethod, o);
+            String classNameWithPath = ReflectUtils.invokeMethod(getClassNameMethod, o);
             return classNameWithPath.replace("/", ".");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to getClassName", e);
@@ -154,8 +158,8 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
             if (compiler == null) {
                 try {
                     Class<?> clazz = forName(JAVAC_TOOL_CLASS);
-                    Method createMethod = getMethod(clazz, "create");
-                    compiler = invokeMethod(createMethod, null);
+                    Method createMethod = ReflectUtils.getMethod(clazz, "create");
+                    compiler = ReflectUtils.invokeMethod(createMethod, null);
                 } catch (Throwable ignored) {
                 }
             }
@@ -186,12 +190,12 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
     private void ensureByteBuddyExist() {
         agentClass = forName(BYTE_BUDDY_AGENT_CLASS);
         attachmentProviderClass = forName(ATTACHMENT_PROVIDER_CLASS);
-        installMethod = getMethod(agentClass, "install", attachmentProviderClass);
+        installMethod = ReflectUtils.getMethod(agentClass, "install", attachmentProviderClass);
     }
 
     private void ensureAsmExist() {
         classReaderClass = forName(CLASS_READER_CLASS);
-        getClassNameMethod = getMethod(classReaderClass, "getClassName");
+        getClassNameMethod = ReflectUtils.getMethod(classReaderClass, "getClassName");
     }
 
     public Class<?> forName(String className) {
@@ -208,39 +212,5 @@ public class InfrastructureJarClassLoader extends URLClassLoader {
         }
 
         return clazz;
-    }
-
-    public Field getField(Class<?> clazz, String fieldName) {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to get field: " + clazz + "." + fieldName, e);
-        }
-    }
-
-    public <T> T invokeField(Field field, Object obj) {
-        try {
-            field.setAccessible(true);
-            return (T) field.get(obj);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to invoke field: " + field.getName(), e);
-        }
-    }
-
-    public Method getMethod(Class<?> clazz, String methodName, Class<?>... args) {
-        try {
-            return clazz.getDeclaredMethod(methodName, args);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to get method: " + clazz + "." + methodName, e);
-        }
-    }
-
-    public <T> T invokeMethod(Method method, Object obj, Object... args) {
-        try {
-            method.setAccessible(true);
-            return (T) method.invoke(obj, args);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to invoke " + method.getName(), e);
-        }
     }
 }

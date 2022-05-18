@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.agent;
 
+import com.hyf.hotrefresh.common.util.ReflectUtils;
 import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.core.util.Util;
 
@@ -27,15 +28,15 @@ public class AgentHelper {
         InfrastructureJarClassLoader cl = Util.getInfrastructureJarClassLoader();
 
         Class<?> AttachmentProviderClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider");
-        Field DEFAULT = cl.getField(AttachmentProviderClass, "DEFAULT");
+        Field DEFAULT = ReflectUtils.getField(AttachmentProviderClass, "DEFAULT");
 
 
         Class<?> SimpleClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Simple");
-        Method of = cl.getMethod(SimpleClass, "of", ClassLoader.class, File[].class);
+        Method of = ReflectUtils.getMethod(SimpleClass, "of", ClassLoader.class, File[].class);
 
 
         Class<?> UnavailableClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Unavailable");
-        Field instance = cl.getField(UnavailableClass, "INSTANCE");
+        Field instance = ReflectUtils.getField(UnavailableClass, "INSTANCE");
 
         Class<?> CompoundClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Compound");
 
@@ -47,15 +48,15 @@ public class AgentHelper {
                 String toolsJarPath = processor.getToolsJarPath();
                 File toolsJar = new File(toolsJarPath);
                 return toolsJar.isFile() && toolsJar.canRead()
-                        ? cl.invokeMethod(of, null, cl, new File[]{toolsJar})
-                        : cl.invokeField(instance, null);
+                        ? ReflectUtils.invokeMethod(of, null, cl, new File[]{toolsJar})
+                        : ReflectUtils.invokeField(instance, null);
             }
             return method.invoke(DEFAULT, args);
         });
 
         try {
             Object arr = Array.newInstance(AttachmentProviderClass, 2);
-            Array.set(arr, 0, cl.invokeField(DEFAULT, null));
+            Array.set(arr, 0, ReflectUtils.invokeField(DEFAULT, null));
             Array.set(arr, 1, o);
             Constructor<?> CompoundConstructor = CompoundClass.getConstructor(AttachmentProviderArrayClass);
             return CompoundConstructor.newInstance(arr);
@@ -71,7 +72,7 @@ public class AgentHelper {
         //
         // Class<?> SpringLoadedAgentClass = cl.forName("org.springsource.loaded.agent.SpringLoadedAgent");
         //
-        // Method premainMethod = cl.getMethod(SpringLoadedAgentClass, "premain", String.class, Instrumentation.class);
+        // Method premainMethod = ReflectUtils.getMethod(SpringLoadedAgentClass, "premain", String.class, Instrumentation.class);
         //
         // cl.invokeMethod(premainMethod, null, null, instrumentation);
     }

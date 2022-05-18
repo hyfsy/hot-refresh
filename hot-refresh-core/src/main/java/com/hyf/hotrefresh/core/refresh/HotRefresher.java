@@ -2,6 +2,8 @@ package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.core.event.ByteCodeRefreshedEvent;
+import com.hyf.hotrefresh.core.event.HotRefreshEventPublisher;
 import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.install.CoreInstaller;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
@@ -58,6 +60,9 @@ public class HotRefresher {
                     reset(className);
                 }
             }
+
+            HotRefreshEventPublisher eventPublisher = HotRefreshEventPublisher.getInstance();
+            eventPublisher.publishEvent(new ByteCodeRefreshedEvent(compiledBytes));
         } catch (RefreshException e) {
             throw e;
         } catch (Throwable e) {
