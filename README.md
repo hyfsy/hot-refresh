@@ -8,25 +8,27 @@ IDEA小锤子的远程版
 
 # 使用
 
+> 目前懒得发布maven中央仓库，请自行拉取源代码打包
+
 1、需要热刷新的应用系统引入依赖：
 
 ```xml
 <dependency>
-    <groupId>io.github.hyfsy</groupId>
+    <groupId>com.hyf.hotrefresh</groupId>
     <artifactId>hot-refresh-server</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0-SNAPSHOT</version>
 </dependency>
 ```
 
 2、启动应用系统
 
-3、获取本地服务器jar包：[hot-refresh-client-1.0.1.jar](https://github.com/hyfsy/hot-refresh/releases)
+3、获取本地服务器jar包：`hot-refresh-client-1.1.0-SNAPSHOT`
 
 4、进入命令行界面，启动本地服务器：
 
 ```bash
 java 
-  -jar hot-refresh-client-1.0.1.jar
+  -jar hot-refresh-client-1.1.0-SNAPSHOT.jar
   -h C:\\Users\\baB_hyf\\Desktop\\test 
   -s http://localhost:8082/rest 
 ```

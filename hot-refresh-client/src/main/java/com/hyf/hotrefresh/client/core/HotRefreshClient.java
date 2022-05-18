@@ -1,6 +1,6 @@
-package com.hyf.hotrefresh.client;
+package com.hyf.hotrefresh.client.core;
 
-import com.hyf.hotrefresh.client.rpc.RpcClient;
+import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
@@ -21,9 +21,10 @@ public class HotRefreshClient {
 
     private static final HotRefreshClient INSTANCE = new HotRefreshClient();
 
-    private static final RpcClient client = RpcClient.getInstance();
+    private final RpcClient client;
 
     private HotRefreshClient() {
+        client = RpcClient.getInstance();
     }
 
     public static HotRefreshClient getInstance() {

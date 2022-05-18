@@ -1,9 +1,7 @@
 package com.hyf.hotrefresh.client;
 
-import com.hyf.hotrefresh.client.command.CommandLineHandler;
-import com.hyf.hotrefresh.client.rpc.RpcClient;
-import com.hyf.hotrefresh.client.rpc.RpcPushWatcher;
-import com.hyf.hotrefresh.client.watch.WatchCenter;
+import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
+import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
@@ -24,9 +22,9 @@ public class LocalClient {
     // TODO IDEA plugin
     public static void main(String[] args) {
 
-        System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh");
-        System.setProperty("server", "http://localhost:8082");
-        System.setProperty("debug", "1");
+        // System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh");
+        // System.setProperty("server", "http://localhost:8082");
+        // System.setProperty("debug", "1");
 
         // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
@@ -112,15 +110,10 @@ public class LocalClient {
     }
 
     private static void start() {
-        startFileWatcher();
-        startCommandLineHandler();
+        setupPlugin();
     }
 
-    private static void startFileWatcher() {
-        WatchCenter.registerWatcher(WATCH_HOME, new RpcPushWatcher());
-    }
-
-    private static void startCommandLineHandler() {
-        new CommandLineHandler().start();
+    private static void setupPlugin() {
+        new PluginBootstrap().boot();
     }
 }

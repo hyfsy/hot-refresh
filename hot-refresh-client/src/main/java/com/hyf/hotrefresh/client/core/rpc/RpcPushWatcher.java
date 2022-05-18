@@ -1,6 +1,6 @@
-package com.hyf.hotrefresh.client.rpc;
+package com.hyf.hotrefresh.client.core.rpc;
 
-import com.hyf.hotrefresh.client.HotRefreshClient;
+import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;

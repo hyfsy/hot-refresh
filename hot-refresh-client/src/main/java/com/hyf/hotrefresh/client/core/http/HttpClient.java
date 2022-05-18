@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.http;
+package com.hyf.hotrefresh.client.core.http;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
