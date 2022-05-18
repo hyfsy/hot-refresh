@@ -40,11 +40,15 @@ public class ToolsJarProcessor {
             Process process = builder.start();
             processResult(process);
 
-            if (process.waitFor() != 0) {
-                processError(process);
+            int exitCode = process.waitFor();
+            if (exitCode != 0 && Log.isDebugMode()) {
+                Log.debug("tools.jar path process return code: " + exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.error("Execute find tools.jar process failed", e);
+        }
+        catch (Throwable t) {
+            Log.error("Execute find tools.jar process unknown error", t);
         }
 
         // make sure not null
@@ -55,7 +59,7 @@ public class ToolsJarProcessor {
     }
 
     private void processResult(Process process) {
-        Thread t = new Thread(new Runnable() {
+        Thread successThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), getCharset()))) {
@@ -63,35 +67,48 @@ public class ToolsJarProcessor {
                 } catch (IOException e) {
                     Log.error("Read find tools.jar process InputStream error", e);
                 }
-                process.destroy();
+                process.destroy(); // TODO 快速销毁，会导致ErrorStream出错，感觉没有其他办法处理 -> java.io.IOException: Stream closed
             }
-        }, "process-input");
-        t.start();
+        }, "tools.jar-process-input");
+        successThread.start();
 
-        Thread stopProcess = new Thread(new Runnable() {
+        Thread errorThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream(), getCharset()))) {
+                    String s;
+                    while ((s = br.readLine()) != null) {
+                        Log.warn(s);
+                    }
+                } catch (IOException e) {
+                    if (Log.isDebugMode()) {
+                        Log.error("Read find tools.jar process ErrorStream error", e);
+                    }
+                }
+            }
+        }, "tools.jar-process-error");
+        errorThread.start();
+
+        Thread stopThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     TimeUnit.SECONDS.sleep(30);
                 } catch (InterruptedException ignored) {
                 }
-                t.interrupt();
-                process.destroy();
+                if (successThread.isAlive()) {
+                    successThread.interrupt();
+                }
+                if (errorThread.isAlive()) {
+                    errorThread.interrupt();
+                }
+                if (process.isAlive()) {
+                    process.destroy();
+                }
             }
-        }, "process-interrupter");
-        stopProcess.setDaemon(true);
-        stopProcess.start();
-    }
-
-    private void processError(Process process) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"))) {
-            String s;
-            while ((s = br.readLine()) != null) {
-                Log.warn(s);
-            }
-        } catch (IOException e) {
-            Log.error("Read find tools.jar process ErrorStream error", e);
-        }
+        }, "tools.jar-process-interrupter");
+        stopThread.setDaemon(true);
+        stopThread.start();
     }
 
     private String getCharset() {
