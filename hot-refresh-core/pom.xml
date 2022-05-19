@@ -43,4 +43,8 @@
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>hot-refresh-core</finalName>
+    </build>
 </project>

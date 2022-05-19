@@ -19,6 +19,7 @@
         <junit.version>4.12</junit.version>
         <mockito.version>2.23.4</mockito.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 
         <!-- third -->
         <!-- avoid low version compile idea bug -->
@@ -38,16 +39,17 @@
         <module>hot-refresh-remoting</module>
         <module>hot-refresh-client</module>
         <module>hot-refresh-server</module>
+        <module>hot-refresh-client-distribution</module>
 
         <module>adapter/hot-refresh-adapter-lombok</module>
         <module>adapter/hot-refresh-adapter-mapstruct</module>
         <module>adapter/hot-refresh-adapter-spring-boot</module>
         <module>adapter/hot-refresh-adapter-mybatis</module>
 
-        <module>plugin/hot-refresh-plugin-web</module>
-        <module>plugin/hot-refresh-plugin-spring-boot</module>
-        <module>plugin/hot-refresh-plugin-fastjson</module>
-        <module>plugin/hot-refresh-plugin-execute</module>
+        <module>plugins/hot-refresh-plugin-web</module>
+        <module>plugins/hot-refresh-plugin-spring-boot</module>
+        <module>plugins/hot-refresh-plugin-fastjson</module>
+        <module>plugins/hot-refresh-plugin-execute</module>
 
         <module>test-cases/hot-refresh-test-spring-boot</module>
         <module>test-cases/hot-refresh-test-jar-file</module>
@@ -140,6 +142,15 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
