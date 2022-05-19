@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client;
 
+import com.hyf.hotrefresh.client.core.Version;
 import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.common.Log;
@@ -9,6 +10,7 @@ import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static com.hyf.hotrefresh.common.Constants.*;
@@ -60,10 +62,11 @@ public class LocalClient {
     }
 
     private static void print() {
+        String version = "Client Version: " + Version.getVersion();
         String home = "Watch Home Path: " + WATCH_HOME;
         String url = "Refresh Server : " + PUSH_SERVER_URL;
 
-        int max = Math.max(home.getBytes(MESSAGE_ENCODING).length, url.getBytes(MESSAGE_ENCODING).length);
+        int max = Math.max(home.getBytes(MESSAGE_ENCODING).length, Math.max(url.getBytes(MESSAGE_ENCODING).length, version.getBytes(MESSAGE_ENCODING).length));
         StringBuilder sb = new StringBuilder(max);
         for (int i = 0; i < max; i++) {
             sb.append('=');
@@ -73,6 +76,7 @@ public class LocalClient {
         Log.info(sb.toString());
         Log.info(home);
         Log.info(url);
+        Log.info(version);
         Log.info(sb.toString());
         Log.info("");
     }

@@ -29,7 +29,7 @@ public class RpcRequest implements RpcMessage {
     public static final int FIXED_LENGTH = 4 + 4;
 
     private Map<String, Object> headers = new HashMap<>();
-    private InputStream body;
+    private InputStream         body;
 
     @Override
     public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
@@ -109,7 +109,7 @@ public class RpcRequest implements RpcMessage {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RpcRequest that = (RpcRequest)o;
+        RpcRequest that = (RpcRequest) o;
         return Objects.equals(headers, that.headers);
     }
 
