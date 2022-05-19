@@ -8,9 +8,5 @@ import com.hyf.hotrefresh.remoting.message.Message;
  */
 public interface MessageHandler {
 
-    @Deprecated
-    default void init() {
-    }
-
     Message handle(Message request) throws Exception;
 }

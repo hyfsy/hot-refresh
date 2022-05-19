@@ -3,8 +3,6 @@ package com.hyf.hotrefresh.remoting.message.handler;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandlerRegistry;
 
 /**
- * 方便过早暴露处理器，解决循环依赖问题
- *
  * @author baB_hyf
  * @date 2022/05/15
  */

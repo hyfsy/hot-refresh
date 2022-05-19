@@ -69,7 +69,7 @@ public class RpcClient {
                     Message message = MessageCodec.decode(data);
                     clientMessageHandler.handle(message);
                 } finally {
-                    is.close();
+                    IOUtils.close(is);
                 }
             }
 

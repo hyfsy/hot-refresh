@@ -70,12 +70,18 @@ public class HotRefresher {
         }
     }
 
-    @Deprecated
+    /**
+     * @deprecated refreshed class has been loaded by app class loader and delete the file cannot
+     * clear class loader cache, so use this method invoke will be no action
+     */
     public static void reset(String className) throws RefreshException {
         HotRefreshManager.reset(className);
     }
 
-    @Deprecated
+    /**
+     * @deprecated refreshed class has been loaded by app class loader and delete the file cannot
+     * clear class loader cache, so use this method invoke will be no action
+     */
     public static void reset() throws RefreshException {
         HotRefreshManager.resetAll();
     }

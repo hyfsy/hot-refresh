@@ -3,9 +3,9 @@ package com.hyf.hotrefresh.client.core.rpc;
 import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
-import com.hyf.hotrefresh.remoting.rpc.payload.RpcRequest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +69,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
 
     private void addFileChangeRequest(File file, ChangeType type) {
         try {
-            RpcRequest request = new RpcRequest();
+            RpcHotRefreshRequest request = new RpcHotRefreshRequest();
             request.setFileName(file.getName());
             request.setFileLocation(file.getAbsolutePath());
             request.setInst(RpcRequestInst.valueOf(type.name()));

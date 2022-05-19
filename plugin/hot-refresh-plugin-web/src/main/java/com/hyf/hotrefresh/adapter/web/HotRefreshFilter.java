@@ -7,7 +7,9 @@ import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
+import com.hyf.hotrefresh.remoting.exception.ServerException;
 import com.hyf.hotrefresh.remoting.server.HotRefreshServer;
+import com.hyf.hotrefresh.remoting.server.RpcServer;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -31,13 +33,18 @@ public class HotRefreshFilter implements Filter {
         add("HotRefreshFilter");
     }};
 
-    private final HotRefreshServer server = HotRefreshServer.getInstance();
+    private final RpcServer server = new HotRefreshServer();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         String blocks = filterConfig.getInitParameter("blocks");
         if (blocks != null) {
             blockList.addAll(Arrays.asList(blocks.split(",")));
+        }
+        try {
+            server.start();
+        } catch (ServerException e) {
+            Log.error("Server start failed", e);
         }
     }
 
@@ -113,15 +120,24 @@ public class HotRefreshFilter implements Filter {
         return requestURI.equals(requestPath);
     }
 
+    /**
+     * @deprecated recommend to use rpc style response to return
+     */
     protected void success(HttpServletRequest request, HttpServletResponse response) {
         response(request, response, "");
     }
 
+    /**
+     * @deprecated recommend to use rpc style response to return
+     */
     protected void error(HttpServletRequest request, HttpServletResponse response, Throwable ex) {
         String sb = ExceptionUtils.getNestedMessage(ex) + Constants.MESSAGE_SEPARATOR + ExceptionUtils.getStackMessage(ex);
         response(request, response, sb);
     }
 
+    /**
+     * @deprecated recommend to use rpc style response to return
+     */
     private void response(HttpServletRequest request, HttpServletResponse response, String message) {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
@@ -136,5 +152,10 @@ public class HotRefreshFilter implements Filter {
 
     @Override
     public void destroy() {
+        try {
+            server.stop();
+        } catch (ServerException e) {
+            Log.error("Server stop failed", e);
+        }
     }
 }

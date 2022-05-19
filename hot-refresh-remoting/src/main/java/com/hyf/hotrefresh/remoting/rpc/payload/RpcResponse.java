@@ -5,7 +5,6 @@ import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcResponseInst;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ public class RpcResponse implements RpcMessage {
     // status(4byte)
     // data length(4byte)
     // data
-    // inst(1byte)
     // extra length(4byte)
     // extra
 
@@ -31,7 +29,6 @@ public class RpcResponse implements RpcMessage {
     private Map<String, Object> extra  = new HashMap<>();
     private int                 status = -1;
     private byte[]              data   = new byte[0];
-    private RpcResponseInst     inst   = RpcResponseInst.NONE;
 
     @Override
     public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
@@ -44,7 +41,6 @@ public class RpcResponse implements RpcMessage {
         buf.putInt(status);
         buf.putInt(data.length);
         buf.put(data);
-        buf.put(inst.getCode());
         buf.putInt(extraBytes.length);
         buf.put(extraBytes);
         return buf.array();
@@ -61,14 +57,12 @@ public class RpcResponse implements RpcMessage {
         int dataLength = buf.getInt();
         byte[] dataBytes = new byte[dataLength];
         buf.get(dataBytes);
-        byte instCode = buf.get();
         int extraLength = buf.getInt();
         byte[] extraBytes = new byte[extraLength];
         buf.get(extraBytes);
 
         this.setStatus(status);
         this.setData(dataBytes);
-        this.setInst(RpcResponseInst.getInst(instCode));
         this.setExtra(MessageCodec.decodeObject(extraBytes, encoding, codec));
     }
 
@@ -93,14 +87,6 @@ public class RpcResponse implements RpcMessage {
         this.data = data;
     }
 
-    public RpcResponseInst getInst() {
-        return inst;
-    }
-
-    public void setInst(RpcResponseInst inst) {
-        this.inst = inst;
-    }
-
     public Map<String, Object> getExtra() {
         return extra;
     }
@@ -118,12 +104,12 @@ public class RpcResponse implements RpcMessage {
             return false;
         }
         RpcResponse that = (RpcResponse) o;
-        return status == that.status && Objects.equals(extra, that.extra) && Arrays.equals(data, that.data) && inst == that.inst;
+        return status == that.status && Objects.equals(extra, that.extra) && Arrays.equals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(extra, status, inst);
+        int result = Objects.hash(extra, status);
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
