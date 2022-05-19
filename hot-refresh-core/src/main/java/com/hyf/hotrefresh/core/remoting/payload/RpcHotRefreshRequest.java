@@ -3,7 +3,6 @@ package com.hyf.hotrefresh.core.remoting.payload;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcRequest;
 
 import java.nio.ByteBuffer;
@@ -43,6 +42,7 @@ public class RpcHotRefreshRequest extends RpcRequest {
         int messageLength = superBuf.limit() + FIXED_LENGTH + fileNameBytes.length + fileLocationBytes.length;
 
         ByteBuffer buf = ByteBuffer.allocate(messageLength);
+        superBuf.flip(); // 可写
         buf.put(superBuf);
         buf.putInt(fileNameBytes.length);
         buf.put(fileNameBytes);

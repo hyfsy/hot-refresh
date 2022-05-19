@@ -7,7 +7,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 /**
  * 应用上下文工具
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
  * @author baB_hyf
  * @date 2022/02/09
  */
-@Component
 public class ApplicationContextUtils implements ApplicationContextAware, BeanFactoryAware {
 
     private static volatile ConfigurableListableBeanFactory beanFactory;

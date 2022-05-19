@@ -8,13 +8,11 @@ import java.util.Map;
  */
 public class ByteCodeRefreshedEvent extends HotRefreshEvent {
 
-    private Map<String, byte[]> compiledBytes;
-
     public ByteCodeRefreshedEvent(Map<String, byte[]> compiledBytes) {
         super(compiledBytes);
     }
 
     public Map<String, byte[]> getCompiledBytes() {
-        return compiledBytes;
+        return (Map<String, byte[]>) this.getSource();
     }
 }

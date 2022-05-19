@@ -7,7 +7,7 @@ import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
+import com.hyf.hotrefresh.core.remoting.payload.RpcRequestInst;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

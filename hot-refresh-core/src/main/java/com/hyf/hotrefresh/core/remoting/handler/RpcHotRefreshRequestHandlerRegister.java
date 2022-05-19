@@ -15,5 +15,6 @@ public class RpcHotRefreshRequestHandlerRegister implements RpcMessageHandlerReg
     @Override
     public void register(RpcMessageHandlerRegistry registry) {
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.REQUEST_HOT_REFRESH, HandleSide.SERVER, new RpcHotRefreshRequestHandler()));
+        registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_HOT_REFRESH, HandleSide.CLIENT, new RpcHotRefreshResponseHandler()));
     }
 }

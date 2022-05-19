@@ -36,8 +36,12 @@ public class HotRefreshClient {
             Message message = MessageFactory.createMessage(request);
             client.sync(SERVER_ADDRESS, message);
         } catch (Exception e) {
-            Log.warn("Request to " + SERVER_ADDRESS + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
+            if (Log.isDebugMode()) {
+                Log.debug(ExceptionUtils.getStackMessage(e));
+            }
+            else {
+                Log.warn("Request to " + SERVER_ADDRESS + " failed: " + ExceptionUtils.getNestedMessage(e));
+            }
         }
     }
 
@@ -48,8 +52,12 @@ public class HotRefreshClient {
             Message message = MessageFactory.createMessage(rpcBatchRequest);
             client.sync(SERVER_ADDRESS, message);
         } catch (Exception e) {
-            Log.warn("Request to " + SERVER_ADDRESS + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
+            if (Log.isDebugMode()) {
+                Log.debug(ExceptionUtils.getStackMessage(e));
+            }
+            else {
+                Log.warn("Request to " + SERVER_ADDRESS + " failed: " + ExceptionUtils.getNestedMessage(e));
+            }
         }
     }
 }

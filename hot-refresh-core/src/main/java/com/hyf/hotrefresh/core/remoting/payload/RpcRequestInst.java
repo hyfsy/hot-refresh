@@ -1,4 +1,6 @@
-package com.hyf.hotrefresh.remoting.rpc.enums;
+package com.hyf.hotrefresh.core.remoting.payload;
+
+import com.hyf.hotrefresh.remoting.rpc.enums.EnumCodeAware;
 
 /**
  * @author baB_hyf

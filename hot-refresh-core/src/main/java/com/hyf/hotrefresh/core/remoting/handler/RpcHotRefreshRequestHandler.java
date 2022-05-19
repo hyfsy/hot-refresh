@@ -7,7 +7,7 @@ import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshResponse;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
+import com.hyf.hotrefresh.core.remoting.payload.RpcRequestInst;
 
 import java.io.InputStream;
 import java.util.Arrays;
