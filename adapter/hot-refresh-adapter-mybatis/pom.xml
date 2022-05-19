@@ -10,10 +10,6 @@
     </parent>
     <artifactId>hot-refresh-adapter-mybatis</artifactId>
 
-    <properties>
-        <mybatis.version>3.5.9</mybatis.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.mybatis</groupId>

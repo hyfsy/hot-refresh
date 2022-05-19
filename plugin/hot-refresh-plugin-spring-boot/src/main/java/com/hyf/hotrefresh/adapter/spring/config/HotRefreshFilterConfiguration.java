@@ -22,7 +22,7 @@ public class HotRefreshFilterConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public FilterRegistrationBean /* 兼容低版本spring */ hotRefreshFilter() {
-        FilterRegistrationBean filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        FilterRegistrationBean filterFilterRegistrationBean = new FilterRegistrationBean();
         filterFilterRegistrationBean.setFilter(getFilter());
         filterFilterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
         filterFilterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST);

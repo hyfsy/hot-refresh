@@ -103,20 +103,6 @@ public class HotRefreshFilterTests {
         }
 
         @Override
-        public boolean isFinished() {
-            return false;
-        }
-
-        @Override
-        public boolean isReady() {
-            return false;
-        }
-
-        @Override
-        public void setReadListener(ReadListener readListener) {
-        }
-
-        @Override
         public int read() throws IOException {
             return bais.read();
         }
@@ -128,16 +114,6 @@ public class HotRefreshFilterTests {
 
         public ByteArrayServletOutputStream(ByteArrayOutputStream baos) {
             this.baos = baos;
-        }
-
-        @Override
-        public boolean isReady() {
-            return false;
-        }
-
-        @Override
-        public void setWriteListener(WriteListener writeListener) {
-
         }
 
         @Override
