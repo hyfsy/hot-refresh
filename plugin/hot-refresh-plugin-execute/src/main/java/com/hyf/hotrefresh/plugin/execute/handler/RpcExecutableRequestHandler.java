@@ -25,7 +25,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
     @Override
     public RpcExecutableResponse handle(RpcExecutableRequest request) throws Exception {
 
-        try (InputStream content = request.getContent()) {
+        try (InputStream content = request.getBody()) {
 
             ExecutableClassLoader cl = ExecutableClassLoader.createInstance();
 

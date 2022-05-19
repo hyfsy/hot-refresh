@@ -31,7 +31,7 @@ public class RpcResponse implements RpcMessage {
     private byte[]              data   = new byte[0];
 
     @Override
-    public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
+    public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         byte[] extraBytes = MessageCodec.encodeObject(extra, encoding, codec);
 
@@ -43,12 +43,11 @@ public class RpcResponse implements RpcMessage {
         buf.put(data);
         buf.putInt(extraBytes.length);
         buf.put(extraBytes);
-        return buf.array();
+        return buf;
     }
 
     @Override
-    public void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec) {
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+    public void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec) {
         if (!buf.hasRemaining()) {
             return;
         }

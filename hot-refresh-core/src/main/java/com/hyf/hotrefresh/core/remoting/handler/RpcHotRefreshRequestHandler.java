@@ -22,12 +22,12 @@ public class RpcHotRefreshRequestHandler implements RpcMessageHandler<RpcHotRefr
     @Override
     public RpcHotRefreshResponse handle(RpcHotRefreshRequest request) throws Exception {
 
-        try {
-            Map<String, Object> headers = request.getHeaders();
-            String fileName = request.getFileName();
-            String fileLocation = request.getFileLocation();
-            InputStream content = request.getContent(); // 需要手动关闭
-            RpcRequestInst inst = request.getInst();
+        Map<String, Object> headers = request.getHeaders();
+        String fileName = request.getFileName();
+        String fileLocation = request.getFileLocation();
+        RpcRequestInst inst = request.getInst();
+
+        try (InputStream content = request.getBody() /* 需要手动关闭 */) {
 
             // 热刷新
             if (Arrays.asList(RpcRequestInst.CREATE, RpcRequestInst.MODIFY, RpcRequestInst.DELETE).contains(inst)) {
@@ -40,11 +40,6 @@ public class RpcHotRefreshRequestHandler implements RpcMessageHandler<RpcHotRefr
                 if (contentString != null && !"".equals(contentString.trim())) {
                     HotRefresher.refresh(fileName, contentString, ChangeType.valueOf(inst.name()).name());
                 }
-            }
-        } finally {
-            InputStream content = request.getContent();
-            if (content != null) {
-                content.close();
             }
         }
 

@@ -31,7 +31,7 @@ public class ExecuteCommandHandler implements CommandHandler {
         RpcExecutableRequest request = new RpcExecutableRequest();
         request.setFileName(file.getName());
         request.setFileLocation(file.getAbsolutePath());
-        request.setContent(Files.newInputStream(file.toPath()));
+        request.setBody(Files.newInputStream(file.toPath()));
         client.sendRequest(request);
     }
 }

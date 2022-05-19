@@ -73,7 +73,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
             request.setFileName(file.getName());
             request.setFileLocation(file.getAbsolutePath());
             request.setInst(RpcRequestInst.valueOf(type.name()));
-            request.setContent(new FileInputStream(file));
+            request.setBody(new FileInputStream(file));
             rpcMessageQueue.put(request);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

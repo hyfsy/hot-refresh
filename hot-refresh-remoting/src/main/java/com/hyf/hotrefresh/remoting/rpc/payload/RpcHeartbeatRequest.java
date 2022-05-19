@@ -5,6 +5,8 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 
+import java.nio.ByteBuffer;
+
 /**
  * TODO 单例
  *
@@ -14,12 +16,12 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 public class RpcHeartbeatRequest implements RpcMessage {
 
     @Override
-    public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
-        return new byte[0];
+    public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
+        return ByteBuffer.allocate(0);
     }
 
     @Override
-    public void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec) {
+    public void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
     }
 

@@ -48,7 +48,7 @@ public class HotRefreshFilterTests {
         request.setFileName("Supplier.java");
         request.setFileLocation(null);
         request.setInst(RpcRequestInst.MODIFY);
-        request.setContent(getJavaFileInputStream());
+        request.setBody(getJavaFileInputStream());
         Message message = MessageFactory.createMessage(request);
         byte[] encode = MessageCodec.encode(message);
         ByteArrayServletInputStream basis = new ByteArrayServletInputStream(new ByteArrayInputStream(encode));
