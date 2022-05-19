@@ -39,12 +39,18 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
+                    <!-- 输出文件是否添加-distribution后缀 -->
                     <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <!-- <descriptorRefs>-->
+                    <!--    <descriptorRef>jar-with-dependencies</descriptorRef>-->
+                    <!-- <descriptorRefs>-->
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
                     <archive>
                         <manifest>
                             <mainClass>com.hyf.hotrefresh.client.LocalClient</mainClass>
@@ -56,7 +62,8 @@
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>assembly</goal>
+                            <goal>single</goal>
+<!--                            <goal>assembly</goal>-->
                         </goals>
                     </execution>
                 </executions>
