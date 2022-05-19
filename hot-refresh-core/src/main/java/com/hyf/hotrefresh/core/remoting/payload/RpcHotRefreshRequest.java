@@ -22,9 +22,9 @@ public class RpcHotRefreshRequest extends RpcRequest {
 
     public static final int FIXED_LENGTH = 4 + 4 + 1;
 
-    private String fileName;
+    private String         fileName;
     // @Nullable
-    private String fileLocation;
+    private String         fileLocation;
     private RpcRequestInst inst;
 
     @Override
@@ -104,9 +104,9 @@ public class RpcHotRefreshRequest extends RpcRequest {
 
     @Override
     public boolean equals(Object o) {
-        RpcHotRefreshRequest that = (RpcHotRefreshRequest)o;
+        RpcHotRefreshRequest that = (RpcHotRefreshRequest) o;
         return super.equals(o) && Objects.equals(fileName, that.fileName) && Objects.equals(fileLocation,
-            that.fileLocation) && inst == that.inst;
+                that.fileLocation) && inst == that.inst;
     }
 
     @Override
