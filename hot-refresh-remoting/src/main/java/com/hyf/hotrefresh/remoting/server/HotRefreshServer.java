@@ -2,7 +2,7 @@ package com.hyf.hotrefresh.remoting.server;
 
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.core.install.CoreInstaller;
+import com.hyf.hotrefresh.remoting.exception.ServerException;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
@@ -13,35 +13,31 @@ import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ServiceLoader;
 
 /**
  * @author baB_hyf
  * @date 2022/05/18
  */
-public class HotRefreshServer {
-
-    private static final HotRefreshServer INSTANCE = new HotRefreshServer();
+public class HotRefreshServer implements RpcServer {
 
     private MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
 
-    private HotRefreshServer() {
-        initServer();
+    private ServiceLoader<RpcServerLifecycle> lifecycles;
+
+    public HotRefreshServer() {
+        lifecycles = ServiceLoader.load(RpcServerLifecycle.class);
     }
 
-    public static HotRefreshServer getInstance() {
-        return INSTANCE;
-    }
-
-    private void initServer() {
-        CoreInstaller.install();
-    }
-
-    public void handle(InputStream is, OutputStream os) {
-
-        if (!CoreInstaller.enable()) {
-            return;
+    @Override
+    public void start() throws ServerException {
+        for (RpcServerLifecycle lifecycle : lifecycles) {
+            lifecycle.start();
         }
+    }
 
+    @Override
+    public void handle(InputStream is, OutputStream os) {
         try {
             Message message = MessageCodec.decode(IOUtils.readAsByteArray(is));
             Message rtn = serverMessageHandler.handle(message);
@@ -63,18 +59,14 @@ public class HotRefreshServer {
                 }
             }
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ignore) {
-                }
-            }
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException ignore) {
-                }
-            }
+            IOUtils.close(is, os);
+        }
+    }
+
+    @Override
+    public void stop() throws ServerException {
+        for (RpcServerLifecycle lifecycle : lifecycles) {
+            lifecycle.stop();
         }
     }
 }

@@ -37,4 +37,13 @@ public abstract class IOUtils {
 
         bos.flush();
     }
+
+    public static void close(Closeable... closeable) {
+        for (Closeable c : closeable) {
+            try {
+                c.close();
+            } catch (IOException ignore) {
+            }
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package com.hyf.hotrefresh.remoting.rpc;
 
 import com.hyf.hotrefresh.common.util.ReflectUtils;
-import com.hyf.hotrefresh.core.util.Util;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

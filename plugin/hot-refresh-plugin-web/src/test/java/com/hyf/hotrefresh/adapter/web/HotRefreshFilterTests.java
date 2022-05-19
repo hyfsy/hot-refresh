@@ -1,10 +1,10 @@
 package com.hyf.hotrefresh.adapter.web;
 
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.payload.RpcRequest;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
@@ -44,7 +44,7 @@ public class HotRefreshFilterTests {
 
         assertFalse(Supplier.get());
 
-        RpcRequest request = new RpcRequest();
+        RpcHotRefreshRequest request = new RpcHotRefreshRequest();
         request.setFileName("Supplier.java");
         request.setFileLocation(null);
         request.setInst(RpcRequestInst.MODIFY);
