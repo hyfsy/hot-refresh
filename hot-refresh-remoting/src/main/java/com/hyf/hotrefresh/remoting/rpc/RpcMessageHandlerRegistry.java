@@ -69,7 +69,6 @@ public class RpcMessageHandlerRegistry {
     public void initDefaultHandler() {
         if (initialized.compareAndSet(false, true)) {
 
-
             ServiceLoader<RpcMessageHandlerRegister> registers = ServiceLoader.load(RpcMessageHandlerRegister.class);
             for (RpcMessageHandlerRegister register : registers) {
                 register(register);

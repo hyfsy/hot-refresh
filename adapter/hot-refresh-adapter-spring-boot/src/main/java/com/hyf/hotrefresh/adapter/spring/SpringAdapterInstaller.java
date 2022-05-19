@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.adapter.spring;
 
+import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.core.install.Installer;
 
 /**
@@ -10,6 +11,8 @@ public class SpringAdapterInstaller implements Installer {
 
     @Override
     public void install() {
-        System.out.println("spring installed");
+        if (Log.isDebugMode()) {
+            Log.debug("spring adapter installed");
+        }
     }
 }

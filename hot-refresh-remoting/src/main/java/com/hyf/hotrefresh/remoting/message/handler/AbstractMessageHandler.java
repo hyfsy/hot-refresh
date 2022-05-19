@@ -1,12 +1,12 @@
 package com.hyf.hotrefresh.remoting.message.handler;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.remoting.exception.RpcException;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 
 import java.util.HashMap;
@@ -27,6 +27,9 @@ public abstract class AbstractMessageHandler implements MessageHandler {
         try {
             RpcMessage rpcMessage = (RpcMessage) request.getBody();
             RpcMessageHandler<RpcMessage, RpcMessage> rpcMessageHandler = (RpcMessageHandler<RpcMessage, RpcMessage>) getHandlers().get(request.getMessageType());
+            if (rpcMessageHandler == null) {
+                throw new RpcException("Unknown message type code: " + request.getMessageType());
+            }
             Class<RpcMessage> rpcMessageClassType = RpcMessageFactory.getRpcMessageClassType((Class<? extends RpcMessageHandler<?, ?>>) rpcMessageHandler.getClass());
             if (!(rpcMessageClassType == rpcMessage.getClass())) {
                 throw new IllegalStateException("Rpc message type related handler not exist: " + rpcMessage.getClass());

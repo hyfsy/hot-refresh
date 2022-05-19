@@ -1,15 +1,14 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
+import com.hyf.hotrefresh.client.core.DeferredOpenFileInputStream;
 import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
+import com.hyf.hotrefresh.core.remoting.payload.RpcRequestInst;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcRequestInst;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -73,12 +72,11 @@ public class RpcPushWatcher extends Thread implements Watcher {
             request.setFileName(file.getName());
             request.setFileLocation(file.getAbsolutePath());
             request.setInst(RpcRequestInst.valueOf(type.name()));
-            request.setBody(new FileInputStream(file));
+            // 延迟打开的输入流，防止文件被长时间占用
+            request.setBody(new DeferredOpenFileInputStream(file));
             rpcMessageQueue.put(request);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Add request failed", e);
         }
     }
 

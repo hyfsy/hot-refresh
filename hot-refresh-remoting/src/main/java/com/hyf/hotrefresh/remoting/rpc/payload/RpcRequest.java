@@ -64,20 +64,12 @@ public class RpcRequest implements RpcMessage {
         byte[] headerBytes = new byte[headerLength];
         buf.get(headerBytes);
 
-        int fileNameLength = buf.getInt();
-        byte[] fileNameBytes = new byte[fileNameLength];
-        buf.get(fileNameBytes);
-
-        int fileLocationLength = buf.getInt();
-        byte[] fileLocationBytes = new byte[fileLocationLength];
-        buf.get(fileLocationBytes);
-
-        int contentLength = buf.getInt();
-        byte[] contentBytes = new byte[contentLength];
-        buf.get(contentBytes);
+        int bodyLength = buf.getInt();
+        byte[] bodyBytes = new byte[bodyLength];
+        buf.get(bodyBytes);
 
         this.setHeaders(MessageCodec.decodeObject(headerBytes, encoding, codec));
-        this.setBody(new ByteArrayInputStream(contentBytes));
+        this.setBody(new ByteArrayInputStream(bodyBytes));
     }
 
     @Override
