@@ -29,17 +29,17 @@ public abstract class RpcBatchMessage implements RpcMessage {
     private List<RpcMessage> rpcMessages = new ArrayList<>();
 
     @Override
-    public byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
+    public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         int len = 0;
 
         List<Byte> codeList = new ArrayList<>();
-        List<byte[]> byteList = new ArrayList<>();
+        List<ByteBuffer> byteList = new ArrayList<>();
         for (RpcMessage rpcMessage : rpcMessages) {
             codeList.add(rpcMessage.getMessageCode());
-            byte[] bytes = rpcMessage.encode(encoding, codec);
-            len += bytes.length;
-            byteList.add(bytes);
+            ByteBuffer buf = rpcMessage.encode(encoding, codec);
+            len += buf.limit();
+            byteList.add(buf);
         }
 
         ByteBuffer buf = ByteBuffer.allocate(4 + 4 * rpcMessages.size() + rpcMessages.size() + len);
@@ -47,17 +47,15 @@ public abstract class RpcBatchMessage implements RpcMessage {
 
         for (int i = 0; i < rpcMessages.size(); i++) {
             buf.put(codeList.get(i));
-            buf.putInt(byteList.get(i).length);
+            buf.putInt(byteList.get(i).limit());
             buf.put(byteList.get(i));
         }
 
-        return buf.array();
+        return buf;
     }
 
     @Override
-    public void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec) {
-
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+    public void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         int segmentSize = buf.getInt();
         List<RpcMessage> segmentList = new ArrayList<>(segmentSize);
@@ -69,7 +67,8 @@ public abstract class RpcBatchMessage implements RpcMessage {
             byte[] segmentBytes = new byte[segmentLength];
             buf.get(segmentBytes);
             RpcMessage rpcMessage = RpcMessageFactory.createRpcMessage(messageTypeCode);
-            rpcMessage.decode(segmentBytes, encoding, codec);
+            ByteBuffer rpcMessageBuf = ByteBuffer.wrap(segmentBytes);
+            rpcMessage.decode(rpcMessageBuf, encoding, codec);
             segmentList.add(rpcMessage);
         }
 

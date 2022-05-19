@@ -56,7 +56,8 @@ public class MessageCodec {
         // body
         byte[] data = new byte[0];
         if (rpcMessage != null) {
-            data = rpcMessage.encode(encoding, codec);
+            ByteBuffer buf  = rpcMessage.encode(encoding, codec);
+            data = buf.array();
         }
         data = compression.compress(data);
 
@@ -125,7 +126,8 @@ public class MessageCodec {
         data = compression.decompress(data);
 
         RpcMessage rpcMessage = RpcMessageFactory.createRpcMessage(messageTypeCode);
-        rpcMessage.decode(data, encoding, codec);
+        ByteBuffer dataBuf = ByteBuffer.wrap(data);
+        rpcMessage.decode(dataBuf, encoding, codec);
 
         Message message = MessageFactory.createEmptyMessage();
         message.setEncoding(encodingCode);

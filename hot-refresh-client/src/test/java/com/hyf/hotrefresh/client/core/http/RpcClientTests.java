@@ -33,7 +33,7 @@ public class RpcClientTests {
         request.setFileName("Supplier.java");
         request.setFileLocation(null);
         request.setInst(RpcRequestInst.CREATE);
-        request.setContent(getJavaFileInputStream());
+        request.setBody(getJavaFileInputStream());
         Message message = MessageFactory.createMessage(request);
 
         int port = 2837;

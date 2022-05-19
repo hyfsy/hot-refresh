@@ -2,7 +2,8 @@ package com.hyf.hotrefresh.remoting.rpc;
 
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
+
+import java.nio.ByteBuffer;
 
 /**
  * @author baB_hyf
@@ -10,11 +11,9 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
  */
 public interface RpcMessage {
 
-    byte[] encode(RpcMessageEncoding encoding, RpcMessageCodec codec);
+    ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec);
 
-    void decode(byte[] bytes, RpcMessageEncoding encoding, RpcMessageCodec codec);
-
-    default RpcMessageType getMessageType() {return null;}
+    void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec);
 
     byte getMessageCode();
 }
