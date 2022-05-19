@@ -35,6 +35,11 @@
 
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>

@@ -10,10 +10,14 @@
     <artifactId>hot-refresh-remoting</artifactId>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.hyf.hotrefresh</groupId>-->
+<!--            <artifactId>hot-refresh-core</artifactId>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-core</artifactId>
-            <optional>true</optional>
+            <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>
 </project>
