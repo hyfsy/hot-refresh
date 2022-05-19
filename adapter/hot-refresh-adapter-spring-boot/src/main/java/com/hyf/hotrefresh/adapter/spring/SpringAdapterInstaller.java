@@ -10,6 +10,6 @@ public class SpringAdapterInstaller implements Installer {
 
     @Override
     public void install() {
-
+        System.out.println("spring installed");
     }
 }

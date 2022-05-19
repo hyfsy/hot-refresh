@@ -12,8 +12,8 @@ public class PluginBootstrap {
 
     public void boot() {
         PluginClassLoader classLoader = PluginClassLoader.getInstance();
-        ServiceLoader<Pluggable> plugins = ServiceLoader.load(Pluggable.class, classLoader);
-        for (Pluggable plugin : plugins) {
+        ServiceLoader<Plugin> plugins = ServiceLoader.load(Plugin.class, classLoader);
+        for (Plugin plugin : plugins) {
             try {
                 plugin.setup();
             } catch (Exception e) {
