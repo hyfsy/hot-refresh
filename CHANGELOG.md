@@ -8,7 +8,8 @@
 - Support fastjson plugin to transform json format conversion.
 - Support add executable test script to debug the environment convenience.
 - Support the external plugins of the client side.
-- Fixed many bugs.
+- [#2] Fixed
+- Fixed many other bugs.
 
 
 
