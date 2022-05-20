@@ -3,12 +3,12 @@
 ## 1.1.0
 
 - Optimize spring boot autoconfiguration for HotRefreshFilter.
-- Optimize remoting related function, support outside extension processing.
+- Optimize remoting module function, support outside extension processing.
 - Optimize remoting api.
 - Support fastjson plugin to transform json format conversion.
 - Support add executable test script to debug the environment convenience.
 - Support the external plugins of the client side.
-- Support compatible with Spring.
+- Fixed many bugs.
 
 
 
