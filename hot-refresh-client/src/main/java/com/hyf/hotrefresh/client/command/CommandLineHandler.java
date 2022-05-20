@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client.command;
 
+import com.hyf.hotrefresh.client.plugin.PluginClassLoader;
 import com.hyf.hotrefresh.common.Log;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public class CommandLineHandler extends Thread {
     public CommandLineHandler() {
         setName("command-line-handler");
 
-        ServiceLoader<CommandHandler> handlers = ServiceLoader.load(CommandHandler.class);
+        PluginClassLoader classLoader = PluginClassLoader.getInstance();
+        ServiceLoader<CommandHandler> handlers = ServiceLoader.load(CommandHandler.class, classLoader);
         handlers.forEach(commandHandlers::add);
     }
 
