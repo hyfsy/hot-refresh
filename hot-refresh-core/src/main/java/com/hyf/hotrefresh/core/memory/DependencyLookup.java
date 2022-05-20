@@ -1,11 +1,16 @@
 package com.hyf.hotrefresh.core.memory;
 
+import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.Log;
+
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -42,6 +47,15 @@ class DependencyLookup {
 
     private Collection<JavaFileObject> listUnder(String packageName, URL packageFolderURL) {
         File directory = new File(packageFolderURL.getFile());
+        // decode file path for chinese
+        if (directory.getAbsolutePath().contains("%")) {
+            try {
+                directory = new File(URLDecoder.decode(directory.getAbsolutePath(), Constants.MESSAGE_ENCODING.name()));
+            } catch (UnsupportedEncodingException e) {
+                Log.error("Failed to decode file for chinese path", e);
+            }
+        }
+
         // .class
         if (directory.isDirectory()) {
             return processDir(packageName, directory);
