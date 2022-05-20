@@ -18,7 +18,7 @@ public class SpringHotRefreshListener implements HotRefreshListener<ByteCodeRefr
 
     @Override
     public void onRefreshEvent(ByteCodeRefreshedEvent event) {
-        System.out.println("received event");
+        // System.out.println("received event");
 
         MemoryClassLoader memoryClassLoader = Util.getThrowawayMemoryClassLoader();
 

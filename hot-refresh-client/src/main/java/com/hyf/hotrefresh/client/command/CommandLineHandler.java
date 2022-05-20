@@ -1,12 +1,10 @@
 package com.hyf.hotrefresh.client.command;
 
-import com.hyf.hotrefresh.client.plugin.PluginClassLoader;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.ServiceLoader;
 
 /**
  * @author baB_hyf
@@ -14,14 +12,11 @@ import java.util.ServiceLoader;
  */
 public class CommandLineHandler extends Thread {
 
-    private List<CommandHandler> commandHandlers = new ArrayList<>();
+    private List<CommandHandler> commandHandlers;
 
     public CommandLineHandler() {
         setName("command-line-handler");
-
-        PluginClassLoader classLoader = PluginClassLoader.getInstance();
-        ServiceLoader<CommandHandler> handlers = ServiceLoader.load(CommandHandler.class, classLoader);
-        handlers.forEach(commandHandlers::add);
+        commandHandlers = Services.gets(CommandHandler.class);
     }
 
     @Override

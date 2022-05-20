@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.memory;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.util.Util;
 
@@ -120,7 +121,7 @@ public class MemoryCodeCompiler {
 
     private static Map<String, byte[]> obfuscation(Map<String, byte[]> compiledBytes) throws CompileException {
         try {
-            ServiceLoader<ObfuscationHandler> obfuscationHandlers = ServiceLoader.load(ObfuscationHandler.class);
+            List<ObfuscationHandler> obfuscationHandlers = Services.gets(ObfuscationHandler.class);
             for (ObfuscationHandler handler : obfuscationHandlers) {
                 compiledBytes = handler.handle(compiledBytes);
             }

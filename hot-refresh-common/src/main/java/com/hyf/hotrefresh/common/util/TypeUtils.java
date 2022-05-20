@@ -10,7 +10,7 @@ import java.util.List;
  * @author baB_hyf
  * @date 2022/05/19
  */
-public class TypeUtils {
+public abstract class TypeUtils {
 
     public static List<ParameterizedType> getAllGenericTypes(Type type) {
 

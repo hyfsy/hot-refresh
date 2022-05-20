@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.event;
 
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.util.TypeUtils;
 
 import java.lang.reflect.ParameterizedType;
@@ -7,7 +8,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -41,7 +41,7 @@ public class HotRefreshEventPublisher {
 
     private List<HotRefreshListener<?>> getHotRefreshListeners() {
         List<HotRefreshListener<?>> list = new ArrayList<>();
-        ServiceLoader<HotRefreshListener> listeners = ServiceLoader.load(HotRefreshListener.class);
+        List<HotRefreshListener> listeners = Services.gets(HotRefreshListener.class);
         for (HotRefreshListener listener : listeners) {
             list.add(listener);
         }
@@ -57,7 +57,7 @@ public class HotRefreshEventPublisher {
                 for (ParameterizedType parameterizedType : allGenericTypes) {
                     Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
                     if (actualTypeArgument instanceof Class) { // 泛型是个Class，表示固定的
-                        c = (Class<? extends HotRefreshEvent>)actualTypeArgument;
+                        c = (Class<? extends HotRefreshEvent>) actualTypeArgument;
                     }
                 }
             }
