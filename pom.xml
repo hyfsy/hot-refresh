@@ -8,6 +8,9 @@
     <packaging>pom</packaging>
 
     <!-- https://tech.meituan.com/2022/03/17/java-hotswap-sonic.html -->
+    <!-- https://dcevm.github.io -->
+    <!-- http://hotswapagent.org -->
+    <!-- https://github.com/HotswapProjects/HotswapAgent -->
 
     <properties>
         <java.version>1.8</java.version>
