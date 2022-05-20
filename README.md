@@ -8,7 +8,7 @@ IDEA小锤子的远程版
 
 # 使用
 
-> 目前懒得发布maven中央仓库，请自行拉取源代码打包
+> 服务器部署包下载地址：https://github.com/hyfsy/hot-refresh/releases
 
 1、需要热刷新的应用系统引入依赖：
 
@@ -22,19 +22,17 @@ IDEA小锤子的远程版
 
 2、启动应用系统
 
-3、获取本地服务器jar包：`hot-refresh-client-1.1.0-SNAPSHOT`
+3、获取本地服务器部署包：`hot-refresh-client.zip`
 
 4、进入命令行界面，启动本地服务器：
 
 ```bash
-java 
-  -jar hot-refresh-client-1.1.0-SNAPSHOT.jar
-  -h C:\\Users\\baB_hyf\\Desktop\\test 
-  -s http://localhost:8082/rest 
+bin/hot.cmd
 ```
 
 - `-h`：本地编写代码的工作目录（默认当前命令行目录）
 - `-s`：需要热刷新的应用系统地址，到servlet路径，如：http://localhost:8080/ctx-path/rest/
+- `-d`：启用客户端调试模式
 
 5、修改`-h`指定的工作目录下的java文件可看到应用系统热刷新
 

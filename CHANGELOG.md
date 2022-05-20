@@ -4,11 +4,11 @@
 
 - Optimize spring boot autoconfiguration for HotRefreshFilter.
 - Optimize remoting related function, support outside extension processing.
-- Add fastjson plugin to support json format conversion.
+- Optimize remoting api.
+- Support fastjson plugin to transform json format conversion.
 - Support add executable test script to debug the environment convenience.
 - Support the external plugins of the client side.
-- Compatible with Spring.
-- Compatible with Mybatis.
+- Support compatible with Spring.
 
 
 
