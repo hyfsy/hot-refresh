@@ -6,6 +6,7 @@ public class ExecuteC implements Executable<ExecuteC.A> {
 
     @Override
     public A execute() {
+        System.out.println("execute c");
         return new A();
     }
 

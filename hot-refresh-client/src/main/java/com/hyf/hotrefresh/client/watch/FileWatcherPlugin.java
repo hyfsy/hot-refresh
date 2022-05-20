@@ -1,9 +1,10 @@
 package com.hyf.hotrefresh.client.watch;
 
-import com.hyf.hotrefresh.client.plugin.Plugin;
 import com.hyf.hotrefresh.client.core.rpc.RpcPushWatcher;
+import com.hyf.hotrefresh.client.plugin.Plugin;
+import com.hyf.hotrefresh.common.Services;
 
-import java.util.ServiceLoader;
+import java.util.List;
 
 import static com.hyf.hotrefresh.common.Constants.WATCH_HOME;
 
@@ -19,8 +20,8 @@ public class FileWatcherPlugin implements Plugin {
         initWatcher();
     }
 
-    private static void initWatcher() {
-        ServiceLoader<Watcher> watchers = ServiceLoader.load(Watcher.class);
+    private void initWatcher() {
+        List<Watcher> watchers = Services.gets(Watcher.class);
         for (Watcher watcher : watchers) {
             WatchCenter.registerWatcher(WATCH_HOME, watcher);
         }

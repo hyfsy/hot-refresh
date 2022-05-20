@@ -8,6 +8,9 @@ import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.exception.ServerException;
+import com.hyf.hotrefresh.remoting.message.MessageCodec;
+import com.hyf.hotrefresh.remoting.message.MessageFactory;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 import com.hyf.hotrefresh.remoting.server.HotRefreshServer;
 import com.hyf.hotrefresh.remoting.server.RpcServer;
 
@@ -35,6 +38,8 @@ public class HotRefreshFilter implements Filter {
 
     private final RpcServer server = new HotRefreshServer();
 
+    private Exception serverException = null;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         String blocks = filterConfig.getInitParameter("blocks");
@@ -44,6 +49,9 @@ public class HotRefreshFilter implements Filter {
         try {
             server.start();
         } catch (ServerException e) {
+            // hot refresh server start failed but cannot effect the environment
+            // and we also need to know why we failed
+            serverException = e;
             Log.error("Server start failed", e);
         }
     }
@@ -85,6 +93,15 @@ public class HotRefreshFilter implements Filter {
         if (contentType == null || (!contentType.equals(RemotingConstants.DEFAULT_CONTENT_TYPE))) {
             success(req, resp);
             return;
+        }
+
+        // server start failed
+        if (serverException != null) {
+            ServletOutputStream os = resp.getOutputStream();
+            RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
+            rpcErrorResponse.setThrowable(serverException);
+            os.write(MessageCodec.encode(MessageFactory.createMessage(rpcErrorResponse)));
+            os.flush();
         }
 
         server.handle(req.getInputStream(), resp.getOutputStream());

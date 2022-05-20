@@ -1,7 +1,6 @@
 package com.hyf.hotrefresh.adapter.spring;
 
 import com.hyf.hotrefresh.core.event.ByteCodeRefreshedEvent;
-import com.hyf.hotrefresh.core.event.HotRefreshEvent;
 import com.hyf.hotrefresh.core.event.HotRefreshListener;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.util.Util;
@@ -15,16 +14,11 @@ import java.util.Map;
  * @author baB_hyf
  * @date 2022/05/19
  */
-public class SpringHotRefreshListener implements HotRefreshListener<HotRefreshEvent> {
+public class SpringHotRefreshListener implements HotRefreshListener<ByteCodeRefreshedEvent> {
 
     @Override
-    public void onRefreshEvent(HotRefreshEvent env) {
-
-        if (!(env instanceof ByteCodeRefreshedEvent)) {
-            return;
-        }
-
-        ByteCodeRefreshedEvent event = (ByteCodeRefreshedEvent)env;
+    public void onRefreshEvent(ByteCodeRefreshedEvent event) {
+        // System.out.println("received event");
 
         MemoryClassLoader memoryClassLoader = Util.getThrowawayMemoryClassLoader();
 
@@ -41,8 +35,6 @@ public class SpringHotRefreshListener implements HotRefreshListener<HotRefreshEv
             }
 
         });
-
-        System.out.println("handler event: ");
 
         RequestMappingHandlerMapping mappingHandlerMapping = new RequestMappingHandlerMapping();
     }

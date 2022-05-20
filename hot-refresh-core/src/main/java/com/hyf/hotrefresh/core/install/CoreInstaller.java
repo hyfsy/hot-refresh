@@ -1,10 +1,11 @@
 package com.hyf.hotrefresh.core.install;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.core.exception.InstallException;
 import com.hyf.hotrefresh.core.util.Util;
 
-import java.util.ServiceLoader;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -46,7 +47,7 @@ public class CoreInstaller {
 
     public void invokeInstaller() throws InstallException {
         try {
-            ServiceLoader<Installer> installers = ServiceLoader.load(Installer.class);
+            List<Installer> installers = Services.gets(Installer.class);
             for (Installer installer : installers) {
                 installer.install();
             }

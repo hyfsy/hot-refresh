@@ -1,11 +1,12 @@
 package com.hyf.hotrefresh.remoting.rpc;
 
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.remoting.rpc.enums.HandleSide;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -69,8 +70,7 @@ public class RpcMessageHandlerRegistry {
     public void initDefaultHandler() {
         if (initialized.compareAndSet(false, true)) {
 
-
-            ServiceLoader<RpcMessageHandlerRegister> registers = ServiceLoader.load(RpcMessageHandlerRegister.class);
+            List<RpcMessageHandlerRegister> registers = Services.gets(RpcMessageHandlerRegister.class);
             for (RpcMessageHandlerRegister register : registers) {
                 register(register);
             }

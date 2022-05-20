@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.memory;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.util.FileUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
@@ -71,7 +72,7 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     private static void initClassFileStorage() {
-        ServiceLoader<ClassFileStorage> classFileStorages = ServiceLoader.load(ClassFileStorage.class);
+        List<ClassFileStorage> classFileStorages = Services.gets(ClassFileStorage.class);
         if (classFileStorages.iterator().hasNext()) {
             classFileStorage = classFileStorages.iterator().next();
         }

@@ -1,9 +1,10 @@
 package com.hyf.hotrefresh.core.memory;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.Services;
 import org.junit.Test;
 
-import java.util.ServiceLoader;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +20,7 @@ public class ClassFileStorageTests {
     public void testOperate() {
         MemoryClassLoader.newInstance(); // load for clear file storage home
 
-        ServiceLoader<ClassFileStorage> classFileStorages = ServiceLoader.load(ClassFileStorage.class);
+        List<ClassFileStorage> classFileStorages = Services.gets(ClassFileStorage.class);
         assertTrue(classFileStorages.iterator().hasNext());
 
         ClassFileStorage classFileStorage = classFileStorages.iterator().next();
