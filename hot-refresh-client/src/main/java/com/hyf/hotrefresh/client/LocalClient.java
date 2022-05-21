@@ -1,8 +1,8 @@
 package com.hyf.hotrefresh.client;
 
 import com.hyf.hotrefresh.client.core.Version;
-import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.client.core.rpc.RpcClient;
+import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
@@ -10,7 +10,6 @@ import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static com.hyf.hotrefresh.common.Constants.*;
@@ -24,7 +23,7 @@ public class LocalClient {
     // TODO IDEA plugin
     public static void main(String[] args) {
 
-        // System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh");
+        // System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh\\test-cases\\hot-refresh-test-spring-boot");
         // System.setProperty("server", "http://localhost:8082");
         // System.setProperty("debug", "1");
 
@@ -62,9 +61,9 @@ public class LocalClient {
     }
 
     private static void print() {
-        String version = "Client Version: " + Version.getVersion();
         String home = "Watch Home Path: " + WATCH_HOME;
         String url = "Refresh Server : " + PUSH_SERVER_URL;
+        String version = "Client Version : " + Version.getVersion();
 
         int max = Math.max(home.getBytes(MESSAGE_ENCODING).length, Math.max(url.getBytes(MESSAGE_ENCODING).length, version.getBytes(MESSAGE_ENCODING).length));
         StringBuilder sb = new StringBuilder(max);

@@ -1,8 +1,9 @@
 package com.hyf.hotrefresh.client.plugin;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 
-import java.util.ServiceLoader;
+import java.util.List;
 
 /**
  * @author baB_hyf
@@ -11,8 +12,7 @@ import java.util.ServiceLoader;
 public class PluginBootstrap {
 
     public void boot() {
-        PluginClassLoader classLoader = PluginClassLoader.getInstance();
-        ServiceLoader<Plugin> plugins = ServiceLoader.load(Plugin.class, classLoader);
+        List<Plugin> plugins = Services.gets(Plugin.class);
         for (Plugin plugin : plugins) {
             try {
                 plugin.setup();

@@ -1,10 +1,11 @@
 package com.hyf.hotrefresh.core.memory;
 
+import com.hyf.hotrefresh.common.Services;
 import org.junit.Test;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
-import java.util.ServiceLoader;
+import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -19,7 +20,7 @@ public class AnnotationProcessorCompositeClassLoaderTests {
 
     @Test
     public void testLoadAnnotationProcessor() {
-        ServiceLoader<OtherProcessorToAvoidJavacError> processors = ServiceLoader.load(OtherProcessorToAvoidJavacError.class, AnnotationProcessorCompositeClassLoader.getInstance());
+        List<OtherProcessorToAvoidJavacError> processors = Services.gets(OtherProcessorToAvoidJavacError.class, AnnotationProcessorCompositeClassLoader.getInstance());
         assertTrue(processors.iterator().hasNext());
         assertThat(processors.iterator().next(), instanceOf(MockProcessor.class));
     }

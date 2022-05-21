@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.remoting.server;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.remoting.exception.ServerException;
 import com.hyf.hotrefresh.remoting.message.Message;
@@ -13,7 +14,7 @@ import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ServiceLoader;
+import java.util.List;
 
 /**
  * @author baB_hyf
@@ -21,12 +22,12 @@ import java.util.ServiceLoader;
  */
 public class HotRefreshServer implements RpcServer {
 
-    private MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
+    private final MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
 
-    private ServiceLoader<RpcServerLifecycle> lifecycles;
+    private List<RpcServerLifecycle> lifecycles;
 
     public HotRefreshServer() {
-        lifecycles = ServiceLoader.load(RpcServerLifecycle.class);
+        lifecycles = Services.gets(RpcServerLifecycle.class);
     }
 
     @Override
