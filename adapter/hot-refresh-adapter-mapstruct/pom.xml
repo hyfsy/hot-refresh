@@ -10,10 +10,6 @@
     </parent>
     <artifactId>hot-refresh-adapter-mapstruct</artifactId>
 
-    <properties>
-        <mapstruct.version>1.4.1.Final</mapstruct.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.mapstruct</groupId>

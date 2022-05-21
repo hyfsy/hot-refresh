@@ -10,13 +10,7 @@
     </parent>
     <artifactId>hot-refresh-adapter-lombok</artifactId>
 
-    <properties>
-        <!-- avoid low version compile idea bug -->
-        <lombok.version>1.18.14</lombok.version>
-    </properties>
-
     <dependencies>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

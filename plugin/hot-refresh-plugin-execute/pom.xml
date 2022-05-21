@@ -17,18 +17,20 @@
         </dependency>
         <dependency>
             <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- client -->
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-client</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- server -->
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-core</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-remoting</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

@@ -10,11 +10,6 @@
     </parent>
     <artifactId>hot-refresh-plugin-spring-boot</artifactId>
 
-    <properties>
-        <spring-boot.version>2.5.1</spring-boot.version>
-        <servlet-api.version>4.0.1</servlet-api.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
