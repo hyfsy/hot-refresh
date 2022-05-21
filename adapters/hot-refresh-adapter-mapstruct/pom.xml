@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.hyf.hotrefresh</groupId>
-        <artifactId>hot-refresh-parent</artifactId>
+        <artifactId>hot-refresh-adapters</artifactId>
         <version>${revision}</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>hot-refresh-adapter-mapstruct</artifactId>
 

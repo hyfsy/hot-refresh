@@ -16,7 +16,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <!-- 输出文件是否添加-distribution后缀 -->
                     <appendAssemblyId>false</appendAssemblyId>
@@ -31,10 +30,16 @@
                         <goals>
                             <!-- 只运行一次 -->
                             <goal>single</goal>
-                            <!--<goal>assembly</goal>-->
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
