@@ -1,6 +1,6 @@
 
 
-## 1.1.0(May 21, 2022)
+## 1.1.0 (May 21, 2022)
 
 - Optimize spring boot autoconfiguration for HotRefreshFilter.
 - Optimize remoting module function, support outside extension processing.
@@ -13,13 +13,13 @@
 
 
 
-## 1.0.1(May 17, 2022)
+## 1.0.1 (May 17, 2022)
 
 - Nothing was added, just publish 1.0.0 has something error.
 
 
 
-## 1.0.0(May 16, 2022)
+## 1.0.0 (May 16, 2022)
 
 - Support hot refresh class on the production environment.
 - Compatible with Lombok.
