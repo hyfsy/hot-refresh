@@ -1,9 +1,9 @@
 package com.hyf.hotrefresh.client;
 
-import com.hyf.hotrefresh.client.core.Version;
 import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Version;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;

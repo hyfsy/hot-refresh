@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.core;
+package com.hyf.hotrefresh.common;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +11,7 @@ import java.util.Properties;
 public class Version {
 
     public static final String DEFAULT_VERSION = "";
-
-    public static final String GROUP_ID              = "com.hyf.hotrefresh";
-    public static final String ARTIFACT_ID           = "hot-refresh-client";
-    public static final String VERSION_RESOURCE_PATH = "META-INF/maven/" + GROUP_ID + "/" + ARTIFACT_ID + "/pom.properties";
+    public static final String VERSION_RESOURCE_PATH = "version.properties";
 
     public static String getVersion() {
         try (InputStream is = Version.class.getClassLoader().getResourceAsStream(VERSION_RESOURCE_PATH)) {
