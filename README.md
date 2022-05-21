@@ -8,23 +8,21 @@ IDEA小锤子的远程版
 
 # 使用
 
-> 服务器部署包下载地址：https://github.com/hyfsy/hot-refresh/releases
-
 1、需要热刷新的应用系统引入依赖：
 
 ```xml
 <dependency>
     <groupId>com.hyf.hotrefresh</groupId>
     <artifactId>hot-refresh-server</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
 2、启动应用系统
 
-3、获取本地服务器部署包：`hot-refresh-client.zip`
+3、获取本地服务器部署包：[hot-refresh-client.zip](https://github.com/hyfsy/hot-refresh/releases)
 
-4、进入命令行界面，启动本地服务器：
+4、解压后，启动本地服务器：
 
 ```bash
 bin/hot.cmd
