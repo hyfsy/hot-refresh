@@ -7,37 +7,9 @@
         <artifactId>hot-refresh-parent</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>hot-refresh-client</artifactId>
+    <artifactId>hot-refresh-client-distribution</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${apache-httpcomponents.version}</version>
-        </dependency>
-        <!-- http -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>${apache-httpcomponents.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- TODO netty -->
-
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-remoting</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-core</artifactId>
-        </dependency>
-    </dependencies>
     <build>
         <finalName>hot-refresh-client</finalName>
         <plugins>
@@ -46,22 +18,20 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven-assembly-plugin.version}</version>
                 <configuration>
+                    <!-- 输出文件是否添加-distribution后缀 -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
                         <descriptor>assembly/assembly.xml</descriptor>
                     </descriptors>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.hyf.hotrefresh.client.LocalClient</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
+                            <!-- 只运行一次 -->
                             <goal>single</goal>
+                            <!--<goal>assembly</goal>-->
                         </goals>
                     </execution>
                 </executions>
