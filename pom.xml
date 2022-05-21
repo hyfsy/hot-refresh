@@ -96,9 +96,13 @@
 
         <module>adapter/hot-refresh-adapter-lombok</module>
         <module>adapter/hot-refresh-adapter-mapstruct</module>
-        <module>adapter/hot-refresh-adapter-web</module>
         <module>adapter/hot-refresh-adapter-spring-boot</module>
         <module>adapter/hot-refresh-adapter-mybatis</module>
+
+        <module>plugin/hot-refresh-plugin-web</module>
+        <module>plugin/hot-refresh-plugin-spring-boot</module>
+        <module>plugin/hot-refresh-plugin-fastjson</module>
+        <module>plugin/hot-refresh-plugin-execute</module>
 
         <module>test-case/hot-refresh-test-spring-boot</module>
         <module>test-case/hot-refresh-test-jar-file</module>
@@ -143,17 +147,32 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hot-refresh-adapter-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-adapter-spring-boot</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-adapter-mybatis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-spring-boot</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-fastjson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-execute</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
