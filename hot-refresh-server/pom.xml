@@ -27,7 +27,7 @@
             <artifactId>hot-refresh-adapter-mapstruct</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-spring-boot</artifactId>
         </dependency>
         <dependency>

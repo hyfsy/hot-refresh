@@ -11,7 +11,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>
