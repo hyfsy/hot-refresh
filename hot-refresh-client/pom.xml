@@ -32,6 +32,10 @@
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-core</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

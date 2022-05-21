@@ -15,12 +15,12 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>com.alibaba</groupId>-->
+        <!--    <artifactId>fastjson</artifactId>-->
+        <!--    <version>${fastjson.version}</version>-->
+        <!--    <scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-core</artifactId>
