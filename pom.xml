@@ -25,6 +25,8 @@
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 
         <!-- third -->
+        <asm.version>5.2</asm.version>
+        <bytebuddy.version>1.8.17</bytebuddy.version>
         <!-- avoid low version compile idea bug -->
         <lombok.version>1.18.14</lombok.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
