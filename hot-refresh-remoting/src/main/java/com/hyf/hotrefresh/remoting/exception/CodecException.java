@@ -13,8 +13,4 @@ public class CodecException extends RpcException {
     public CodecException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public CodecException(Throwable cause) {
-        super(cause);
-    }
 }
