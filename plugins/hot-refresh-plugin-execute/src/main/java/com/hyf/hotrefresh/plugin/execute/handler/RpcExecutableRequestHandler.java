@@ -4,11 +4,13 @@ import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.common.util.ReflectUtils;
+import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
 import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.plugin.execute.Executable;
 import com.hyf.hotrefresh.plugin.execute.ExecutableClassLoader;
+import com.hyf.hotrefresh.plugin.execute.exception.ExecutionException;
 import com.hyf.hotrefresh.plugin.execute.payload.RpcExecutableRequest;
 import com.hyf.hotrefresh.plugin.execute.payload.RpcExecutableResponse;
 import com.hyf.hotrefresh.plugin.fastjson.FastjsonUtils;
@@ -32,7 +34,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
 
             ExecutableClassLoader cl = ExecutableClassLoader.createInstance();
 
-            Class<?> clazz = loadContent(content, request.getFileName(), cl);
+            Class<?> clazz = loadContent(cl, content, request.getFileName(), request.getFileLocation());
 
             RpcExecutableResponse response = new RpcExecutableResponse();
             Object result = null;
@@ -66,7 +68,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
         }
     }
 
-    private Class<?> loadContent(InputStream content, String fileName, ExecutableClassLoader cl) throws Exception {
+    private Class<?> loadContent(ExecutableClassLoader cl, InputStream content, String fileName, String fileLocation) throws Exception {
         String className = "";
         if (fileName.endsWith(".java")) {
             String javaFileContent = IOUtils.readAsString(content);
@@ -75,10 +77,18 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
             if (compiledBytes != null && !compiledBytes.isEmpty()) {
                 className = compiledBytes.keySet().toArray(new String[0])[0];
             }
-        } else if (fileName.endsWith(".class")) {
+        }
+        else if (fileName.endsWith(".class")) {
             byte[] bytes = IOUtils.readAsByteArray(content);
             className = Util.getInfrastructureJarClassLoader().getClassName(bytes);
             cl.store(className, bytes);
+        }
+        else {
+            throw new ExecutionException("File name illegal: " + fileName);
+        }
+
+        if (StringUtils.isBlank(className)) {
+            throw new ExecutionException("Cannot determinate the class name, file location: " + fileLocation);
         }
 
         return cl.loadClass(className);

@@ -8,7 +8,7 @@ import java.util.*;
  * @author baB_hyf
  * @date 2021/12/12
  */
-public class CompileException extends com.hyf.hotrefresh.core.exception.RefreshException {
+public class CompileException extends RefreshException {
 
     private List<Diagnostic<? extends JavaFileObject>> diagnostics;
 
