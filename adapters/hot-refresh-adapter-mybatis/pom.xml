@@ -4,23 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.hyfsy</groupId>
-        <artifactId>hot-refresh-parent</artifactId>
+        <artifactId>hot-refresh-adapters</artifactId>
         <version>${revision}</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>hot-refresh-adapter-mapstruct</artifactId>
+    <artifactId>hot-refresh-adapter-mybatis</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
             <scope>provided</scope>
         </dependency>
 
