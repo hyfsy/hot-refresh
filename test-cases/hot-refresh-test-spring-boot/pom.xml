@@ -10,14 +10,6 @@
     </parent>
     <artifactId>hot-refresh-test-spring-boot</artifactId>
 
-    <properties>
-        <!-- avoid low version compile idea bug -->
-        <lombok.version>1.18.14</lombok.version>
-        <mapstruct.version>1.4.1.Final</mapstruct.version>
-        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <mybatis.version>3.5.9</mybatis.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

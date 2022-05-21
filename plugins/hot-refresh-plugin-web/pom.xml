@@ -21,10 +21,12 @@
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
