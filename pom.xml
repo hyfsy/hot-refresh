@@ -61,6 +61,9 @@
     </issueManagement>
 
     <!-- https://tech.meituan.com/2022/03/17/java-hotswap-sonic.html -->
+    <!-- https://dcevm.github.io -->
+    <!-- http://hotswapagent.org -->
+    <!-- https://github.com/HotswapProjects/HotswapAgent -->
 
     <properties>
         <!-- basic properties -->
@@ -83,6 +86,8 @@
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 
         <!-- dependency version -->
+        <asm.version>5.2</asm.version>
+        <bytebuddy.version>1.8.17</bytebuddy.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.23.4</mockito.version>
         <!-- avoid low version compile idea bug -->

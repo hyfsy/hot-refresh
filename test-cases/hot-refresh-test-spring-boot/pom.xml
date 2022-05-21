@@ -10,15 +10,6 @@
     </parent>
     <artifactId>hot-refresh-test-spring-boot</artifactId>
 
-    <properties>
-        <java_home>C:/Program Files/Java/jdk1.8.0_181</java_home>
-        <!-- avoid low version compile idea bug -->
-        <lombok.version>1.18.14</lombok.version>
-        <mapstruct.version>1.4.1.Final</mapstruct.version>
-        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <mybatis.version>3.5.9</mybatis.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -32,15 +23,15 @@
     </dependencyManagement>
 
     <dependencies>
-        <!--<dependency>-->
-        <!--    <groupId>com.sun</groupId>-->
-        <!--    <artifactId>tools</artifactId>-->
-        <!--    <version>${java.version}</version>-->
-        <!--    <scope>system</scope>-->
-        <!--    &lt;!&ndash;<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>&ndash;&gt;-->
-        <!--    <systemPath>${java_home}/lib/tools.jar</systemPath>-->
-        <!--    <optional>true</optional>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>${java.version}</version>
+            <scope>system</scope>
+            <!--<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
