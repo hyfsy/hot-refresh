@@ -2,6 +2,7 @@
 ## 1.2.1 (May 26, 2022)
 
 - Optimize infrastructure class loader, separate it duties, divide into two class: InfrastructureClassLoader and InfraUtils.
+- Add logger to monitor rpc codec error.
 
 
 ## 1.1.0 (May 21, 2022)
