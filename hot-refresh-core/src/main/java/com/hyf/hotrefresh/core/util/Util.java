@@ -36,8 +36,7 @@ public abstract class Util {
         try {
             return getInfrastructureJarClassLoader().getInstrumentation();
         } catch (Throwable e) {
-            // throw new IllegalStateException(e);
-            return null;
+             throw new IllegalStateException(e);
         }
     }
 }
