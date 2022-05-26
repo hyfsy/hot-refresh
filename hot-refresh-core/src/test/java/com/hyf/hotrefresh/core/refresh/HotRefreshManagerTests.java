@@ -1,13 +1,12 @@
 package com.hyf.hotrefresh.core.refresh;
 
-import com.hyf.hotrefresh.common.util.ReflectUtils;
+import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
 import com.hyf.hotrefresh.core.exception.AgentException;
 import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
-import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -50,7 +49,7 @@ public class HotRefreshManagerTests {
     }
 
     private boolean invokeMethod(Class<?> clazz) {
-        Method getMethod = ReflectUtils.getMethod(clazz, "get");
-        return ReflectUtils.invokeMethod(getMethod, null);
+        Method getMethod = ReflectionUtils.getMethod(clazz, "get");
+        return ReflectionUtils.invokeMethod(getMethod, null);
     }
 }

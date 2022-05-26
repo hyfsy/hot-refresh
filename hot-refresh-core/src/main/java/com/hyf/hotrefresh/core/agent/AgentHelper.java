@@ -1,7 +1,8 @@
 package com.hyf.hotrefresh.core.agent;
 
-import com.hyf.hotrefresh.common.util.ReflectUtils;
-import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.common.util.ReflectionUtils;
+import com.hyf.hotrefresh.core.util.InfraUtils;
+import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.io.File;
@@ -27,20 +28,20 @@ public class AgentHelper {
 
         InfrastructureJarClassLoader cl = Util.getInfrastructureJarClassLoader();
 
-        Class<?> AttachmentProviderClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider");
-        Field DEFAULT = ReflectUtils.getField(AttachmentProviderClass, "DEFAULT");
+        Class<?> AttachmentProviderClass = InfraUtils.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider");
+        Field DEFAULT = ReflectionUtils.getField(AttachmentProviderClass, "DEFAULT");
 
 
-        Class<?> SimpleClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Simple");
-        Method of = ReflectUtils.getMethod(SimpleClass, "of", ClassLoader.class, File[].class);
+        Class<?> SimpleClass = InfraUtils.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Simple");
+        Method of = ReflectionUtils.getMethod(SimpleClass, "of", ClassLoader.class, File[].class);
 
 
-        Class<?> UnavailableClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Unavailable");
-        Field instance = ReflectUtils.getField(UnavailableClass, "INSTANCE");
+        Class<?> UnavailableClass = InfraUtils.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Accessor$Unavailable");
+        Field instance = ReflectionUtils.getField(UnavailableClass, "INSTANCE");
 
-        Class<?> CompoundClass = cl.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Compound");
+        Class<?> CompoundClass = InfraUtils.forName("net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider$Compound");
 
-        Class<?> AttachmentProviderArrayClass = cl.forName("[Lnet.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider;");
+        Class<?> AttachmentProviderArrayClass = InfraUtils.forName("[Lnet.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider;");
 
         Object o = Proxy.newProxyInstance(AttachmentProviderClass.getClassLoader(), new Class[]{AttachmentProviderClass}, (proxy, method, args) -> {
             if ("attempt".equals(method.getName())) {
@@ -48,15 +49,15 @@ public class AgentHelper {
                 String toolsJarPath = processor.getToolsJarPath();
                 File toolsJar = new File(toolsJarPath);
                 return toolsJar.isFile() && toolsJar.canRead()
-                        ? ReflectUtils.invokeMethod(of, null, cl, new File[]{toolsJar})
-                        : ReflectUtils.invokeField(instance, null);
+                        ? ReflectionUtils.invokeMethod(of, null, cl, new File[]{toolsJar})
+                        : ReflectionUtils.invokeField(instance, null);
             }
             return method.invoke(DEFAULT, args);
         });
 
         try {
             Object arr = Array.newInstance(AttachmentProviderClass, 2);
-            Array.set(arr, 0, ReflectUtils.invokeField(DEFAULT, null));
+            Array.set(arr, 0, ReflectionUtils.invokeField(DEFAULT, null));
             Array.set(arr, 1, o);
             Constructor<?> CompoundConstructor = CompoundClass.getConstructor(AttachmentProviderArrayClass);
             return CompoundConstructor.newInstance(arr);

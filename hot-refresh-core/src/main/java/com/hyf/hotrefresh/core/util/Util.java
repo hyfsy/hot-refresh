@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.util;
 
+import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 
 import java.lang.instrument.Instrumentation;
@@ -33,10 +34,6 @@ public abstract class Util {
     }
 
     public static Instrumentation getInstrumentation() {
-        try {
-            return getInfrastructureJarClassLoader().getInstrumentation();
-        } catch (Throwable e) {
-             throw new IllegalStateException(e);
-        }
+        return InfraUtils.getInstrumentation();
     }
 }

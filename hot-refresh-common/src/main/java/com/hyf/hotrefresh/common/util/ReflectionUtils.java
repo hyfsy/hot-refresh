@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * @author baB_hyf
  * @date 2022/05/18
  */
-public abstract class ReflectUtils {
+public abstract class ReflectionUtils {
 
     public static Field getField(Class<?> clazz, String fieldName) {
         try {
@@ -58,6 +58,14 @@ public abstract class ReflectUtils {
             return constructor.newInstance(args);
         } catch (Exception e) {
             throw new RuntimeException("Failed to new instance of " + clazz.getName() + " with args " + Arrays.stream(argsTypes).map(Class::getName).collect(Collectors.joining(",")));
+        }
+    }
+
+    public static Class<?> forName(String className, ClassLoader classLoader) {
+        try {
+            return Class.forName(className, false, classLoader);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Failed to get class: " + className, e);
         }
     }
 }

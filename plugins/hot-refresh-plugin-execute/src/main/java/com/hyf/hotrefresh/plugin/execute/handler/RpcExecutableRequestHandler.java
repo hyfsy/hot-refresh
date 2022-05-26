@@ -3,10 +3,11 @@ package com.hyf.hotrefresh.plugin.execute.handler;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.common.util.ReflectUtils;
+import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.plugin.execute.Executable;
 import com.hyf.hotrefresh.plugin.execute.ExecutableClassLoader;
@@ -40,12 +41,12 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
             Object result = null;
             try {
                 if (Executable.class.isAssignableFrom(clazz)) {
-                    Object o = ReflectUtils.newClassInstance(clazz);
+                    Object o = ReflectionUtils.newClassInstance(clazz);
                     Executable<?> executable = (Executable<?>) o;
                     result = executable.execute();
                 }
                 else if (hasMainMethod(clazz)) {
-                    result = ReflectUtils.getMethod(clazz, "main", String[].class).invoke(null, /* must specify mandatory */ (Object) new String[0]);
+                    result = ReflectionUtils.getMethod(clazz, "main", String[].class).invoke(null, /* must specify mandatory */ (Object) new String[0]);
                 }
                 else {
                     if (Log.isDebugMode()) {
@@ -80,7 +81,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
         }
         else if (fileName.endsWith(".class")) {
             byte[] bytes = IOUtils.readAsByteArray(content);
-            className = Util.getInfrastructureJarClassLoader().getClassName(bytes);
+            className = InfraUtils.getClassName(bytes);
             cl.store(className, bytes);
         }
         else {
@@ -96,7 +97,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
 
     private boolean hasMainMethod(Class<?> clazz) {
         try {
-            ReflectUtils.getMethod(clazz, "main", String[].class);
+            ReflectionUtils.getMethod(clazz, "main", String[].class);
             return true;
         } catch (Throwable t) {
             return false;

@@ -3,6 +3,7 @@ package com.hyf.hotrefresh.core.memory;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.core.exception.CompileException;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import javax.tools.Diagnostic;
@@ -29,7 +30,7 @@ public class MemoryCodeCompiler {
 
     private static final List<String> OPTIONS = new ArrayList<>();
 
-    private static final JavaCompiler COMPILER = Util.getInfrastructureJarClassLoader().getJavaCompiler();
+    private static final JavaCompiler COMPILER = InfraUtils.getJavaCompiler();
 
     static {
         initOptions();
