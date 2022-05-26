@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.util;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.util.FileUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
 
 import java.io.File;
@@ -76,6 +77,6 @@ public abstract class ResourceUtil {
     private static File getLocalFile(URL url) {
         String urlFileName = url.toString().substring(url.toString().lastIndexOf("/"));
         String downloadFilePath = DOWNLOAD_HOME + urlFileName;
-        return com.hyf.hotrefresh.common.util.FileUtils.getFile(downloadFilePath);
+        return FileUtils.getFile(downloadFilePath);
     }
 }

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class HotRefreshSpringAdapterAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "applicationContextUtils")
-    public ApplicationContextUtils applicationContextUtils() {
+    @ConditionalOnMissingBean(name = "hotRefreshApplicationContextUtils")
+    public ApplicationContextUtils hotRefreshApplicationContextUtils() {
         return new ApplicationContextUtils();
     }
 }
