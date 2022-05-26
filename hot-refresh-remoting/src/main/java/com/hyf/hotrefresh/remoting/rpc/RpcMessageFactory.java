@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.remoting.rpc;
 
-import com.hyf.hotrefresh.common.util.ReflectUtils;
+import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.common.util.TypeUtils;
 import com.hyf.hotrefresh.remoting.exception.RpcException;
 
@@ -27,7 +27,7 @@ public class RpcMessageFactory {
         }
 
         Class<T> clazz = getRpcMessageClassType((Class<? extends RpcMessageHandler<?, ?>>) handler.getClass());
-        return ReflectUtils.newClassInstance(clazz);
+        return ReflectionUtils.newClassInstance(clazz);
     }
 
     @SuppressWarnings("unchecked")

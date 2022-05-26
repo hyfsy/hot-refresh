@@ -1,4 +1,8 @@
 
+## 1.2.1 (May 26, 2022)
+
+- Optimize infrastructure class loader, separate it duties, divide into two class: InfrastructureClassLoader and InfraUtils.
+
 
 ## 1.1.0 (May 21, 2022)
 

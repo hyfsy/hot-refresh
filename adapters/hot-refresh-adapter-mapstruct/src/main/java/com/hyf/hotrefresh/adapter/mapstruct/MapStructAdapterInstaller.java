@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.adapter.mapstruct;
 
 import com.hyf.hotrefresh.core.install.Installer;
-import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
 
 /**
  * @author baB_hyf

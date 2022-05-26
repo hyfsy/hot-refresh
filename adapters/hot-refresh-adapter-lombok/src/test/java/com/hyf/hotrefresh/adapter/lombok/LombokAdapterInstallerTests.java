@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
 import com.hyf.hotrefresh.core.memory.AnnotationProcessorCompositeClassLoader;
-import com.hyf.hotrefresh.core.util.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
 import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Before;
 import org.junit.Test;

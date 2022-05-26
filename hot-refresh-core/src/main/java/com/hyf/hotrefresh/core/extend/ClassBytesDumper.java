@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.core.extend;
 
 import com.hyf.hotrefresh.common.util.FileUtils;
-import com.hyf.hotrefresh.core.util.Util;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
@@ -21,7 +21,7 @@ public class ClassBytesDumper {
     }
 
     public static void dump(Class<?> clazz, OutputStream os) {
-        Instrumentation instrumentation = Util.getInfrastructureJarClassLoader().getInstrumentation();
+        Instrumentation instrumentation = InfraUtils.getInstrumentation();
 
         ClassBytesDumpTransformer classDumpTransformer = new ClassBytesDumpTransformer(Collections.singleton(clazz), new File("E:\\test\\"));
         instrumentation.addTransformer(classDumpTransformer, true);

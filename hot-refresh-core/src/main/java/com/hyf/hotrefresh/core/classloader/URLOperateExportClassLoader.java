@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.core.classloader;
 
 
-import com.hyf.hotrefresh.core.util.ResourceUtil;
+import com.hyf.hotrefresh.core.util.ResourceUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.net.URL;
@@ -30,7 +30,7 @@ public class URLOperateExportClassLoader extends URLClassLoader {
 
     public void addPath(String path) {
         URL resource = Util.getOriginContextClassLoader().getResource(path);
-        URL url = ResourceUtil.getResourceURL(resource);
+        URL url = ResourceUtils.getResourceURL(resource);
         addURL(url);
     }
 }

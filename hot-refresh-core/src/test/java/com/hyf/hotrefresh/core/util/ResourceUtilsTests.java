@@ -13,12 +13,12 @@ import static org.junit.Assert.assertNotNull;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public class ResourceUtilTests {
+public class ResourceUtilsTests {
 
     @Test
     public void testGetResourceURL() throws MalformedURLException {
         URL resource = Util.getOriginContextClassLoader().getResource(TestJavaFileUtils.getFileName());
-        URL resourceURL = ResourceUtil.getResourceURL(resource);
+        URL resourceURL = ResourceUtils.getResourceURL(resource);
         assertNotNull(resourceURL);
         assertEquals("file", resourceURL.getProtocol());
     }
