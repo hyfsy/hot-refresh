@@ -13,8 +13,8 @@ import java.lang.reflect.Method;
  */
 public abstract class FastjsonUtils {
 
-    private static Method toJSONStringMethod;
-    private static Object SerializerFeatureArray;
+    private static volatile Method toJSONStringMethod;
+    private static volatile Object SerializerFeatureArray;
 
     public static String objectToJson(Object o) {
 
@@ -28,8 +28,9 @@ public abstract class FastjsonUtils {
             Class<?> SerializerFeatureClass = InfraUtils.forName("com.alibaba.fastjson.serializer.SerializerFeature");
             Field PrettyFormatField = ReflectionUtils.getField(SerializerFeatureClass, "PrettyFormat");
             Object PrettyFormatFieldObject = ReflectionUtils.invokeField(PrettyFormatField, null);
-            SerializerFeatureArray = Array.newInstance(SerializerFeatureClass, 1);
+            Object SerializerFeatureArray = Array.newInstance(SerializerFeatureClass, 1);
             Array.set(SerializerFeatureArray, 0, PrettyFormatFieldObject);
+            FastjsonUtils.SerializerFeatureArray = SerializerFeatureArray;
         }
 
         return ReflectionUtils.invokeMethod(toJSONStringMethod, null, o, SerializerFeatureArray);

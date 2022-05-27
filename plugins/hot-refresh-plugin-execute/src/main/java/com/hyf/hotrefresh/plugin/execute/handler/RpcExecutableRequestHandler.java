@@ -8,7 +8,6 @@ import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
 import com.hyf.hotrefresh.core.util.InfraUtils;
-import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.plugin.execute.Executable;
 import com.hyf.hotrefresh.plugin.execute.ExecutableClassLoader;
 import com.hyf.hotrefresh.plugin.execute.exception.ExecutionException;
@@ -19,6 +18,8 @@ import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,12 +42,24 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
             Object result = null;
             try {
                 if (Executable.class.isAssignableFrom(clazz)) {
-                    Object o = ReflectionUtils.newClassInstance(clazz);
-                    Executable<?> executable = (Executable<?>) o;
+                    Executable<?> executable = (Executable<?>) ReflectionUtils.newClassInstance(clazz);
                     result = executable.execute();
                 }
+                else if (hasExecuteMethod(clazz)) {
+                    Method executeMethod = getExecuteMethod(clazz);
+                    assert executeMethod != null;
+                    if (isStaticMethod(executeMethod)) {
+                        result = ReflectionUtils.invokeMethod(executeMethod, null);
+                    }
+                    else {
+                        Object executable = ReflectionUtils.newClassInstance(clazz);
+                        result = ReflectionUtils.invokeMethod(executeMethod, executable);
+                    }
+                }
                 else if (hasMainMethod(clazz)) {
-                    result = ReflectionUtils.getMethod(clazz, "main", String[].class).invoke(null, /* must specify mandatory */ (Object) new String[0]);
+                    Method mainMethod = getMainMethod(clazz);
+                    assert mainMethod != null;
+                    result = ReflectionUtils.invokeMethod(mainMethod, null, /* must specify mandatory */ (Object) new String[0]);
                 }
                 else {
                     if (Log.isDebugMode()) {
@@ -96,11 +109,31 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
     }
 
     private boolean hasMainMethod(Class<?> clazz) {
+        return getMainMethod(clazz) != null;
+    }
+
+    private Method getMainMethod(Class<?> clazz) {
         try {
-            ReflectionUtils.getMethod(clazz, "main", String[].class);
-            return true;
+            Method mainMethod = ReflectionUtils.getMethod(clazz, "main", String[].class);
+            return isStaticMethod(mainMethod) ? mainMethod : null;
         } catch (Throwable t) {
-            return false;
+            return null;
         }
+    }
+
+    private boolean hasExecuteMethod(Class<?> clazz) {
+        return getExecuteMethod(clazz) != null;
+    }
+
+    private Method getExecuteMethod(Class<?> clazz) {
+        try {
+            return ReflectionUtils.getMethod(clazz, "execute");
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private boolean isStaticMethod(Method method) {
+        return (Modifier.STATIC & method.getModifiers()) != 0;
     }
 }
