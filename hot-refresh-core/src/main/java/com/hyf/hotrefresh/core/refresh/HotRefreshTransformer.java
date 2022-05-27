@@ -1,12 +1,10 @@
 package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.core.extend.ClassBytesDumper;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
-import com.hyf.hotrefresh.common.util.IOUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -40,23 +38,29 @@ class HotRefreshTransformer implements ClassFileTransformer {
         if (bytes == null) {
             bytes = classfileBuffer;
         }
-        else {
-            if (Log.isDebugMode()) {
-                Log.debug("Hot refresh transform class: " + fullClassName);
-                store(classResourceName, bytes);
-            }
+
+        if (Log.isDebugMode()) {
+            Log.debug("Hot refresh transform class: " + fullClassName);
+            store(classResourceName, classBeingRedefined, bytes);
         }
 
         return bytes;
     }
 
-    private void store(String classResourceName, byte[] bytes) {
-        String filePath = DEBUG_STORE_PATH + File.separator + classResourceName.replace("/", File.separator) + ".class";
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             FileOutputStream fos = new FileOutputStream(filePath)) {
-            IOUtils.writeTo(bais, fos);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void store(String classResourceName, Class<?> classBeingRedefined, byte[] bytes) {
+
+        byte[] current = null;
+        if (bytes != null) {
+            String classFilePath = DEBUG_STORE_PATH + File.separator + classResourceName.replace("/", File.separator) + ".class";
+            try {
+                ClassBytesDumper.dump(bytes, classFilePath);
+                current = bytes;
+            } catch (IOException e) {
+                Log.error("Failed to dump bytes", e);
+            }
         }
+
+        // let outside exception throw points to get if this class failed to reTransform
+        ReTransformExceptionRecorder.record(classBeingRedefined, current);
     }
 }

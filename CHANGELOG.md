@@ -1,8 +1,11 @@
 
-## 1.2.1 (May 26, 2022)
+## 1.2.0 (May 27, 2022)
 
 - Optimize infrastructure class loader, separate it duties, divide into two class: InfrastructureClassLoader and InfraUtils.
-- Add logger to monitor rpc codec error.
+- Optimize log to monitor rpc codec error.
+- Optimize trace to analysis class byte code that failed to reTransform.
+- Fix dump class byte code failed when hot refresh not been able to work.
+- [#3] Fix infrastructure's class has been app class loader to load to lead to ClassNotFoundException.
 
 
 ## 1.1.0 (May 21, 2022)

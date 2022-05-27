@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class ClassBytesDumperTests {
 
     @Test
-    public void testDump() {
+    public void testDump() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ClassBytesDumper.dump(ClassBytesDumperTests.class, baos);
         assertTrue(baos.size() != 0);
