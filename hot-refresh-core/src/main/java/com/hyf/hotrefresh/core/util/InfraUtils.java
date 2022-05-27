@@ -20,8 +20,6 @@ public abstract class InfraUtils {
     private static final String JAVAC_TOOL_CLASS          = "com.sun.tools.javac.api.JavacTool";
     private static final String ATTACHMENT_PROVIDER_CLASS = "net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider";
 
-    private static Class<?> agentClass              = null;
-    private static Class<?> attachmentProviderClass = null;
     private static Method   installMethod           = null;
     private static Class<?> classReaderClass        = null;
     private static Method   getClassNameMethod      = null;
@@ -29,9 +27,9 @@ public abstract class InfraUtils {
     private static JavaCompiler    compiler        = null;
     private static Instrumentation instrumentation = null;
 
-    private InfraUtils() {
-        ensureByteBuddyExist();
-        ensureAsmExist();
+    static {
+        initByteBuddyEnvironment();
+        initAsmEnvironment();
     }
 
     public static Instrumentation getInstrumentation() {
@@ -99,13 +97,13 @@ public abstract class InfraUtils {
         return false;
     }
 
-    private static void ensureByteBuddyExist() {
-        agentClass = forName(BYTE_BUDDY_AGENT_CLASS);
-        attachmentProviderClass = forName(ATTACHMENT_PROVIDER_CLASS);
+    private static void initByteBuddyEnvironment() {
+        Class<?> agentClass = forName(BYTE_BUDDY_AGENT_CLASS);
+        Class<?> attachmentProviderClass = forName(ATTACHMENT_PROVIDER_CLASS);
         installMethod = ReflectionUtils.getMethod(agentClass, "install", attachmentProviderClass);
     }
 
-    private static void ensureAsmExist() {
+    private static void initAsmEnvironment() {
         classReaderClass = forName(CLASS_READER_CLASS);
         getClassNameMethod = ReflectionUtils.getMethod(classReaderClass, "getClassName");
     }

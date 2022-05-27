@@ -70,6 +70,14 @@ public class HotRefresher {
         }
     }
 
+    public static void start() {
+        HotRefreshManager.start();
+    }
+
+    public static void stop() {
+        HotRefreshManager.stop();
+    }
+
     /**
      * @deprecated refreshed class has been loaded by app class loader and delete the file cannot
      * clear class loader cache, so use this method invoke will be no action

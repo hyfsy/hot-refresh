@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * @date 2021/12/11
  */
 class HotRefreshManager {
-
+    // so we broken the parent delegate to fixed it, you can see [d1333eaf](https://github.com/hyfsy/hot-refresh/commit/d1333eaff0e03fb4ef2903c28d8013d5f6662127) for more details.
     private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
 
     private static final Instrumentation INST;
@@ -31,31 +31,13 @@ class HotRefreshManager {
         return INST;
     }
 
-    //---------------------------------------------------------------------
-    // 针对于SpringLoaded的情况，处理方法已无效
-    //---------------------------------------------------------------------
-
-    @Deprecated
     public static void start() {
         stop();
         getInstrumentation().addTransformer(hotRefreshTransformer, true);
     }
 
-    @Deprecated
     public static void stop() {
         getInstrumentation().removeTransformer(hotRefreshTransformer);
-    }
-
-    @Deprecated
-    public static void reset(String className) throws AgentException {
-        Class<?> clazz = Util.getThrowawayMemoryClassLoader().remove(className);
-        reTransform(clazz);
-    }
-
-    @Deprecated
-    public static void resetAll() throws AgentException {
-        List<Class<?>> classList = Util.getThrowawayMemoryClassLoader().clear();
-        reTransform(classList.toArray(new Class[0]));
     }
 
     public static void reTransform(Class<?>... classes) throws AgentException {
@@ -67,7 +49,27 @@ class HotRefreshManager {
             getInstrumentation().retransformClasses(classes);
         } catch (Throwable e) {
             String classNames = Arrays.stream(classes).map(Class::getName).collect(Collectors.joining("; "));
-            throw new AgentException("Class file structure has been modified: " + classNames, e);
+            String reTransformFailedBytesMessage = ReTransformExceptionRecorder.buildBytesMessage();
+            String agentExceptionMessage = "Class file structure has been modified: " + classNames + reTransformFailedBytesMessage;
+            throw new AgentException(agentExceptionMessage, e);
+        } finally {
+            ReTransformExceptionRecorder.clear();
         }
+    }
+
+    //---------------------------------------------------------------------
+    // 针对于SpringLoaded的情况，处理方法已无效
+    //---------------------------------------------------------------------
+
+    @Deprecated
+    public static void reset(String className) throws AgentException {
+        Class<?> clazz = Util.getThrowawayMemoryClassLoader().remove(className);
+        reTransform(clazz);
+    }
+
+    @Deprecated
+    public static void resetAll() throws AgentException {
+        List<Class<?>> classList = Util.getThrowawayMemoryClassLoader().clear();
+        reTransform(classList.toArray(new Class[0]));
     }
 }
