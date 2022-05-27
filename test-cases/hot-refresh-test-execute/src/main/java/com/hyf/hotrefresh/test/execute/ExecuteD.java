@@ -7,6 +7,7 @@ package com.hyf.hotrefresh.test.execute;
 public class ExecuteD {
 
     public static void main(String[] args) {
-        throw new RuntimeException("test exception");
+        System.out.println("execute d");
+        throw new RuntimeException("test execute d exception");
     }
 }
