@@ -1,6 +1,7 @@
 
 ## 1.2.0 (May 27, 2022)
 
+- Compatible with some Spring Boot basic features.
 - Optimize infrastructure class loader, separate it duties, divide into two class: InfrastructureClassLoader and InfraUtils.
 - Optimize log to monitor rpc codec error.
 - Optimize trace to analysis class byte code that failed to reTransform.
