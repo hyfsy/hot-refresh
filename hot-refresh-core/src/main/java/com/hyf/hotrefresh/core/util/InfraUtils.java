@@ -4,7 +4,6 @@ import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.core.agent.AgentHelper;
 
 import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,12 +19,12 @@ public abstract class InfraUtils {
     private static final String JAVAC_TOOL_CLASS          = "com.sun.tools.javac.api.JavacTool";
     private static final String ATTACHMENT_PROVIDER_CLASS = "net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider";
 
-    private static Method   installMethod           = null;
-    private static Class<?> classReaderClass        = null;
-    private static Method   getClassNameMethod      = null;
+    private static Method   installMethod      = null;
+    private static Class<?> classReaderClass   = null;
+    private static Method   getClassNameMethod = null;
 
-    private static JavaCompiler    compiler        = null;
-    private static Instrumentation instrumentation = null;
+    private static volatile JavaCompiler    compiler        = null;
+    private static volatile Instrumentation instrumentation = null;
 
     static {
         initByteBuddyEnvironment();
@@ -57,21 +56,11 @@ public abstract class InfraUtils {
 
     public static JavaCompiler getJavaCompiler() {
         if (compiler == null) {
-            compiler = ToolProvider.getSystemJavaCompiler();
-            // if tools.jar not on the classpath then default to use URLClassLoader$FactoryURLClassLoader load
-            if (compiler != null && compiler.getClass().getClassLoader() != ClassLoader.getSystemClassLoader()) {
-                // use our class loader to load to avoid ClassNotFoundException at compile phase
-                compiler = null;
-            }
-
-            // jre
-            if (compiler == null) {
-                try {
-                    Class<?> clazz = forName(JAVAC_TOOL_CLASS);
-                    Method createMethod = ReflectionUtils.getMethod(clazz, "create");
-                    compiler = ReflectionUtils.invokeMethod(createMethod, null);
-                } catch (Throwable ignored) {
-                }
+            try {
+                Class<?> clazz = forName(JAVAC_TOOL_CLASS);
+                Method createMethod = ReflectionUtils.getMethod(clazz, "create");
+                compiler = ReflectionUtils.invokeMethod(createMethod, null);
+            } catch (Throwable ignored) {
             }
         }
 
