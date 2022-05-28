@@ -12,9 +12,9 @@ IDEA小锤子的远程版
 
 ```xml
 <dependency>
-    <groupId>com.hyf.hotrefresh</groupId>
+    <groupId>io.github.hyfsy</groupId>
     <artifactId>hot-refresh-server</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ IDEA小锤子的远程版
 4、解压后，启动本地服务器：
 
 ```bash
-bin/hot.cmd
+bin/hot.cmd -s http://localhost:8080
 ```
 
 - `-h`：本地编写代码的工作目录（默认当前命令行目录）
@@ -50,6 +50,6 @@ bin/hot.cmd
 - [ ] jar包热刷新支持
 - [x] 集成Lombok
 - [x] 集成MapStruct
-- [ ] 集成Spring
+- [x] 集成Spring
 - [ ] 集成MyBatis
 
