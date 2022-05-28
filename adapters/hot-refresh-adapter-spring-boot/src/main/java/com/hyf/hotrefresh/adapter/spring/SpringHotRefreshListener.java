@@ -23,7 +23,9 @@ public class SpringHotRefreshListener implements HotRefreshListener<ByteCodeRefr
         try {
             SpringAgent.refreshClass(name, bytes);
         } catch (Throwable t) {
-            Log.error("Failed to refresh spring class", t);
+            if (Log.isDebugMode()) {
+                Log.error("Failed to refresh spring class", t);
+            }
         }
     }
 
