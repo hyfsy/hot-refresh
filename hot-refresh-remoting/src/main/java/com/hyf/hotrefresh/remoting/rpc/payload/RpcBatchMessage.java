@@ -39,6 +39,7 @@ public abstract class RpcBatchMessage implements RpcMessage {
             codeList.add(rpcMessage.getMessageCode());
             ByteBuffer buf = rpcMessage.encode(encoding, codec);
             len += buf.limit();
+            buf.flip(); // 可写
             byteList.add(buf);
         }
 
