@@ -83,7 +83,7 @@ public class MessageCodec {
             buf.put(data);
             return buf.array();
         } catch (Exception e) {
-            Log.error(message.toString(), e);
+            Log.error("Failed to encode message: " + message.toString(), e);
             throw e;
         }
     }
@@ -145,7 +145,7 @@ public class MessageCodec {
             message.setBody(rpcMessage);
             return message;
         } catch (Exception e) {
-            Log.error(Arrays.toString(bytes), e);
+            Log.error("Failed to decode message: " + Arrays.toString(bytes), e);
             throw e;
         }
     }
