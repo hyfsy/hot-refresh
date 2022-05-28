@@ -23,6 +23,9 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <!-- 版本需要不一样，否则没效果 -->
+
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
@@ -30,25 +33,25 @@
             <scope>system</scope>
             <!--<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            <optional>true</optional>
+            <!--<optional>true</optional>-->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
+            <version>1.18.4</version>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
