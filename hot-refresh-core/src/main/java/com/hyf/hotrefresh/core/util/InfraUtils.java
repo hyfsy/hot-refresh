@@ -15,9 +15,9 @@ import java.lang.reflect.Method;
 public abstract class InfraUtils {
 
     private static final String BYTE_BUDDY_AGENT_CLASS    = "net.bytebuddy.agent.ByteBuddyAgent";
+    private static final String ATTACHMENT_PROVIDER_CLASS = "net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider";
     private static final String CLASS_READER_CLASS        = "org.objectweb.asm.ClassReader";
     private static final String JAVAC_TOOL_CLASS          = "com.sun.tools.javac.api.JavacTool";
-    private static final String ATTACHMENT_PROVIDER_CLASS = "net.bytebuddy.agent.ByteBuddyAgent$AttachmentProvider";
 
     private static Method   installMethod      = null;
     private static Class<?> classReaderClass   = null;
