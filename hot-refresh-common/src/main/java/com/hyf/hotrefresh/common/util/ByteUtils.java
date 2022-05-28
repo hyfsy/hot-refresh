@@ -17,6 +17,7 @@ public abstract class ByteUtils {
     public static byte[] parse(String str) {
         str = str.trim();
         str = str.substring(1, str.length() - 1);
+        str = str.replaceAll("\r", "").replaceAll("\n", "").replace("\t", "");
         List<String> bytesList = Arrays.stream(str.split(",")).map(String::trim).collect(Collectors.toList());
         byte[] bytes = new byte[bytesList.size()];
         for (int i = 0; i < bytesList.size(); i++) {
