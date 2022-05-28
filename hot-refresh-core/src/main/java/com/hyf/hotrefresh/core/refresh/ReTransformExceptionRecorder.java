@@ -17,21 +17,25 @@ public class ReTransformExceptionRecorder {
     private static ThreadLocal<byte[]>   originThreadLocal              = new ThreadLocal<>();
     private static ThreadLocal<Class<?>> classBeingRedefinedThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<byte[]>   currentThreadLocal             = new ThreadLocal<>();
+    private static ThreadLocal<byte[]>   transformedThreadLocal         = new ThreadLocal<>();
 
-    static void record(byte[] origin, byte[] current) {
+    static void record(byte[] origin, byte[] current, byte[] transformed) {
         originThreadLocal.set(origin);
         currentThreadLocal.set(current);
+        transformedThreadLocal.set(transformed);
     }
 
-    static void record(Class<?> classBeingRedefined, byte[] current) {
+    static void record(Class<?> classBeingRedefined, byte[] current, byte[] transformed) {
         classBeingRedefinedThreadLocal.set(classBeingRedefined);
         currentThreadLocal.set(current);
+        transformedThreadLocal.set(transformed);
     }
 
     static void clear() {
         originThreadLocal.remove();
         classBeingRedefinedThreadLocal.remove();
         currentThreadLocal.remove();
+        transformedThreadLocal.remove();
     }
 
     static String buildBytesMessage() {
@@ -45,6 +49,7 @@ public class ReTransformExceptionRecorder {
         byte[] origin = originThreadLocal.get();
         Class<?> classBeingRedefined = classBeingRedefinedThreadLocal.get();
         byte[] current = currentThreadLocal.get();
+        byte[] transformed = transformedThreadLocal.get();
 
         sb.append("\r\n");
 
@@ -76,6 +81,10 @@ public class ReTransformExceptionRecorder {
 
         if (current != null) {
             sb.append("\r\n\t-> current bytes: ").append(ByteUtils.toString(current));
+        }
+
+        if (transformed != null) {
+            sb.append("\r\n\t-> transformed bytes: ").append(ByteUtils.toString(transformed));
         }
 
         sb.append("\r\n");

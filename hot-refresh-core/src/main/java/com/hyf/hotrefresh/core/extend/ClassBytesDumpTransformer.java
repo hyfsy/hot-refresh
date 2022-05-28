@@ -23,11 +23,11 @@ public class ClassBytesDumpTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer)
+                            ProtectionDomain protectionDomain, byte[] classFileBuffer)
             throws IllegalClassFormatException {
         try {
             if (classesToEnhance.contains(classBeingRedefined)) {
-                dumpClassIfNecessary(classBeingRedefined, classfileBuffer);
+                dumpClassIfNecessary(classBeingRedefined, classFileBuffer);
             }
         } catch (Exception e) {
             e.printStackTrace();
