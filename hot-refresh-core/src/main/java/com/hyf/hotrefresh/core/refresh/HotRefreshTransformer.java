@@ -26,41 +26,51 @@ class HotRefreshTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String classResourceName, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classFileBuffer) throws IllegalClassFormatException {
 
         if (classResourceName == null) {
-            return classfileBuffer;
+            return classFileBuffer;
         }
 
         String fullClassName = classResourceName.replace("/", ".");
 
         byte[] bytes = placeHolderMemoryClassLoader.get(fullClassName);
         if (bytes == null) {
-            bytes = classfileBuffer;
+            bytes = classFileBuffer;
         }
 
         if (Log.isDebugMode()) {
             Log.debug("Hot refresh transform class: " + fullClassName);
-            store(classResourceName, classBeingRedefined, bytes);
+            store(classResourceName, classBeingRedefined, classFileBuffer, bytes);
         }
 
         return bytes;
     }
 
-    private void store(String classResourceName, Class<?> classBeingRedefined, byte[] bytes) {
+    private void store(String classResourceName, Class<?> classBeingRedefined, byte[] transformedBytes, byte[] memoryBytes) {
 
         byte[] current = null;
-        if (bytes != null) {
+        byte[] transformed = null;
+        if (memoryBytes != null) {
             String classFilePath = DEBUG_STORE_PATH + File.separator + classResourceName.replace("/", File.separator) + ".class";
             try {
-                ClassBytesDumper.dump(bytes, classFilePath);
-                current = bytes;
+                ClassBytesDumper.dump(memoryBytes, classFilePath);
+                current = memoryBytes;
+            } catch (IOException e) {
+                Log.error("Failed to dump bytes", e);
+            }
+        }
+        if (transformedBytes != null) {
+            String classFilePath = DEBUG_STORE_PATH + File.separator + classResourceName.replace("/", File.separator) + "_TRANSFORMED.class";
+            try {
+                ClassBytesDumper.dump(transformedBytes, classFilePath);
+                transformed = transformedBytes;
             } catch (IOException e) {
                 Log.error("Failed to dump bytes", e);
             }
         }
 
         // let outside exception throw points to get if this class failed to reTransform
-        ReTransformExceptionRecorder.record(classBeingRedefined, current);
+        ReTransformExceptionRecorder.record(classBeingRedefined, current, transformed);
     }
 }
