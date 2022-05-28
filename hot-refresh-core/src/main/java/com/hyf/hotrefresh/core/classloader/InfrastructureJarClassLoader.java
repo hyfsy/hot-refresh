@@ -29,6 +29,8 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
 
     private static final Map<String, String> registeredInfrastructureJarMap = new ConcurrentHashMap<>(4);
 
+    private final Map<String, Class<?>> loadedClass = new ConcurrentHashMap<>();
+
     private InfrastructureJarClassLoader(URL... urls) {
         // TODO 是否会因为ccl变化而产生问题？
         super(urls, Util.getOriginContextClassLoader());
@@ -58,18 +60,13 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         urls.add(asmURL);
 
         // tools
-        try {
-            Class.forName(JAVAC_TOOL_CLASS, false, ccl);
-        } catch (ClassNotFoundException ignored) {
-            // TODO 先查询本地lib目录
-            String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
-            if (toolsJarPath != null) {
-                try {
-                    URL javacURL = ResourceUtils.getResourceURL(new File(toolsJarPath).toURI().toURL());
-                    urls.add(javacURL);
-                } catch (MalformedURLException e) {
-                    Log.error("Failed to add javac source url", e);
-                }
+        String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
+        if (toolsJarPath != null) {
+            try {
+                URL javacURL = ResourceUtils.getResourceURL(new File(toolsJarPath).toURI().toURL());
+                urls.add(javacURL);
+            } catch (MalformedURLException e) {
+                Log.error("Failed to add javac source url", e);
             }
         }
 
@@ -104,5 +101,21 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         }
 
         return resource;
+    }
+
+    @Override
+    protected Class<?> brokenLoadClass(String name) throws ClassNotFoundException {
+
+        Class<?> c = loadedClass.get(name);
+        if (c == null) {
+            synchronized (loadedClass) {
+                if (c == null) {
+                    c = super.brokenLoadClass(name);
+                    loadedClass.put(name, c);
+                }
+            }
+        }
+
+        return c;
     }
 }
