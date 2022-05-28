@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 public class LombokAdapterInstaller implements Installer {
 
-    public static final String LOMBOK_LOCAL_PATH = "lib/lombok-1.18.12.jar";
+    public static final String LOMBOK_LOCAL_PATH = "lib/lombok-1.18.14.jar";
 
     @Override
     public void install() {

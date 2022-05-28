@@ -23,8 +23,6 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
 
-    private static final String JAVAC_TOOL_CLASS = "com.sun.tools.javac.api.JavacTool";
-
     private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
 
     private static final Map<String, String> registeredInfrastructureJarMap = new ConcurrentHashMap<>(4);
