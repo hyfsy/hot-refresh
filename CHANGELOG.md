@@ -1,5 +1,5 @@
 
-## 1.2.0 (May 27, 2022)
+## 1.2.0 (May 28, 2022)
 
 - Compatible with some Spring Boot basic features.
 - Add new ways to execute scripts.
