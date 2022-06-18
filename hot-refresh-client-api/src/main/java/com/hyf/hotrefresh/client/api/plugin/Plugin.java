@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.plugin;
+package com.hyf.hotrefresh.client.api.plugin;
 
 /**
  * @author baB_hyf

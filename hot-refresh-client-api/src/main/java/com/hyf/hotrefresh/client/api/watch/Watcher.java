@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.watch;
+package com.hyf.hotrefresh.client.api.watch;
 
 import com.hyf.hotrefresh.common.ChangeType;
 

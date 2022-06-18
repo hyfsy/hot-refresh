@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
 import com.hyf.hotrefresh.client.core.DefaultRequestBuilder;
-import com.hyf.hotrefresh.client.core.RequestBuilder;
+import com.hyf.hotrefresh.client.api.core.RequestBuilder;
 import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.remoting.message.Message;

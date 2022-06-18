@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.client.command;
 
-import com.hyf.hotrefresh.client.plugin.Plugin;
+import com.hyf.hotrefresh.client.api.plugin.Plugin;
 
 /**
  * @author baB_hyf
