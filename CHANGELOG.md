@@ -1,4 +1,12 @@
 
+
+## 1.2.1 (Jun 18, 2022)
+
+- Add args parser to parse custom args.
+- Split the client dependency to api jar.
+- Support custom httpclient request builder.
+
+
 ## 1.2.0 (May 28, 2022)
 
 - Compatible with some Spring Boot basic features.
