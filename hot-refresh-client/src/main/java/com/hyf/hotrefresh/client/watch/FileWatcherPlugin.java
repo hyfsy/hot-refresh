@@ -1,7 +1,8 @@
 package com.hyf.hotrefresh.client.watch;
 
+import com.hyf.hotrefresh.client.api.watch.Watcher;
 import com.hyf.hotrefresh.client.core.rpc.RpcPushWatcher;
-import com.hyf.hotrefresh.client.plugin.Plugin;
+import com.hyf.hotrefresh.client.api.plugin.Plugin;
 import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
 

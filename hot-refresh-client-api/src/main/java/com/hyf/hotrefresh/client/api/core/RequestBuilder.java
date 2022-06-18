@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.core;
+package com.hyf.hotrefresh.client.api.core;
 
 import com.hyf.hotrefresh.remoting.message.Message;
 import org.apache.http.client.methods.HttpUriRequest;

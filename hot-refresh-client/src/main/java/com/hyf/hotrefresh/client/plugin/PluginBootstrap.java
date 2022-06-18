@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client.plugin;
 
+import com.hyf.hotrefresh.client.api.plugin.Plugin;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 

@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client.watch;
 
+import com.hyf.hotrefresh.client.api.watch.Watcher;
 import com.hyf.hotrefresh.common.Log;
 
 import java.io.File;

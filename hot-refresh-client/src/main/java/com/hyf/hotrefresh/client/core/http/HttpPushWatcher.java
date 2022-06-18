@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.client.core.http;
 
-import com.hyf.hotrefresh.client.watch.Watcher;
+import com.hyf.hotrefresh.client.api.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;
