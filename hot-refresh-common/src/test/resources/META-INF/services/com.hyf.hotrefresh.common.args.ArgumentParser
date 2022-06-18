@@ -1,0 +1,4 @@
+com.hyf.hotrefresh.common.args.ArgumentHolderTests$MockArgumentParser
+com.hyf.hotrefresh.common.args.AnnotatedArgumentParserAdapterTests$MockArgumentParserNoArgumentAnnotation
+com.hyf.hotrefresh.common.args.AnnotatedArgumentParserAdapterTests$MockArgumentParserHasArgumentAnnotation
+com.hyf.hotrefresh.common.args.AnnotatedArgumentParserAdapterTests$MockAnnotatedArgumentParser

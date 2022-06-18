@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.core.http;
+package com.hyf.hotrefresh.client.core.rpc;
 
 import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;

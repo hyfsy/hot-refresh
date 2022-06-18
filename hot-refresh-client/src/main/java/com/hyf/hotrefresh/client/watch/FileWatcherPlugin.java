@@ -3,10 +3,11 @@ package com.hyf.hotrefresh.client.watch;
 import com.hyf.hotrefresh.client.core.rpc.RpcPushWatcher;
 import com.hyf.hotrefresh.client.plugin.Plugin;
 import com.hyf.hotrefresh.common.Services;
+import com.hyf.hotrefresh.common.args.ArgumentHolder;
 
 import java.util.List;
 
-import static com.hyf.hotrefresh.common.Constants.WATCH_HOME;
+import static com.hyf.hotrefresh.common.Constants.ARG_WATCH_HOME;
 
 /**
  * @author baB_hyf
@@ -16,14 +17,14 @@ public class FileWatcherPlugin implements Plugin {
 
     @Override
     public void setup() throws Exception {
-        WatchCenter.registerWatcher(WATCH_HOME, new RpcPushWatcher());
+        WatchCenter.registerWatcher(ArgumentHolder.get(ARG_WATCH_HOME), new RpcPushWatcher());
         initWatcher();
     }
 
     private void initWatcher() {
         List<Watcher> watchers = Services.gets(Watcher.class);
         for (Watcher watcher : watchers) {
-            WatchCenter.registerWatcher(WATCH_HOME, watcher);
+            WatchCenter.registerWatcher(ArgumentHolder.get(ARG_WATCH_HOME), watcher);
         }
     }
 }

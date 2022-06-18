@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.plugin.execute.executable;
 
+import com.hyf.hotrefresh.common.args.ArgumentHolder;
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.plugin.execute.Executable;
 
@@ -11,7 +12,7 @@ public class DebugExecutable implements Executable<Void> {
 
     @Override
     public Void execute() {
-        Constants.DEBUG = true;
+        ArgumentHolder.put(Constants.ARG_DEBUG, true);
         return null;
     }
 }

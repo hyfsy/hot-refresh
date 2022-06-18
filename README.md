@@ -52,4 +52,5 @@ bin/hot.cmd
 - [x] 集成MapStruct
 - [ ] 集成Spring
 - [ ] 集成MyBatis
+- [ ] 集成SkyWalking
 

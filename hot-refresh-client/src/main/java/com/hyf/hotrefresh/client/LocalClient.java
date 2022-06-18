@@ -4,13 +4,13 @@ import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Version;
+import com.hyf.hotrefresh.common.args.ArgumentHolder;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 
 import static com.hyf.hotrefresh.common.Constants.*;
 
@@ -23,11 +23,9 @@ public class LocalClient {
     // TODO IDEA plugin
     public static void main(String[] args) {
 
-        // System.setProperty("home", "E:\\study\\code\\idea4\\project\\hot-refresh\\test-cases\\hot-refresh-test-spring-boot");
-        // System.setProperty("server", "http://localhost:8082");
+        // System.setProperty("watchHome", "E:\\study\\code\\idea4\\project\\hot-refresh\\test-cases\\hot-refresh-test-spring-boot");
+        // System.setProperty("serverURL", "http://localhost:8082");
         // System.setProperty("debug", "1");
-
-        // java -Dhome=C:\Users\baB_hyf\Desktop\test -Durl=http://localhost:8082 -jar hot-refresh-server-1.0.0-SNAPSHOT.jar
 
         parse(args);
         print();
@@ -36,33 +34,12 @@ public class LocalClient {
     }
 
     private static void parse(String[] args) {
-        if (args == null || args.length == 0) {
-            return;
-        }
-
-        for (int i = 0; i < args.length; i++) {
-            if (Arrays.asList("-h", "-H", "--home").contains(args[i])) {
-                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
-                    continue;
-                }
-                WATCH_HOME = args[i++ + 1];
-            }
-            else if (Arrays.asList("-s", "-S", "--server").contains(args[i])) {
-                if (i + 1 >= args.length || args[i + 1].startsWith("-")) {
-                    continue;
-                }
-                SERVER_URL = args[i++ + 1];
-                PUSH_SERVER_URL = SERVER_URL.endsWith("/") ? SERVER_URL.substring(0, SERVER_URL.length() - 1) + REFRESH_API : SERVER_URL + REFRESH_API;
-            }
-            else if (Arrays.asList("-d", "-D", "--debug").contains(args[i])) {
-                DEBUG = true;
-            }
-        }
+        ArgumentHolder.parse(args);
     }
 
     private static void print() {
-        String home = "Watch Home Path: " + WATCH_HOME;
-        String url = "Refresh Server : " + PUSH_SERVER_URL;
+        String home = "Watch Home Path: " + ArgumentHolder.get(ARG_WATCH_HOME);
+        String url = "Refresh Server : " + ArgumentHolder.get(ARG_SERVER_URL);
         String version = "Client Version : " + Version.getVersion();
 
         int max = Math.max(home.getBytes(MESSAGE_ENCODING).length, Math.max(url.getBytes(MESSAGE_ENCODING).length, version.getBytes(MESSAGE_ENCODING).length));
@@ -81,7 +58,9 @@ public class LocalClient {
     }
 
     private static void check() {
-        String watchHome = WATCH_HOME;
+
+        String watchHome = ArgumentHolder.get(ARG_WATCH_HOME);
+
         File file;
         try {
             file = new File(watchHome);
@@ -94,19 +73,21 @@ public class LocalClient {
         }
 
         Log.info("Wait for connect......");
+
+        String serverURL = ArgumentHolder.get(ARG_SERVER_URL);
         try {
-            URL url = new URL(PUSH_SERVER_URL);
+            URL url = new URL(serverURL);
             url.openConnection();
         } catch (Exception e) {
-            throw new RuntimeException("Url invalid: " + PUSH_SERVER_URL, e);
+            throw new RuntimeException("Url invalid: " + serverURL, e);
         }
 
         try {
             RpcHeartbeatRequest request = new RpcHeartbeatRequest();
             Message message = MessageFactory.createMessage(request);
-            RpcClient.getInstance().sync(PUSH_SERVER_URL, message);
+            RpcClient.getInstance().sync(serverURL, message);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to connect server: " + PUSH_SERVER_URL, e);
+            throw new RuntimeException("Failed to connect server: " + serverURL, e);
         }
 
         Log.info("Server connected");
