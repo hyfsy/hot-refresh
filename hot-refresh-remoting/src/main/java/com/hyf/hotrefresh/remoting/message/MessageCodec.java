@@ -99,7 +99,7 @@ public class MessageCodec {
             byte[] magic = new byte[MAGIC.length];
             buf.get(magic);
             if (!Arrays.equals(magic, MAGIC)) {
-                throw new CodecException("Unknown message magic: " + Arrays.toString(magic));
+                throw new CodecException("Unknown message");
             }
 
             byte version = buf.get();

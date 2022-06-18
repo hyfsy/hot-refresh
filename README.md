@@ -52,4 +52,5 @@ bin/hot.cmd -s http://localhost:8080
 - [x] 集成MapStruct
 - [x] 集成Spring
 - [ ] 集成MyBatis
+- [ ] 集成SkyWalking
 

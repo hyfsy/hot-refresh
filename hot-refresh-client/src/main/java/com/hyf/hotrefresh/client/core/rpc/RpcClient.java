@@ -1,7 +1,9 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
+import com.hyf.hotrefresh.client.core.DefaultRequestBuilder;
+import com.hyf.hotrefresh.client.core.RequestBuilder;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.util.IOUtils;
-import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
@@ -10,26 +12,24 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 
 import javax.net.ssl.SSLContext;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,11 +41,19 @@ public class RpcClient {
     private static final RpcClient INSTANCE = new RpcClient();
 
     private final CloseableHttpClient client = createClient();
-    private final RequestConfig       config = createDefaultConfig();
 
     private final MessageHandler clientMessageHandler = MessageHandlerFactory.getClientMessageHandler();
 
+    private RequestBuilder requestBuilder;
+
     private RpcClient() {
+        List<RequestBuilder> builders = Services.gets(RequestBuilder.class);
+        if (builders.isEmpty()) {
+            requestBuilder = new DefaultRequestBuilder();
+        }
+        else {
+            requestBuilder = builders.iterator().next();
+        }
     }
 
     public static RpcClient getInstance() {
@@ -82,13 +90,10 @@ public class RpcClient {
     }
 
     private void sync(String url, Message request, ResponseHandler callback) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setConfig(config);
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(MessageCodec.encode(request));
-        httpPost.setEntity(new InputStreamEntity(bais, bais.available(), ContentType.create(RemotingConstants.DEFAULT_CONTENT_TYPE)));
+        HttpUriRequest req = requestBuilder.build(url, request);
 
-        client.execute(httpPost, response -> {
+        client.execute(req, response -> {
             StatusLine sl = response.getStatusLine();
             if (sl.getStatusCode() >= 300) {
                 try {
@@ -127,13 +132,13 @@ public class RpcClient {
                 .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
-        connectionManager.setMaxTotal(3000); // 最大连接数3000
-        connectionManager.setDefaultMaxPerRoute(400); // 路由链接数400
+        connectionManager.setMaxTotal(50); // 最大连接数
+        connectionManager.setDefaultMaxPerRoute(10); // 并行进行连接数
 
         RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(60000)
-                .setConnectTimeout(60000)
-                .setConnectionRequestTimeout(10000)
+                .setConnectionRequestTimeout(5000) // 连接获取超时时间
+                .setConnectTimeout(20000) // 连接超时时间
+                .setSocketTimeout(60000) // 读取超时时间
                 .build();
 
         return HttpClients.custom().setDefaultRequestConfig(requestConfig)
@@ -141,11 +146,6 @@ public class RpcClient {
                 .evictExpiredConnections()
                 .evictIdleConnections(30, TimeUnit.SECONDS)
                 .build();
-    }
-
-    private RequestConfig createDefaultConfig() {
-        return RequestConfig.custom().setConnectionRequestTimeout(5000)
-                .setConnectTimeout(5000).setSocketTimeout(5000).build();
     }
 
     public interface ResponseHandler {

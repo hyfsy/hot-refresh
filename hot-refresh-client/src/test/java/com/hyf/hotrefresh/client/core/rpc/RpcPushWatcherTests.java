@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.core.http;
+package com.hyf.hotrefresh.client.core.rpc;
 
 import org.junit.Test;
 

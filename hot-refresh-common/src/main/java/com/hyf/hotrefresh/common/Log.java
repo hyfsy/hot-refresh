@@ -1,8 +1,10 @@
 package com.hyf.hotrefresh.common;
 
+import com.hyf.hotrefresh.common.args.ArgumentHolder;
 import com.hyf.hotrefresh.common.util.DateUtils;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.FileUtils;
+import sun.plugin2.liveconnect.ArgumentHelper;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,7 +22,7 @@ public class Log {
     public static final String LOG_HOME = Constants.REFRESH_HOME + File.separator + "logs";
 
     public static boolean isDebugMode() {
-        return Constants.DEBUG;
+        return ArgumentHolder.get(Constants.ARG_DEBUG);
     }
 
     /**

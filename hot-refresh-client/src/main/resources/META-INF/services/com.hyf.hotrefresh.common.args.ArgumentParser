@@ -1,0 +1,3 @@
+com.hyf.hotrefresh.client.args.DebugArgumentParser
+com.hyf.hotrefresh.client.args.WatchHomeArgumentParser
+com.hyf.hotrefresh.client.args.ServerURLArgumentParser
