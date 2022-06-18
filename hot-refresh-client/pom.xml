@@ -29,11 +29,15 @@
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-remoting</artifactId>
+            <artifactId>hot-refresh-client-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
     </dependencies>
     <build>

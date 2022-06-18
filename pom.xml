@@ -50,6 +50,7 @@
         <module>adapters</module>
         <module>plugins</module>
         <module>test-cases</module>
+        <module>hot-refresh-client-api</module>
     </modules>
 
     <dependencyManagement>
@@ -67,6 +68,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-remoting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-client-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
