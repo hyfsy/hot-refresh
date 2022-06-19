@@ -14,15 +14,18 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache-httpcomponents.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-common</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
