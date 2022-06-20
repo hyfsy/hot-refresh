@@ -5,12 +5,14 @@ import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Version;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
+import com.hyf.hotrefresh.common.util.UrlUtils;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import static com.hyf.hotrefresh.common.Constants.*;
 
@@ -27,10 +29,21 @@ public class LocalClient {
         // System.setProperty("serverURL", "http://localhost:8082");
         // System.setProperty("debug", "1");
 
+        prepare();
         parse(args);
         print();
         check();
         start();
+    }
+
+    private static void prepare() {
+        if (Log.isDebugMode()) {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private static void parse(String[] args) {
@@ -53,6 +66,9 @@ public class LocalClient {
         Log.info(home);
         Log.info(url);
         Log.info(version);
+        if (Log.isDebugMode()) {
+            Log.info("Debug Arguments: " + ArgumentHolder.getMap());
+        }
         Log.info(sb.toString());
         Log.info("");
     }
@@ -74,20 +90,20 @@ public class LocalClient {
 
         Log.info("Wait for connect......");
 
-        String serverURL = ArgumentHolder.get(ARG_SERVER_URL);
+        String serverAddress = UrlUtils.concat(ArgumentHolder.get(ARG_SERVER_URL), REFRESH_API);
         try {
-            URL url = new URL(serverURL);
+            URL url = new URL(serverAddress);
             url.openConnection();
         } catch (Exception e) {
-            throw new RuntimeException("Url invalid: " + serverURL, e);
+            throw new RuntimeException("Url invalid: " + serverAddress, e);
         }
 
         try {
             RpcHeartbeatRequest request = new RpcHeartbeatRequest();
             Message message = MessageFactory.createMessage(request);
-            RpcClient.getInstance().sync(serverURL, message);
+            RpcClient.getInstance().sync(serverAddress, message);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to connect server: " + serverURL, e);
+            throw new RuntimeException("Failed to connect server: " + serverAddress, e);
         }
 
         Log.info("Server connected");
