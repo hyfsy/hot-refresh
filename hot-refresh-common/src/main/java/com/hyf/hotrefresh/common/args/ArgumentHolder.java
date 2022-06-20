@@ -82,4 +82,8 @@ public class ArgumentHolder {
         ARGS.remove(name);
     }
 
+    public static Map<String, Object> getMap() {
+        return Collections.unmodifiableMap(ARGS);
+    }
+
 }
