@@ -1,8 +1,8 @@
 package com.hyf.hotrefresh.plugin.execute.command;
 
-import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.api.command.CommandHandler;
-import com.hyf.hotrefresh.common.util.FileUtils;
+import com.hyf.hotrefresh.client.core.HotRefreshClient;
+import com.hyf.hotrefresh.plugin.execute.exception.ExecutionException;
 import com.hyf.hotrefresh.plugin.execute.payload.RpcExecutableRequest;
 
 import java.io.File;
@@ -25,8 +25,15 @@ public class ExecuteCommandHandler implements CommandHandler {
     public void handle(String command) throws Exception {
 
         String[] commands = command.split(" ");
+        if (commands.length != 2) {
+            return;
+        }
+
         String filePath = commands[1];
-        File file = FileUtils.getFile(filePath);
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new ExecutionException("file not exists: " + file.getAbsolutePath());
+        }
 
         RpcExecutableRequest request = new RpcExecutableRequest();
         request.setFileName(file.getName());
