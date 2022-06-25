@@ -4,6 +4,8 @@
 
 - Add args parser to parse custom args.
 - Split the client dependency to client and api jar.
+- Rpc message version upgrade.
+- Support Hotrefresh manage command.
 - Support custom httpclient request builder.
 - Support assign infrastructure resource outer.
 - Fix lombok use with mapstruct occur some problem.
