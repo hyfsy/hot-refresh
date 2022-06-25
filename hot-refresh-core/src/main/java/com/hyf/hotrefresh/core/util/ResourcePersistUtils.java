@@ -14,6 +14,10 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 
 /**
+ * current only support {@link com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader} to persist jar.
+ * <p>
+ * unrecommended for other purposes.
+ *
  * @author baB_hyf
  * @date 2021/12/11
  */

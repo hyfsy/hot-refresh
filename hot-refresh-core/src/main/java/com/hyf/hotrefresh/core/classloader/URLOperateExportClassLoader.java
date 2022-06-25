@@ -3,7 +3,6 @@ package com.hyf.hotrefresh.core.classloader;
 
 import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
-import com.hyf.hotrefresh.core.util.ResourcePersistUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.net.URL;
@@ -35,8 +34,7 @@ public class URLOperateExportClassLoader extends URLClassLoader {
     }
 
     public String addPath(String identity, String path) {
-        URL resource = Util.getOriginContextClassLoader().getResource(path);
-        URL url = ResourcePersistUtils.getResourceURL(resource);
+        URL url = Util.getOriginContextClassLoader().getResource(path);
         URL oldUrl = addPath(identity, url);
         return oldUrl == null ? null : oldUrl.toString();
     }
