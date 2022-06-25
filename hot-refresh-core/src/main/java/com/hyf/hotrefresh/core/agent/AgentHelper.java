@@ -50,14 +50,14 @@ public class AgentHelper {
                 File toolsJar = new File(toolsJarPath);
                 return toolsJar.isFile() && toolsJar.canRead()
                         ? ReflectionUtils.invokeMethod(of, null, cl, new File[]{toolsJar})
-                        : ReflectionUtils.invokeField(instance, null);
+                        : ReflectionUtils.invokeFieldGet(instance, null);
             }
             return method.invoke(DEFAULT, args);
         });
 
         try {
             Object arr = Array.newInstance(AttachmentProviderClass, 2);
-            Array.set(arr, 0, ReflectionUtils.invokeField(DEFAULT, null));
+            Array.set(arr, 0, ReflectionUtils.invokeFieldGet(DEFAULT, null));
             Array.set(arr, 1, o);
             Constructor<?> CompoundConstructor = CompoundClass.getConstructor(AttachmentProviderArrayClass);
             return CompoundConstructor.newInstance(arr);

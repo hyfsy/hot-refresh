@@ -27,7 +27,7 @@ public abstract class FastjsonUtils {
         if (SerializerFeatureArray == null) {
             Class<?> SerializerFeatureClass = InfraUtils.forName("com.alibaba.fastjson.serializer.SerializerFeature");
             Field PrettyFormatField = ReflectionUtils.getField(SerializerFeatureClass, "PrettyFormat");
-            Object PrettyFormatFieldObject = ReflectionUtils.invokeField(PrettyFormatField, null);
+            Object PrettyFormatFieldObject = ReflectionUtils.invokeFieldGet(PrettyFormatField, null);
             Object SerializerFeatureArray = Array.newInstance(SerializerFeatureClass, 1);
             Array.set(SerializerFeatureArray, 0, PrettyFormatFieldObject);
             FastjsonUtils.SerializerFeatureArray = SerializerFeatureArray;

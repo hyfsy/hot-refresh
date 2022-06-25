@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 public class LombokAdapterInstaller implements Installer {
 
-    public static final String LOMBOK_LOCAL_PATH = "lib/lombok-1.18.14.jar";
+    public static final String LOMBOK_LOCAL_PATH = "lib/lombok-1.18.12.jar";
 
     @Override
     public void install() {
@@ -27,11 +27,6 @@ public class LombokAdapterInstaller implements Installer {
         // execute lombok annotation processor function will throw ClassNotDefError error
         ClassLoader shadowClassLoader = getShadowClassLoader();
         replaceParent(shadowClassLoader, Util.getInfrastructureJarClassLoader());
-
-        // load lombok lib
-        LombokShadowClassLoaderDelegate delegate = new LombokShadowClassLoaderDelegate(shadowClassLoader);
-        delegate.addPath(LOMBOK_LOCAL_PATH);
-        AnnotationProcessorCompositeClassLoader.getInstance().addClassLoader(delegate);
     }
 
     public ClassLoader getShadowClassLoader() {

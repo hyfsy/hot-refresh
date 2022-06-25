@@ -27,6 +27,6 @@ public class ReflectionUtilsTests {
         Field fieldField = ReflectionUtils.getField(ReflectionUtilsTests.class, "field");
         assertNotNull(fieldField);
         assertNotNull(ReflectionUtils.invokeMethod(getMethod, this));
-        assertNotNull(ReflectionUtils.invokeField(fieldField, this));
+        assertNotNull(ReflectionUtils.invokeFieldGet(fieldField, this));
     }
 }
