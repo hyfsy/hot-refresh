@@ -11,9 +11,9 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
  */
 public class RemotingConstants {
 
-    // 1: formulate specification
-    // 2: slimming message, e.g. remove empty map
-    public static final byte VERSION = 2;
+    // 1: formulate specification(1.1+)
+    // 2: slimming message, e.g. remove empty map(1.3+)
+    public static final byte MESSAGE_VERSION = 2;
 
     public static final String DEFAULT_CONTENT_TYPE = "application-hot-refresh/hex-stream";
 

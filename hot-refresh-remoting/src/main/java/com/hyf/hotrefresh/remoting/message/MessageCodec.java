@@ -69,7 +69,7 @@ public class MessageCodec {
             int messageLength = FIXED_LENGTH + headerData.length + data.length;
             ByteBuffer buf = ByteBuffer.allocate(messageLength);
             buf.put(MAGIC);
-            buf.put(RemotingConstants.VERSION);
+            buf.put(RemotingConstants.MESSAGE_VERSION);
             buf.putInt(messageLength);
             buf.putInt(message.getId());
             buf.put(message.getEncoding());
@@ -102,7 +102,7 @@ public class MessageCodec {
             }
 
             byte version = buf.get();
-            if (version != RemotingConstants.VERSION) {
+            if (version != RemotingConstants.MESSAGE_VERSION) {
                 throw new CodecException("Unknown message version: " + version);
             }
 
