@@ -15,7 +15,7 @@ public class RpcResponseHandler extends RpcMessageResponseHandler<RpcResponse> {
 
         int status = response.getStatus();
 
-        if (status == SUCCESS || status == UNKNOWN) {
+        if (status == RpcResponse.SUCCESS || status == RpcResponse.UNKNOWN) {
             handleSuccessResponse(response);
         }
         else {

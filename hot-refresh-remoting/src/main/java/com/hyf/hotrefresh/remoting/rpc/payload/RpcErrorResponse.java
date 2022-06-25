@@ -16,7 +16,7 @@ public class RpcErrorResponse extends RpcResponse {
     private Throwable t;
 
     public RpcErrorResponse() {
-        setStatus(RemotingConstants.RESPONSE_ERROR);
+        setStatus(ERROR);
         setData("Something error".getBytes(RemotingConstants.DEFAULT_ENCODING.getCharset()));
     }
 
@@ -35,7 +35,7 @@ public class RpcErrorResponse extends RpcResponse {
     }
 
     private void resetWithThrowable() {
-        setStatus(RemotingConstants.RESPONSE_ERROR);
+        setStatus(ERROR);
         // 会序列化javac相关的类，无法被序列化导致报错
         // setData(MessageCodec.encodeObject(t, RpcMessageConstants.DEFAULT_ENCODING, RpcMessageConstants.DEFAULT_CODEC));
         Map<String, Object> extraMap = new HashMap<>();

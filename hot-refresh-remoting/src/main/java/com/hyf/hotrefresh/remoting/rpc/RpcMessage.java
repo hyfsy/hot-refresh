@@ -15,5 +15,8 @@ public interface RpcMessage {
 
     void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec);
 
+    /**
+     * @see com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType
+     */
     byte getMessageCode();
 }

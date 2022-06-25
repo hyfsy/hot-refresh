@@ -8,9 +8,9 @@ import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshResponse;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class RpcHotRefreshRequestHandler implements RpcMessageHandler<RpcHotRefr
 
         if (inst == RpcHotRefreshRequestInst.UNKNOWN) {
             RpcHotRefreshResponse response = new RpcHotRefreshResponse();
-            response.setStatus(RemotingConstants.RESPONSE_ERROR);
+            response.setStatus(RpcResponse.ERROR);
             response.setData("Request inst unknown".getBytes(RemotingConstants.DEFAULT_ENCODING.getCharset()));
             return response;
         }
