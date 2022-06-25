@@ -21,7 +21,7 @@ public class Log {
     public static final String LOG_HOME = Constants.REFRESH_HOME + File.separator + "logs";
 
     public static boolean isDebugMode() {
-        return ArgumentHolder.get(Constants.ARG_DEBUG);
+        return ArgumentHolder.getOrDefault(Constants.ARG_DEBUG, false);
     }
 
     /**

@@ -42,7 +42,7 @@ public class ToolsJarProcessor {
 
             int exitCode = process.waitFor();
             if (exitCode != 0 && Log.isDebugMode()) {
-                Log.debug("tools.jar path process return code: " + exitCode);
+                Log.warn("tools.jar path process return code: " + exitCode);
             }
         } catch (IOException | InterruptedException e) {
             Log.error("Execute find tools.jar process failed", e);
