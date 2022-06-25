@@ -33,23 +33,29 @@ public abstract class RpcBatchMessage implements RpcMessage {
 
         int len = 0;
 
-        List<Byte> codeList = new ArrayList<>();
-        List<ByteBuffer> byteList = new ArrayList<>();
+        List<MessageSegment> segments = new ArrayList<>();
+
         for (RpcMessage rpcMessage : rpcMessages) {
-            codeList.add(rpcMessage.getMessageCode());
             ByteBuffer buf = rpcMessage.encode(encoding, codec);
             len += buf.limit();
             buf.flip(); // 可写
-            byteList.add(buf);
+
+            MessageSegment segment = new MessageSegment();
+            segment.code = rpcMessage.getMessageCode();
+            segment.length = buf.limit();
+            segment.buf = buf;
+            segments.add(segment);
         }
 
         ByteBuffer buf = ByteBuffer.allocate(4 + 4 * rpcMessages.size() + rpcMessages.size() + len);
         buf.putInt(rpcMessages.size());
 
-        for (int i = 0; i < rpcMessages.size(); i++) {
-            buf.put(codeList.get(i));
-            buf.putInt(byteList.get(i).limit());
-            buf.put(byteList.get(i));
+        for (MessageSegment segment : segments) {
+            buf.put(segment.code);
+            buf.putInt(segment.length);
+            if (segment.length != 0) {
+                buf.put(segment.buf);
+            }
         }
 
         return buf;
@@ -65,12 +71,14 @@ public abstract class RpcBatchMessage implements RpcMessage {
             byte messageTypeCode = buf.get();
 
             int segmentLength = buf.getInt();
-            byte[] segmentBytes = new byte[segmentLength];
-            buf.get(segmentBytes);
-            RpcMessage rpcMessage = RpcMessageFactory.createRpcMessage(messageTypeCode);
-            ByteBuffer rpcMessageBuf = ByteBuffer.wrap(segmentBytes);
-            rpcMessage.decode(rpcMessageBuf, encoding, codec);
-            segmentList.add(rpcMessage);
+            if (segmentLength != 0) {
+                byte[] segmentBytes = new byte[segmentLength];
+                buf.get(segmentBytes);
+                RpcMessage rpcMessage = RpcMessageFactory.createRpcMessage(messageTypeCode);
+                ByteBuffer rpcMessageBuf = ByteBuffer.wrap(segmentBytes);
+                rpcMessage.decode(rpcMessageBuf, encoding, codec);
+                segmentList.add(rpcMessage);
+            }
         }
 
         this.setRpcMessages(segmentList);
@@ -99,5 +107,11 @@ public abstract class RpcBatchMessage implements RpcMessage {
     @Override
     public int hashCode() {
         return Objects.hash(rpcMessages);
+    }
+
+    private static class MessageSegment {
+        private int        length;
+        private ByteBuffer buf;
+        private byte       code;
     }
 }

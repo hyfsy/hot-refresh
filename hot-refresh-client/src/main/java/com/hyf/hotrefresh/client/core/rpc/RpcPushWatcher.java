@@ -5,7 +5,7 @@ import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.api.watch.Watcher;
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
-import com.hyf.hotrefresh.core.remoting.payload.RpcRequestInst;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 
 import java.io.File;
@@ -71,7 +71,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
             RpcHotRefreshRequest request = new RpcHotRefreshRequest();
             request.setFileName(file.getName());
             request.setFileLocation(file.getAbsolutePath());
-            request.setInst(RpcRequestInst.valueOf(type.name()));
+            request.setInst(RpcHotRefreshRequestInst.valueOf(type.name()));
             // 延迟打开的输入流，防止文件被长时间占用
             request.setBody(new DeferredOpenFileInputStream(file));
             rpcMessageQueue.put(request);

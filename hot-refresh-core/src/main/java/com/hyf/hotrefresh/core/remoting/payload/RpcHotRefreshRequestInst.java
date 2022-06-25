@@ -6,8 +6,9 @@ import com.hyf.hotrefresh.remoting.rpc.enums.EnumCodeAware;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public enum RpcRequestInst implements EnumCodeAware {
+public enum RpcHotRefreshRequestInst implements EnumCodeAware {
 
+    UNKNOWN((byte) 0), // unset
     CREATE((byte) 1), // 新增class
     MODIFY((byte) 2), // 修改class
     DELETE((byte) 3), // 删除class
@@ -15,12 +16,12 @@ public enum RpcRequestInst implements EnumCodeAware {
 
     private byte code;
 
-    RpcRequestInst(byte code) {
+    RpcHotRefreshRequestInst(byte code) {
         this.code = code;
     }
 
-    public static RpcRequestInst getInst(byte code) {
-        for (RpcRequestInst inst : values()) {
+    public static RpcHotRefreshRequestInst getInst(byte code) {
+        for (RpcHotRefreshRequestInst inst : values()) {
             if (inst.code == code) {
                 return inst;
             }

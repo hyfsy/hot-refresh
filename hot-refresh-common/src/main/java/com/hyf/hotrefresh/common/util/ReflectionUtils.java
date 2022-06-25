@@ -52,7 +52,7 @@ public abstract class ReflectionUtils {
             method.setAccessible(true);
             return (T) method.invoke(obj, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to invoke " + method.getName(), e);
+            throw new RuntimeException("Failed to invoke method: " + method.getName(), e);
         }
     }
 

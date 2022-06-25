@@ -1,13 +1,12 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
-import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
-import com.hyf.hotrefresh.core.remoting.payload.RpcRequestInst;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +31,7 @@ public class RpcClientTests {
         RpcHotRefreshRequest request = new RpcHotRefreshRequest();
         request.setFileName("Supplier.java");
         request.setFileLocation(null);
-        request.setInst(RpcRequestInst.CREATE);
+        request.setInst(RpcHotRefreshRequestInst.CREATE);
         request.setBody(getJavaFileInputStream());
         Message message = MessageFactory.createMessage(request);
 

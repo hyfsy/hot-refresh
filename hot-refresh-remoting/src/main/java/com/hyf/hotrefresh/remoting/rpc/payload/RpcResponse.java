@@ -8,7 +8,6 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,25 +23,43 @@ public class RpcResponse implements RpcMessage {
     // extra length(4byte)
     // extra
 
-    public static final int FIXED_LENGTH = 4 + 4 + 1 + 4;
+    public static final int FIXED_LENGTH = 4 + 4 + 4;
 
-    private Map<String, Object> extra  = new HashMap<>();
-    private int                 status = -1;
-    private byte[]              data   = new byte[0];
+    private int                 status;
+    private byte[]              data;
+    private Map<String, Object> extra;
 
     @Override
     public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
-        byte[] extraBytes = MessageCodec.encodeObject(extra, encoding, codec);
+        int messageLength = FIXED_LENGTH;
 
-        int messageLength = FIXED_LENGTH + data.length + extraBytes.length;
+        byte[] dataBytes = null;
+        if (data != null && data.length != 0) {
+            dataBytes = data;
+            messageLength += data.length;
+        }
+
+        byte[] extraBytes = null;
+        if (extra != null && !extra.isEmpty()) {
+            extraBytes = MessageCodec.encodeObject(extra, encoding, codec);
+            messageLength += extraBytes.length;
+        }
 
         ByteBuffer buf = ByteBuffer.allocate(messageLength);
+
         buf.putInt(status);
-        buf.putInt(data.length);
-        buf.put(data);
-        buf.putInt(extraBytes.length);
-        buf.put(extraBytes);
+
+        buf.putInt(dataBytes == null ? 0 : dataBytes.length);
+        if (dataBytes != null) {
+            buf.put(dataBytes);
+        }
+
+        buf.putInt(extraBytes == null ? 0 : extraBytes.length);
+        if (extraBytes != null) {
+            buf.put(extraBytes);
+        }
+
         return buf;
     }
 
@@ -53,16 +70,21 @@ public class RpcResponse implements RpcMessage {
         }
 
         int status = buf.getInt();
-        int dataLength = buf.getInt();
-        byte[] dataBytes = new byte[dataLength];
-        buf.get(dataBytes);
-        int extraLength = buf.getInt();
-        byte[] extraBytes = new byte[extraLength];
-        buf.get(extraBytes);
-
         this.setStatus(status);
-        this.setData(dataBytes);
-        this.setExtra(MessageCodec.decodeObject(extraBytes, encoding, codec));
+
+        int dataLength = buf.getInt();
+        if (dataLength != 0) {
+            byte[] dataBytes = new byte[dataLength];
+            buf.get(dataBytes);
+            this.setData(dataBytes);
+        }
+
+        int extraLength = buf.getInt();
+        if (extraLength != 0) {
+            byte[] extraBytes = new byte[extraLength];
+            buf.get(extraBytes);
+            this.setExtra(MessageCodec.decodeObject(extraBytes, encoding, codec));
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh.core.remoting.payload;
 
+import com.hyf.hotrefresh.common.util.StringUtils;
+import com.hyf.hotrefresh.remoting.exception.RpcException;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
@@ -14,6 +16,7 @@ import java.util.Objects;
  */
 public class RpcHotRefreshRequest extends RpcRequest {
 
+    // super content
     // file name length(4byte)
     // file name
     // file location length (4byte)
@@ -22,32 +25,47 @@ public class RpcHotRefreshRequest extends RpcRequest {
 
     public static final int FIXED_LENGTH = 4 + 4 + 1;
 
-    private String         fileName;
-    // @Nullable
-    private String         fileLocation;
-    private RpcRequestInst inst;
+    private String                   fileName;
+    private String                   fileLocation;
+    private RpcHotRefreshRequestInst inst;
 
     @Override
     public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         ByteBuffer superBuf = super.encode(encoding, codec);
 
-        byte[] fileNameBytes = fileName.getBytes(encoding.getCharset());
+        int messageLength = superBuf.limit() + FIXED_LENGTH;
 
-        byte[] fileLocationBytes = new byte[0];
-        if (fileLocation != null) {
-            fileLocationBytes = fileLocation.getBytes(encoding.getCharset());
+        byte[] fileNameBytes = null;
+        if (StringUtils.isNotBlank(fileName)) {
+            fileNameBytes = fileName.getBytes(encoding.getCharset());
+            messageLength += fileNameBytes.length;
         }
 
-        int messageLength = superBuf.limit() + FIXED_LENGTH + fileNameBytes.length + fileLocationBytes.length;
+        byte[] fileLocationBytes = null;
+        if (StringUtils.isNotBlank(fileLocation)) {
+            fileLocationBytes = fileLocation.getBytes(encoding.getCharset());
+            messageLength += fileLocationBytes.length;
+        }
 
         ByteBuffer buf = ByteBuffer.allocate(messageLength);
+
         superBuf.flip(); // 可写
         buf.put(superBuf);
-        buf.putInt(fileNameBytes.length);
-        buf.put(fileNameBytes);
-        buf.putInt(fileLocationBytes.length);
-        buf.put(fileLocationBytes);
+
+        buf.putInt(fileNameBytes == null ? 0 : fileNameBytes.length);
+        if (fileNameBytes != null) {
+            buf.put(fileNameBytes);
+        }
+
+        buf.putInt(fileLocationBytes == null ? 0 : fileLocationBytes.length);
+        if (fileLocationBytes != null) {
+            buf.put(fileLocationBytes);
+        }
+
+        if (inst == null) {
+            throw new RpcException("Request inst must not be null");
+        }
         buf.put(inst.getCode());
 
         return buf;
@@ -59,18 +77,21 @@ public class RpcHotRefreshRequest extends RpcRequest {
         super.decode(buf, encoding, codec);
 
         int fileNameLength = buf.getInt();
-        byte[] fileNameBytes = new byte[fileNameLength];
-        buf.get(fileNameBytes);
+        if (fileNameLength != 0) {
+            byte[] fileNameBytes = new byte[fileNameLength];
+            buf.get(fileNameBytes);
+            this.setFileName(new String(fileNameBytes, encoding.getCharset()));
+        }
 
         int fileLocationLength = buf.getInt();
-        byte[] fileLocationBytes = new byte[fileLocationLength];
-        buf.get(fileLocationBytes);
+        if (fileLocationLength != 0) {
+            byte[] fileLocationBytes = new byte[fileLocationLength];
+            buf.get(fileLocationBytes);
+            this.setFileLocation(new String(fileLocationBytes, encoding.getCharset()));
+        }
 
         byte instCode = buf.get();
-
-        this.setFileName(new String(fileNameBytes, encoding.getCharset()));
-        this.setFileLocation(new String(fileLocationBytes, encoding.getCharset()));
-        this.setInst(RpcRequestInst.getInst(instCode));
+        this.setInst(RpcHotRefreshRequestInst.getInst(instCode));
     }
 
     @Override
@@ -94,11 +115,11 @@ public class RpcHotRefreshRequest extends RpcRequest {
         this.fileLocation = fileLocation;
     }
 
-    public RpcRequestInst getInst() {
+    public RpcHotRefreshRequestInst getInst() {
         return inst;
     }
 
-    public void setInst(RpcRequestInst inst) {
+    public void setInst(RpcHotRefreshRequestInst inst) {
         this.inst = inst;
     }
 
