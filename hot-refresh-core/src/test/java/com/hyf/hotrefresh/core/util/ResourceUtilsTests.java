@@ -18,7 +18,7 @@ public class ResourceUtilsTests {
     @Test
     public void testGetResourceURL() throws MalformedURLException {
         URL resource = Util.getOriginContextClassLoader().getResource(TestJavaFileUtils.getFileName());
-        URL resourceURL = ResourceUtils.getResourceURL(resource);
+        URL resourceURL = ResourcePersistUtils.getResourceURL(resource);
         assertNotNull(resourceURL);
         assertEquals("file", resourceURL.getProtocol());
     }

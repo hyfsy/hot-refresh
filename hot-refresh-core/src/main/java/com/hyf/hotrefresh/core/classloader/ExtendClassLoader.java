@@ -32,12 +32,18 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
 
         // child load
         Class<?> c = null;
-        try {
-            c = this.brokenLoadClass(name);
-            if (c == null) {
-                throw new ClassNotFoundException(name);
+
+        // Note:  Checking logic in java.lang.invoke.MemberName.checkForTypeAlias
+        // relies on the fact that spoofing is impossible if a class has a name
+        // of the form "java.*"
+        if (!name.startsWith("java.")) {
+            try {
+                c = this.brokenLoadClass(name);
+                if (c == null) {
+                    throw new ClassNotFoundException(name);
+                }
+            } catch (ClassNotFoundException ignore) {
             }
-        } catch (ClassNotFoundException ignore) {
         }
 
         // parent load

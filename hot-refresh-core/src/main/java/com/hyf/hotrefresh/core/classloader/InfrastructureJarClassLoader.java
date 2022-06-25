@@ -1,15 +1,15 @@
 package com.hyf.hotrefresh.core.classloader;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.util.ResourceUtils;
 import com.hyf.hotrefresh.core.agent.ToolsJarProcessor;
-import com.hyf.hotrefresh.core.util.ResourceUtils;
+import com.hyf.hotrefresh.core.util.ResourcePersistUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,13 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class InfrastructureJarClassLoader extends ExtendClassLoader {
 
-    // TODO 支持外部指定
+    public static final String INFRASTRUCTURE_FILE_RESOURCE_PATH = "infrastructure.properties";
+
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
 
-    private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
+    private static volatile Map<String, String> DEFAULT_IDENTITY_MAP;
 
-    private static final Map<String, String> registeredInfrastructureJarMap = new ConcurrentHashMap<>(4);
+    private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
 
     private final Map<String, Class<?>> loadedClass = new ConcurrentHashMap<>();
 
@@ -39,51 +40,97 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
     }
 
     private static InfrastructureJarClassLoader newInstanceByLocal() {
-        URL[] urls = getDefaultInfrastructureURLs();
-        return new InfrastructureJarClassLoader(urls);
+        Map<String, URL> urls = getDefaultInfrastructureURLMap();
+        InfrastructureJarClassLoader infra = new InfrastructureJarClassLoader();
+        urls.forEach(infra::addPath);
+        return infra;
     }
 
-    private static URL[] getDefaultInfrastructureURLs() {
-        List<URL> urls = new ArrayList<>();
+    private static Map<String, URL> getDefaultInfrastructureURLMap() {
+        Map<String, URL> urlMap = new HashMap<>();
         ClassLoader ccl = Util.getOriginContextClassLoader();
 
         // byte-buddy
         URL byteBuddyResource = ccl.getResource(BYTE_BUDDY_LOCAL_PATH);
-        URL byteBuddyURL = ResourceUtils.getResourceURL(byteBuddyResource);
-        urls.add(byteBuddyURL);
+        URL byteBuddyURL = ResourcePersistUtils.getResourceURL(byteBuddyResource);
+        urlMap.put("byte-buddy", byteBuddyURL);
 
         // asm
         URL asmResource = ccl.getResource(ASM_LOCAL_PATH);
-        URL asmURL = ResourceUtils.getResourceURL(asmResource);
-        urls.add(asmURL);
+        URL asmURL = ResourcePersistUtils.getResourceURL(asmResource);
+        urlMap.put("asm", asmURL);
 
         // tools
         String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
         if (toolsJarPath != null) {
             try {
-                URL javacURL = ResourceUtils.getResourceURL(new File(toolsJarPath).toURI().toURL());
-                urls.add(javacURL);
+                URL javacURL = ResourcePersistUtils.getResourceURL(new File(toolsJarPath).toURI().toURL());
+                urlMap.put("tools", javacURL);
             } catch (MalformedURLException e) {
                 Log.error("Failed to add javac source url", e);
             }
         }
 
-        return urls.toArray(new URL[0]);
+        // default
+        getDefaultIdentityMap().forEach((identity, path) -> {
+            File file = new File(path);
+            if (file.exists()) {
+                try {
+                    urlMap.put(identity, file.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    Log.error("Failed to set default resource", e);
+                }
+            }
+            else {
+                URL resource = ccl.getResource(path);
+                URL resourceURL = ResourcePersistUtils.getResourceURL(resource);
+                urlMap.put(identity, resourceURL);
+            }
+        });
+
+        return urlMap;
     }
 
-    // TODO 不仅jar，还要class
-    public void registerInfrastructureJar(String identity, String location) {
+    public static Map<String, String> getDefaultIdentityMap() {
+        if (DEFAULT_IDENTITY_MAP == null) {
+            DEFAULT_IDENTITY_MAP = ResourceUtils.readPropertiesAsMap(INFRASTRUCTURE_FILE_RESOURCE_PATH, Util.getOriginContextClassLoader());
+        }
+        return DEFAULT_IDENTITY_MAP;
+    }
 
-        registeredInfrastructureJarMap.put(identity, location);
+    public void registerInfrastructureJar(String identity, String location) {
 
         URL resource = transferToResourceURL(location);
         if (resource == null) {
-            Log.warn("Failed to register infrastructure jar: " + location);
+            throw new RuntimeException("Resource not exists: " + location);
+        }
+        URL url = ResourcePersistUtils.getResourceURL(resource);
+        registerInfrastructureURL(identity, url);
+    }
+
+    public void registerInfrastructureDirectory(String identity, String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new RuntimeException("Directory not exists: " + path);
+        }
+        if (!file.isDirectory()) {
+            throw new RuntimeException("Only support add directory");
+        }
+        try {
+            registerInfrastructureURL(identity, file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("File url illegal: " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public void registerInfrastructureURL(String identity, URL url) {
+        if (getDefaultIdentityMap().containsKey(identity)) {
+            if (Log.isDebugMode()) {
+                Log.debug("register default infrastructure resource, ignored: " + identity + " -> " + url);
+            }
             return;
         }
-        URL url = ResourceUtils.getResourceURL(resource);
-        // TODO 是否替换原有的？如何替换？
-        super.addURL(url);
+        addPath(identity, url);
     }
 
     private URL transferToResourceURL(String location) {
@@ -99,6 +146,14 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         }
 
         return resource;
+    }
+
+    @Override
+    public URL removePath(String identity) {
+        if (DEFAULT_IDENTITY_MAP.containsKey(identity)) {
+            return null;
+        }
+        return super.removePath(identity);
     }
 
     @Override

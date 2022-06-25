@@ -3,8 +3,11 @@
 ## 1.2.1 ()
 
 - Add args parser to parse custom args.
-- Split the client dependency to api jar.
+- Split the client dependency to client and api jar.
 - Support custom httpclient request builder.
+- Support assign infrastructure resource outer.
+- Fix lombok use with mapstruct occur some problem.
+- Fix extend class loader getResource... to load own resources.
 
 
 ## 1.2.0 (May 28, 2022)
