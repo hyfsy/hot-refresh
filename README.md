@@ -54,4 +54,5 @@ bin/hot.cmd
 - [ ] 集成Spring
 - [ ] 集成MyBatis
 - [ ] 集成SkyWalking
+- [ ] 集成Arthas
 
