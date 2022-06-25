@@ -16,5 +16,6 @@
         <module>hot-refresh-plugin-spring-boot</module>
         <module>hot-refresh-plugin-fastjson</module>
         <module>hot-refresh-plugin-execute</module>
+        <module>hot-refresh-plugin-arthas</module>
     </modules>
 </project>
