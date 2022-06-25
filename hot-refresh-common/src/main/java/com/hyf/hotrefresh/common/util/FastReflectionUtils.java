@@ -24,7 +24,7 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
 
     public static <T> T fastGetField(Object o, Class<?> clazz, String fieldName) {
         Field field = getField(clazz, fieldName);
-        return invokeField(field, o);
+        return invokeFieldGet(field, o);
     }
 
     public static <T> Optional<T> fastGetFieldNoException(Class<?> clazz, String fieldName) {

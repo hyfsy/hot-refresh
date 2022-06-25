@@ -21,10 +21,19 @@ public abstract class ReflectionUtils {
         }
     }
 
-    public static <T> T invokeField(Field field, Object obj) {
+    public static <T> T invokeFieldGet(Field field, Object obj) {
         try {
             field.setAccessible(true);
             return (T) field.get(obj);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Failed to invoke field: " + field.getName(), e);
+        }
+    }
+
+    public static void invokeFieldSet(Field field, Object obj, Object value) {
+        try {
+            field.setAccessible(true);
+            field.set(obj, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to invoke field: " + field.getName(), e);
         }
