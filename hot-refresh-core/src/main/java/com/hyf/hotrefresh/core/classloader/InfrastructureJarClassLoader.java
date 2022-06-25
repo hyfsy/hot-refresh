@@ -107,6 +107,7 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         Class<?> c = loadedClass.get(name);
         if (c == null) {
             synchronized (loadedClass) {
+                c = loadedClass.get(name);
                 if (c == null) {
                     c = super.brokenLoadClass(name);
                     loadedClass.put(name, c);
