@@ -1,6 +1,11 @@
 package com.hyf.hotrefresh.common.util;
 
+import com.hyf.hotrefresh.common.Log;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.URL;
 import java.util.*;
 
@@ -10,15 +15,29 @@ import java.util.*;
  */
 public abstract class ResourceUtils {
 
-    public static List<String> readPropertiesAsList(String resourceName, ClassLoader classLoader) {
+    public static List<String> readPropertiesAsRows(String resourceName, ClassLoader classLoader) {
         List<String> rows = new ArrayList<>();
-        Map<String, String> propertiesMap = readPropertiesAsMap(resourceName, classLoader);
-        propertiesMap.forEach((k, v) -> rows.add(k + "=" + v));
+        try {
+            Enumeration<URL> resources = classLoader.getResources(resourceName);
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                try (BufferedReader reader = new LineNumberReader(new InputStreamReader(url.openStream()))) {
+                    String row;
+                    while ((row = reader.readLine()) != null) {
+                        if (!"".equals(row.trim())) {
+                            rows.add(row.trim());
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Log.error("Get compile options file failed", e);
+        }
         return rows;
     }
 
     public static Map<String, String> readPropertiesAsMap(String resourceName, ClassLoader classLoader) {
-        Map<String, String> propertiesMap = new HashMap<>();
+        Map<String, String> propertiesMap = new LinkedHashMap<>();
         List<URL> urls = getResource(resourceName, classLoader);
         Properties properties = new Properties();
         urls.forEach(url -> {
