@@ -74,6 +74,11 @@ public class ArgumentHolder {
         return (T) ARGS.get(name);
     }
 
+    public static <T> T getOrDefault(String name, T defaultValue) {
+        T value = get(name);
+        return value != null ? value : defaultValue;
+    }
+
     public static void put(String name, Object value) {
         ARGS.put(name, value);
     }
