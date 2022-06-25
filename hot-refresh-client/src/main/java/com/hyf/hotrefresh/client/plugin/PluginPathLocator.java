@@ -22,9 +22,7 @@ public class PluginPathLocator {
             File file = findPath();
             PLUGIN_PATH = new File(file, PLUGIN_DIR_NAME);
             if (!PLUGIN_PATH.exists()) {
-                if (Log.isDebugMode()) {
-                    Log.warn("plugin path not exists: " + PLUGIN_PATH.getAbsolutePath());
-                }
+                Log.warn("plugin path not exists: " + PLUGIN_PATH.getAbsolutePath());
             }
         }
         return PLUGIN_PATH;
