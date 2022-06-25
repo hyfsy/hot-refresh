@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.remoting.rpc.payload;
 
+import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageCodec;
@@ -17,6 +18,10 @@ import java.util.Objects;
  */
 public class RpcResponse implements RpcMessage {
 
+    public static final int SUCCESS = RemotingConstants.RESPONSE_SUCCESS;
+    public static final int ERROR   = RemotingConstants.RESPONSE_ERROR;
+    public static final int UNKNOWN = RemotingConstants.RESPONSE_UNKNOWN;
+
     // status(4byte)
     // data length(4byte)
     // data
@@ -28,6 +33,10 @@ public class RpcResponse implements RpcMessage {
     private int                 status;
     private byte[]              data;
     private Map<String, Object> extra;
+
+    public RpcResponse() {
+        setStatus(SUCCESS);
+    }
 
     @Override
     public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {

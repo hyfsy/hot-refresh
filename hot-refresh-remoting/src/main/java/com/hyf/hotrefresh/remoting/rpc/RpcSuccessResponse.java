@@ -1,6 +1,5 @@
 package com.hyf.hotrefresh.remoting.rpc;
 
-import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageType;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 
@@ -11,7 +10,7 @@ import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 public class RpcSuccessResponse extends RpcResponse {
 
     public RpcSuccessResponse() {
-        setStatus(RemotingConstants.RESPONSE_SUCCESS);
+        setStatus(SUCCESS);
     }
 
     @Override

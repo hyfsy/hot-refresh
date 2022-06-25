@@ -16,6 +16,7 @@ import com.hyf.hotrefresh.plugin.execute.payload.RpcExecutableResponse;
 import com.hyf.hotrefresh.plugin.fastjson.FastjsonUtils;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageHandler;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -65,14 +66,14 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
                     if (Log.isDebugMode()) {
                         Log.debug("Uploaded class not an executable class, please implements Executable interface or create standard main method: " + request.getFileLocation());
                     }
-                    response.setStatus(SUCCESS);
+                    response.setStatus(RpcResponse.SUCCESS);
                     return response;
                 }
 
-                response.setStatus(SUCCESS);
+                response.setStatus(RpcResponse.SUCCESS);
                 response.setData(FastjsonUtils.objectToJson(result).getBytes(RemotingConstants.DEFAULT_ENCODING.getCharset()));
             } catch (Throwable t) {
-                response.setStatus(ERROR);
+                response.setStatus(RpcResponse.ERROR);
                 HashMap<String, Object> extra = new HashMap<>();
                 extra.put(RemotingConstants.EXTRA_EXCEPTION_STACK, ExceptionUtils.getStackMessage(t));
                 response.setExtra(extra);
