@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.core.memory;
 
-import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
+import com.hyf.hotrefresh.common.util.ResourceUtils;
 import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
@@ -10,11 +10,6 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +40,6 @@ public class MemoryCodeCompiler {
             return new HashMap<>();
         }
 
-        // TODO check?
         if (COMPILER == null) {
             throw new IllegalStateException("Cannot load JavaCompiler, please confirm the application running in JDK not JRE.");
         }
@@ -75,24 +69,8 @@ public class MemoryCodeCompiler {
     }
 
     private static void initOptions() {
-        try {
-            Set<String> options = new HashSet<>();
-            Enumeration<URL> resources = Util.getOriginContextClassLoader().getResources(OPTIONS_FILE_RESOURCE_PATH);
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                try (BufferedReader reader = new LineNumberReader(new InputStreamReader(url.openStream()))) {
-                    String option;
-                    while ((option = reader.readLine()) != null) {
-                        if (!"".equals(option.trim())) {
-                            options.add(option.trim());
-                        }
-                    }
-                }
-            }
-            OPTIONS.addAll(options);
-        } catch (IOException e) {
-            Log.error("Get compile options file failed", e);
-        }
+        List<String> optionsList = ResourceUtils.readPropertiesAsList(OPTIONS_FILE_RESOURCE_PATH, Util.getOriginContextClassLoader());
+        OPTIONS.addAll(new HashSet<>(optionsList));
     }
 
     private static void handleDiagnosticMessage(DiagnosticCollector<JavaFileObject> collector) throws CompileException {

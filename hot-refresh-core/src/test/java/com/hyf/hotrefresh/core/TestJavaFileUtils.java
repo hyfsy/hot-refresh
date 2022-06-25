@@ -7,6 +7,7 @@ import com.hyf.hotrefresh.core.util.Util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * @author baB_hyf
@@ -49,5 +50,10 @@ public class TestJavaFileUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getFilePath() {
+        URL resource = Util.getOriginContextClassLoader().getResource(getFileName());
+        return resource == null ? null : resource.toString();
     }
 }
