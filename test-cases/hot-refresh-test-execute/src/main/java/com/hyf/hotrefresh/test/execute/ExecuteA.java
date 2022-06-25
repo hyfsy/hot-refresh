@@ -8,7 +8,7 @@ import com.hyf.hotrefresh.plugin.execute.Executable;
 public class ExecuteA implements Executable<String> {
 
     @Override
-    public String execute() {
+    public String execute() throws Exception {
         System.out.println("execute a");
         return "executed";
     }

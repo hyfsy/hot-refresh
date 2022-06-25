@@ -5,7 +5,7 @@ import com.hyf.hotrefresh.plugin.execute.Executable;
 public class ExecuteC implements Executable<ExecuteC.A> {
 
     @Override
-    public A execute() {
+    public A execute() throws Exception {
         System.out.println("execute c");
         return new A();
     }

@@ -11,7 +11,7 @@ import com.hyf.hotrefresh.plugin.execute.Executable;
 public class DebugExecutable implements Executable<Void> {
 
     @Override
-    public Void execute() {
+    public Void execute() throws Exception {
         ArgumentHolder.put(Constants.ARG_DEBUG, true);
         return null;
     }

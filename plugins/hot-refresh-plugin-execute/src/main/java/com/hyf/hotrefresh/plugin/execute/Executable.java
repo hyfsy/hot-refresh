@@ -6,6 +6,6 @@ package com.hyf.hotrefresh.plugin.execute;
  */
 public interface Executable<T> {
 
-    T execute();
+    T execute() throws Exception;
 
 }
