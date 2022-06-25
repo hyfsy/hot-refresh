@@ -1,6 +1,5 @@
-package com.hyf.hotrefresh.client.command;
+package com.hyf.hotrefresh.client.api.command;
 
-import com.hyf.hotrefresh.client.api.command.CommandHandler;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 

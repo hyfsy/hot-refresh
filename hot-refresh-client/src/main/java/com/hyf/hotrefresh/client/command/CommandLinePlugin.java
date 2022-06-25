@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client.command;
 
+import com.hyf.hotrefresh.client.api.command.CommandLineHandler;
 import com.hyf.hotrefresh.client.api.plugin.Plugin;
 
 /**

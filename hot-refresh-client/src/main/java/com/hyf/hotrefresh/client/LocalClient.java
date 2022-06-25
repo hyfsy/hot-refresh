@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.client;
 
 import com.hyf.hotrefresh.client.core.rpc.RpcClient;
-import com.hyf.hotrefresh.client.plugin.PluginBootstrap;
+import com.hyf.hotrefresh.client.api.plugin.PluginBootstrap;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Version;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
