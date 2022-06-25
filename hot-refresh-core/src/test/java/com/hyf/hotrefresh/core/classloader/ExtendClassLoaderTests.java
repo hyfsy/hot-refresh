@@ -6,7 +6,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.net.URL;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,6 +73,16 @@ public class ExtendClassLoaderTests {
     public void testCannotLoadClassLoaderLoadButParentCanLoadThisFindClass() throws ClassNotFoundException {
         ExtendClassLoader extendClassLoader = new ExtendClassLoader(mockCanLoadParentClassLoader);
         assertEquals(ExtendClassLoaderTests.class, extendClassLoader.loadClass(CLASS_NAME));
+    }
+
+    @Test
+    public void testLoadDifferentResource() throws IOException {
+        String resourceName = "java/lang/String.class";
+        ClassLoader scl = ClassLoader.getSystemClassLoader();
+        ExtendClassLoader ecl = new ExtendClassLoader(new URL[]{scl.getResource("")}, scl);
+        String sclResource = scl.getResource(resourceName).getPath();
+        String eclResource = ecl.getResource(resourceName).getPath();
+        assertNotEquals(sclResource, eclResource);
     }
 
     private static class CanLoadExtendClassLoader extends ExtendClassLoader {
