@@ -14,7 +14,7 @@ IDEA小锤子的远程版
 <dependency>
     <groupId>com.hyf.hotrefresh</groupId>
     <artifactId>hot-refresh-server</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
 </dependency>
 ```
 
