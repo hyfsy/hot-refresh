@@ -35,6 +35,24 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
         }
     }
 
+    public static void fastSetField(Class<?> clazz, String fieldName, Object value) {
+        fastSetField(null, clazz, fieldName, value);
+    }
+
+    public static void fastSetField(Object o, Class<?> clazz, String fieldName, Object value) {
+        Field field = getField(clazz, fieldName);
+        invokeFieldSet(field, o, value);
+    }
+
+    public static Optional<Boolean> fastSetFieldNoException(Object o, Class<?> clazz, String fieldName, Object value) {
+        try {
+            fastSetField(o, clazz, fieldName, value);
+            return Optional.of(true);
+        } catch (Exception e) {
+            return Optional.of(false);
+        }
+    }
+
     public static <T> Optional<T> fastGetFieldNoException(Object o, Class<?> clazz, String fieldName) {
         try {
             return Optional.ofNullable(fastGetField(o, clazz, fieldName));
