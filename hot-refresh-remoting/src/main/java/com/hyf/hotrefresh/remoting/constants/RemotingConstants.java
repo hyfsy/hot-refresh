@@ -11,6 +11,10 @@ import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
  */
 public class RemotingConstants {
 
+    // 1: formulate specification
+    // 2: slimming message, e.g. remove empty map
+    public static final byte VERSION = 2;
+
     public static final String DEFAULT_CONTENT_TYPE = "application-hot-refresh/hex-stream";
 
     public static final RpcMessageEncoding DEFAULT_ENCODING = RpcMessageEncoding.getEncoding(Constants.MESSAGE_ENCODING);
@@ -19,9 +23,9 @@ public class RemotingConstants {
 
     public static final RpcMessageCompression DEFAULT_COMPRESSION = RpcMessageCompression.GZIP;
 
+    public static final int RESPONSE_UNKNOWN = -1;
     public static final int RESPONSE_SUCCESS = 200;
     public static final int RESPONSE_ERROR   = 500;
-    public static final int RESPONSE_UNKNOWN   = -1;
 
     public static final String EXTRA_EXCEPTION_NESTED = "nestedExceptionMessage";
     public static final String EXTRA_EXCEPTION_STACK  = "stackExceptionMessage";

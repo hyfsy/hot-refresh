@@ -12,7 +12,6 @@ public class DefaultRpcMessageHandlerRegister implements RpcMessageHandlerRegist
 
     @Override
     public void register(RpcMessageHandlerRegistry registry) {
-        registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.REQUEST_BASIC, HandleSide.SERVER, new RpcRequestHandler()));
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_BASIC, HandleSide.CLIENT, new RpcResponseHandler()));
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.REQUEST_BATCH, HandleSide.SERVER, new RpcBatchRequestHandler()));
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_BATCH, HandleSide.CLIENT, new RpcBatchResponseHandler()));

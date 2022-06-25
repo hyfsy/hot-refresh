@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,7 +18,7 @@ import java.util.Objects;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public class RpcRequest implements RpcMessage {
+public abstract class RpcRequest implements RpcMessage {
 
     // header length(4byte)
     // header
@@ -28,31 +27,43 @@ public class RpcRequest implements RpcMessage {
 
     public static final int FIXED_LENGTH = 4 + 4;
 
-    private Map<String, Object> headers = new HashMap<>();
+    private Map<String, Object> headers;
     private InputStream         body;
 
     @Override
     public ByteBuffer encode(RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
-        byte[] headerBytes = MessageCodec.encodeObject(headers, encoding, codec);
+        int messageLength = FIXED_LENGTH;
 
-        byte[] contentBytes;
-        try {
-            contentBytes = IOUtils.readAsByteArray(body);
-        } catch (IOException e) {
-            throw new RuntimeException("Read input stream failed", e);
-        } finally {
-            IOUtils.close(body);
+        byte[] headerBytes = null;
+        if (headers != null && !headers.isEmpty()) {
+            headerBytes = MessageCodec.encodeObject(headers, encoding, codec);
+            messageLength += headerBytes.length;
         }
 
-        int messageLength = FIXED_LENGTH + headerBytes.length + contentBytes.length;
+        byte[] contentBytes = null;
+        if (body != null) {
+            try {
+                contentBytes = IOUtils.readAsByteArray(body);
+                messageLength += contentBytes.length;
+            } catch (IOException e) {
+                throw new RuntimeException("Read input stream failed", e);
+            } finally {
+                IOUtils.close(body);
+            }
+        }
 
         ByteBuffer buf = ByteBuffer.allocate(messageLength);
 
-        buf.putInt(headerBytes.length);
-        buf.put(headerBytes);
-        buf.putInt(contentBytes.length);
-        buf.put(contentBytes);
+        buf.putInt(headerBytes == null ? 0 : headerBytes.length);
+        if (headerBytes != null) {
+            buf.put(headerBytes);
+        }
+
+        buf.putInt(contentBytes == null ? 0 : contentBytes.length);
+        if (contentBytes != null) {
+            buf.put(contentBytes);
+        }
 
         return buf;
     }
@@ -61,20 +72,18 @@ public class RpcRequest implements RpcMessage {
     public void decode(ByteBuffer buf, RpcMessageEncoding encoding, RpcMessageCodec codec) {
 
         int headerLength = buf.getInt();
-        byte[] headerBytes = new byte[headerLength];
-        buf.get(headerBytes);
+        if (headerLength != 0) {
+            byte[] headerBytes = new byte[headerLength];
+            buf.get(headerBytes);
+            this.setHeaders(MessageCodec.decodeObject(headerBytes, encoding, codec));
+        }
 
         int bodyLength = buf.getInt();
-        byte[] bodyBytes = new byte[bodyLength];
-        buf.get(bodyBytes);
-
-        this.setHeaders(MessageCodec.decodeObject(headerBytes, encoding, codec));
-        this.setBody(new ByteArrayInputStream(bodyBytes));
-    }
-
-    @Override
-    public byte getMessageCode() {
-        return RpcMessageType.REQUEST_BASIC;
+        if (bodyLength != 0) {
+            byte[] bodyBytes = new byte[bodyLength];
+            buf.get(bodyBytes);
+            this.setBody(new ByteArrayInputStream(bodyBytes));
+        }
     }
 
     public Map<String, Object> getHeaders() {

@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.remoting.message;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.exception.CodecException;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessageFactory;
@@ -33,8 +34,6 @@ public class MessageCodec {
 
     // HYF
     public static final byte[] MAGIC = {(byte) 0x48, (byte) 0x59, (byte) 0x46};
-
-    public static final byte VERSION = 1;
 
     public static final int FIXED_LENGTH = MAGIC.length + 1 + 4 + 4 + 1 + 1 + 1 + 1 + 4 + 4;
 
@@ -70,7 +69,7 @@ public class MessageCodec {
             int messageLength = FIXED_LENGTH + headerData.length + data.length;
             ByteBuffer buf = ByteBuffer.allocate(messageLength);
             buf.put(MAGIC);
-            buf.put(VERSION);
+            buf.put(RemotingConstants.VERSION);
             buf.putInt(messageLength);
             buf.putInt(message.getId());
             buf.put(message.getEncoding());
@@ -103,7 +102,7 @@ public class MessageCodec {
             }
 
             byte version = buf.get();
-            if (version != VERSION) {
+            if (version != RemotingConstants.VERSION) {
                 throw new CodecException("Unknown message version: " + version);
             }
 
