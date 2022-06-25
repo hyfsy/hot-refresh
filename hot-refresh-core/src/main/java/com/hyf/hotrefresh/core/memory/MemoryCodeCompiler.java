@@ -69,7 +69,7 @@ public class MemoryCodeCompiler {
     }
 
     private static void initOptions() {
-        List<String> optionsList = ResourceUtils.readPropertiesAsList(OPTIONS_FILE_RESOURCE_PATH, Util.getOriginContextClassLoader());
+        List<String> optionsList = ResourceUtils.readPropertiesAsRows(OPTIONS_FILE_RESOURCE_PATH, Util.getOriginContextClassLoader());
         OPTIONS.addAll(new HashSet<>(optionsList));
     }
 
