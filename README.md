@@ -50,6 +50,7 @@ bin/hot.cmd -s http://localhost:8080
 - [ ] jar包热刷新支持
 - [x] 集成Lombok
 - [x] 集成MapStruct
+- [ ] 集成Proxy
 - [x] 集成Spring
 - [ ] 集成MyBatis
 - [ ] 集成SkyWalking
