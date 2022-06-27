@@ -35,11 +35,14 @@
             <version>${spring-boot.version}</version>
             <optional>true</optional>
         </dependency>
+
+        <!-- client -->
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-client-api</artifactId>
-            <scope>provided</scope>
+            <artifactId>hot-refresh-client</artifactId>
+            <optional>true</optional>
         </dependency>
+        <!-- server -->
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
