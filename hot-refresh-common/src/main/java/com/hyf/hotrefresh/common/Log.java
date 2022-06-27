@@ -77,6 +77,7 @@ public class Log {
     }
 
     private static void appendConsole(String message) {
+        // 不同控制台可能产生的效果不一样，比如idea的terminal打印太多message会导致字符串缺失
         System.out.println(message);
     }
 
