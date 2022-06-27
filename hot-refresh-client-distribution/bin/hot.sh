@@ -12,6 +12,7 @@ fi
 # Set debug instruct
 export REMOTE_DEBUG_INST="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 export REMOTE_DEBUG_OPTS=""
+export REMOTE_DEBUG_WAIT_OPTS=""
 while getopts ":d:debug:" opt
 do
     case $opt in
@@ -19,8 +20,10 @@ do
             REMOTE_DEBUG_OPTS=${REMOTE_DEBUG_INST};;
         debug)
             REMOTE_DEBUG_OPTS=${REMOTE_DEBUG_INST};;
+        wait)
+            REMOTE_DEBUG_WAIT_OPTS=-DhotRefreshClientStartWaitSeconds=3;;
     esac
 done
 
 # echo "$JAVA ${REMOTE_DEBUG_OPTS} -jar ${BASE_DIR}\lib\hot-refresh-client.jar $@"
-$JAVA ${REMOTE_DEBUG_OPTS} -jar ${BASE_DIR}\lib\hot-refresh-client.jar $@
+$JAVA ${REMOTE_DEBUG_OPTS} ${REMOTE_DEBUG_WAIT_OPTS} -jar ${BASE_DIR}\lib\hot-refresh-client.jar $@

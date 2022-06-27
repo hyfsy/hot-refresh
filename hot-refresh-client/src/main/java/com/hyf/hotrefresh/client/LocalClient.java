@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.client;
 
-import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.client.api.plugin.PluginBootstrap;
+import com.hyf.hotrefresh.client.core.rpc.RpcClient;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Version;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
@@ -37,12 +37,11 @@ public class LocalClient {
     }
 
     private static void prepare() {
-        if (Log.isDebugMode()) {
-            try {
-                TimeUnit.SECONDS.sleep(3);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+        String hotRefreshClientStartWaitSeconds = System.getProperty("hotRefreshClientStartWaitSeconds", "0");
+        try {
+            TimeUnit.SECONDS.sleep(Integer.parseInt(hotRefreshClientStartWaitSeconds));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
