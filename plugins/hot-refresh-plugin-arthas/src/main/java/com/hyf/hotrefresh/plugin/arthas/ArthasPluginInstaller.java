@@ -1,10 +1,8 @@
 package com.hyf.hotrefresh.plugin.arthas;
 
+import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.core.install.Installer;
-import com.taobao.arthas.agent.attach.ArthasAgent;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.hyf.hotrefresh.core.util.Util;
 
 /**
  * @author baB_hyf
@@ -21,6 +19,11 @@ public class ArthasPluginInstaller implements Installer {
 
         // Map<String, String> params = new HashMap<>();
         // ArthasAgent.attach(params);
-        ArthasAgent.attach();
+        try {
+            Class<?> arthasAgentClass = ReflectionUtils.forName("com.taobao.arthas.agent.attach.ArthasAgent",
+                Util.getInfrastructureJarClassLoader());
+            ReflectionUtils.getMethod(arthasAgentClass, "attach");
+        } catch (Exception ignored) {
+        }
     }
 }
