@@ -13,7 +13,7 @@ public class CoreInstallerLifecycle implements RpcServerLifecycle {
     @Override
     public void start() throws ServerException {
         if (!CoreInstaller.install()) {
-            throw new ServerException("Core install failed");
+            throw new ServerException("Server start failed because core install failed, please check server logs for more details");
         }
     }
 
