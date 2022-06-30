@@ -85,6 +85,10 @@ public class MemoryClassLoader extends ClassLoader {
         return new MemoryClassLoader(Util.getOriginContextClassLoader());
     }
 
+    public static MemoryClassLoader newInstance(ClassLoader parent) {
+        return new MemoryClassLoader(parent);
+    }
+
     public static void bind() {
         if (cclPerThreadLocal.get() == null) {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
