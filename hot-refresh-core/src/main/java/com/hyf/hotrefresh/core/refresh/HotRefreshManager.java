@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
  * @date 2021/12/11
  */
 class HotRefreshManager {
+
     // so we broken the parent delegate to fixed it, you can see [d1333eaf](https://github.com/hyfsy/hot-refresh/commit/d1333eaff0e03fb4ef2903c28d8013d5f6662127) for more details.
     private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
 
