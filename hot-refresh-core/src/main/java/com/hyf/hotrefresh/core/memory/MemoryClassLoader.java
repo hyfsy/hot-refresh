@@ -53,9 +53,6 @@ public class MemoryClassLoader extends ClassLoader {
                 return;
             }
             File outputHome = FileUtils.getFile(storageHome);
-            if (outputHome.exists()) {
-                FileUtils.delete(outputHome);
-            }
             try {
                 URL outputURL = outputHome.toURI().toURL();
                 if (!Arrays.asList(((URLClassLoader) scl).getURLs()).contains(outputURL)) {

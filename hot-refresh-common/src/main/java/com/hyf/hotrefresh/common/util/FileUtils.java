@@ -69,6 +69,13 @@ public abstract class FileUtils {
         if (file.getParentFile() != null && !file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create file", e);
+            }
+        }
         return file;
     }
 }
