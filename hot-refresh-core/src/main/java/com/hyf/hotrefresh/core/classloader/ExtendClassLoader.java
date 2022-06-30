@@ -3,8 +3,7 @@ package com.hyf.hotrefresh.core.classloader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLStreamHandlerFactory;
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * 破坏双亲委派的类加载模型
@@ -66,7 +65,7 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
 
     @Override
     public URL getResource(String name) {
-        URL resource = this.findResource(name);
+        URL resource = brokenGetResource(name);
         if (resource != null) {
             return resource;
         }
@@ -77,7 +76,12 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
     public Enumeration<URL> getResources(String name) throws IOException {
         @SuppressWarnings("unchecked")
         Enumeration<URL>[] tmp = (Enumeration<URL>[]) new Enumeration<?>[2];
-        tmp[0] = this.findResources(name);
+        Enumeration<URL> originResource = brokenGetResources(name);
+        if (originResource == null) {
+            originResource = new EmptyEnumeration<>();
+        }
+        tmp[0] = originResource;
+
         if (getParent() != null) {
             tmp[1] = getParent().getResources(name);
         }
@@ -90,18 +94,61 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
 
     @Override
     protected Package getPackage(String name) {
-        // TODO
+        Package pkg = brokenGetPackage(name);
+        if (pkg != null) {
+            return pkg;
+        }
         return super.getPackage(name);
     }
 
     @Override
     protected Package[] getPackages() {
-        // TODO
-        return super.getPackages();
+
+        Map<String, Package> map = new HashMap<>();
+
+        fillPackages(map, brokenGetPackages());
+
+        if (getParent() != null) {
+            fillPackages(map, super.getPackages());
+        }
+        else {
+            // TODO ?
+            // fillPackages(map, Package.getSystemPackages());
+        }
+
+        return map.values().toArray(new Package[0]);
     }
 
     protected Class<?> brokenLoadClass(String name) throws ClassNotFoundException {
         return this.findClass(name);
+    }
+
+    protected URL brokenGetResource(String name) {
+        return this.findResource(name);
+    }
+
+    protected Enumeration<URL> brokenGetResources(String name) throws IOException {
+        return this.findResources(name);
+    }
+
+    protected Package brokenGetPackage(String name) {
+        return null;
+    }
+
+    protected Package[] brokenGetPackages() {
+        return null;
+    }
+
+    protected void fillPackages(Map<String, Package> map, Package[] packages) {
+        if (packages == null) {
+            return;
+        }
+        for (int i = 0; i < packages.length; i++) {
+            String pkgName = packages[i].getName();
+            if (map.get(pkgName) == null) {
+                map.put(pkgName, packages[i]);
+            }
+        }
     }
 
     /**

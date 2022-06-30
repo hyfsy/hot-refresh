@@ -91,6 +91,11 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         return urlMap;
     }
 
+    /**
+     * static method may use this map in a early phase, so operate this map please invoke this method
+     *
+     * @return default identity map
+     */
     public static Map<String, String> getDefaultIdentityMap() {
         if (DEFAULT_IDENTITY_MAP == null) {
             DEFAULT_IDENTITY_MAP = ResourceUtils.readPropertiesAsMap(INFRASTRUCTURE_FILE_RESOURCE_PATH, Util.getOriginContextClassLoader());
@@ -150,7 +155,7 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
 
     @Override
     public URL removePath(String identity) {
-        if (DEFAULT_IDENTITY_MAP.containsKey(identity)) {
+        if (getDefaultIdentityMap().containsKey(identity)) {
             return null;
         }
         return super.removePath(identity);
