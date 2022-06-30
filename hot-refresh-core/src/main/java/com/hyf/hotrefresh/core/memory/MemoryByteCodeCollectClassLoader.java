@@ -19,7 +19,7 @@ class MemoryByteCodeCollectClassLoader extends ClassLoader {
     private final Map<String, MemoryByteCode> collectedByteCode = new HashMap<>();
 
     MemoryByteCodeCollectClassLoader() {
-        super(Util.getThrowawayMemoryClassLoader());
+        super(MemoryClassLoader.newInstance(Util.getInfrastructureJarClassLoader()));
     }
 
     @Override

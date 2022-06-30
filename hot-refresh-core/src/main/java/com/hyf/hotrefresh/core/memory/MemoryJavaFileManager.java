@@ -77,7 +77,7 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
         // merge JavaFileObjects from specified ClassLoader
         if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
-            return new IterableJoin<>(super.list(location, packageName, kinds, recurse), dependencyLookup.find(packageName));
+            return new IterableJoin<>(dependencyLookup.find(packageName), super.list(location, packageName, kinds, recurse));
         }
 
         return super.list(location, packageName, kinds, recurse);
