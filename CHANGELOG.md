@@ -3,13 +3,15 @@
 ## 1.2.1 ()
 
 - Add args parser to parse custom args.
-- Split the client dependency to client and api jar.
-- Rpc message version upgrade.
+- Split the client dependency to client and api jar for extension.
+- Upgrade rpc message version.
 - Support Hotrefresh manage command.
 - Support custom httpclient request builder.
 - Support assign infrastructure resource outer.
 - Fix lombok use with mapstruct occur some problem.
 - Fix extend class loader getResource... to load own resources.
+- Fix find resource use app class instead of infra class at compile time.
+- [#6] Fix add output home failed when directory not exists.
 
 
 ## 1.2.0 (May 28, 2022)
