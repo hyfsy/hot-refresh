@@ -3,7 +3,10 @@ package com.hyf.hotrefresh.core.classloader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLStreamHandlerFactory;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * 破坏双亲委派的类加载模型
@@ -28,36 +31,39 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
-        // break
-
-        // child load
-        Class<?> c = null;
+        Class<?> loadedClass = findLoadedClass(name);
+        if (loadedClass != null) {
+            return loadedClass;
+        }
 
         // Note:  Checking logic in java.lang.invoke.MemberName.checkForTypeAlias
         // relies on the fact that spoofing is impossible if a class has a name
         // of the form "java.*"
         if (!name.startsWith("java.")) {
-            try {
-                c = this.brokenLoadClass(name);
-                if (c == null) {
-                    throw new ClassNotFoundException(name);
-                }
-            } catch (ClassNotFoundException ignore) {
+            return super.loadClass(name, resolve);
+        }
+
+        // break
+
+        Class<?> c = null;
+
+        // child load
+        try {
+            c = this.brokenLoadClass(name);
+            if (resolve) {
+                resolveClass(c);
             }
+        } catch (ClassNotFoundException ignore) {
         }
 
         // parent load
         if (c == null) {
-            c = getParent().loadClass(name);
+            c = super.loadClass(name, resolve);
         }
 
         // all class loader cannot load
         if (c == null) {
             throw new ClassNotFoundException();
-        }
-
-        if (resolve) {
-            resolveClass(c);
         }
 
         return c;
@@ -155,15 +161,16 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
      * copy from {@link sun.misc.CompoundEnumeration}
      */
     protected static class CompoundEnumeration<E> implements Enumeration<E> {
+
         private Enumeration<E>[] enums;
-        private int index = 0;
+        private int              index = 0;
 
         public CompoundEnumeration(Enumeration<E>[] enums) {
             this.enums = enums;
         }
 
         private boolean next() {
-            while(this.index < this.enums.length) {
+            while (this.index < this.enums.length) {
                 if (this.enums[this.index] != null && this.enums[this.index].hasMoreElements()) {
                     return true;
                 }
@@ -174,14 +181,17 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
             return false;
         }
 
+        @Override
         public boolean hasMoreElements() {
             return this.next();
         }
 
+        @Override
         public E nextElement() {
             if (!this.next()) {
                 throw new NoSuchElementException();
-            } else {
+            }
+            else {
                 return this.enums[this.index].nextElement();
             }
         }
