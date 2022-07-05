@@ -38,10 +38,11 @@ class HotRefreshTransformer implements ClassFileTransformer {
         if (bytes == null) {
             bytes = classFileBuffer;
         }
-
-        if (Log.isDebugMode()) {
-            Log.debug("Hot refresh transform class: " + fullClassName);
-            store(classResourceName, classBeingRedefined, classFileBuffer, bytes);
+        else {
+            if (Log.isDebugMode()) {
+                Log.debug("Hot refresh transform class: " + fullClassName);
+                store(classResourceName, classBeingRedefined, classFileBuffer, bytes);
+            }
         }
 
         return bytes;

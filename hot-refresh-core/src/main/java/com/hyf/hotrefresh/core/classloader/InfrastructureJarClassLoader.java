@@ -1,17 +1,21 @@
 package com.hyf.hotrefresh.core.classloader;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.common.util.ResourceUtils;
 import com.hyf.hotrefresh.core.agent.ToolsJarProcessor;
 import com.hyf.hotrefresh.core.util.ResourcePersistUtils;
 import com.hyf.hotrefresh.core.util.Util;
+import com.hyf.hotrefresh.shadow.infrastructure.InfrastructureConstants;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author baB_hyf
@@ -23,12 +27,11 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
 
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
+    private static final String ASM_TREE_LOCAL_PATH   = "lib/asm-tree-5.2.jar";
 
     private static volatile Map<String, String> DEFAULT_IDENTITY_MAP;
 
     private static final InfrastructureJarClassLoader INSTANCE = newInstanceByLocal();
-
-    private final Map<String, Class<?>> loadedClass = new ConcurrentHashMap<>();
 
     private InfrastructureJarClassLoader(URL... urls) {
         // TODO 是否会因为ccl变化而产生问题？
@@ -59,6 +62,9 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         URL asmResource = ccl.getResource(ASM_LOCAL_PATH);
         URL asmURL = ResourcePersistUtils.getResourceURL(asmResource);
         urlMap.put("asm", asmURL);
+        URL asmTreeResource = ccl.getResource(ASM_TREE_LOCAL_PATH);
+        URL asmTreeURL = ResourcePersistUtils.getResourceURL(asmTreeResource);
+        urlMap.put("asm-tree", asmTreeURL);
 
         // tools
         String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
@@ -164,14 +170,33 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
     @Override
     protected Class<?> brokenLoadClass(String name) throws ClassNotFoundException {
 
-        Class<?> c = loadedClass.get(name);
-        if (c == null) {
-            synchronized (loadedClass) {
-                c = loadedClass.get(name);
-                if (c == null) {
-                    c = super.brokenLoadClass(name);
-                    loadedClass.put(name, c);
+        Class<?> c = null;
+        try {
+            c = super.brokenLoadClass(name);
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        if (c != null) {
+            return c;
+        }
+
+        String infrastructureResourceName = name.replace(".", "/") + InfrastructureConstants.FILE_SUFFIX;
+        URL infrastructureResource = this.getResource(infrastructureResourceName);
+        if (infrastructureResource != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (InputStream is = infrastructureResource.openStream()) {
+                IOUtils.writeTo(is, baos);
+                try {
+                    c = this.defineClass(name, baos.toByteArray(), 0, baos.size());
+                } catch (LinkageError e) {
+                    try {
+                        c = this.findLoadedClass(name);
+                    } catch (LinkageError e2) {
+                        throw e;
+                    }
                 }
+            } catch (IOException e) {
+                throw new ClassNotFoundException("I/O exception reading class " + name, e);
             }
         }
 

@@ -39,7 +39,7 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
         // Note:  Checking logic in java.lang.invoke.MemberName.checkForTypeAlias
         // relies on the fact that spoofing is impossible if a class has a name
         // of the form "java.*"
-        if (!name.startsWith("java.")) {
+        if (name.startsWith("java.")) {
             return super.loadClass(name, resolve);
         }
 

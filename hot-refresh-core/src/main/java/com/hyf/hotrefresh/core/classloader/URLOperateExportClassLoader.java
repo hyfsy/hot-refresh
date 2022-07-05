@@ -5,6 +5,7 @@ import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
@@ -40,6 +41,7 @@ public class URLOperateExportClassLoader extends URLClassLoader {
     }
 
     public URL addPath(String identity, URL url) {
+        checkExistWhenFileURL(url);
         URL oldUrl = registeredURLMap.put(identity, url);
         addPathInner(oldUrl, url);
         return oldUrl;
@@ -80,6 +82,14 @@ public class URLOperateExportClassLoader extends URLClassLoader {
             Object loader = FastReflectionUtils.fastInvokeMethod(ucp_lmap, HashMap.class, "remove", new Class[]{Object.class}, urlNoFragString);
             if (loader != null) {
                 FastReflectionUtils.fastInvokeMethod(ucp_loaders, ArrayList.class, "remove", new Class[]{Object.class}, loader);
+            }
+        }
+    }
+
+    private void checkExistWhenFileURL(URL url) {
+        if ("file".equals(url.getProtocol())) {
+            if (!new File(url.getFile()).exists()) {
+                throw new RuntimeException("url not exists: " + url);
             }
         }
     }

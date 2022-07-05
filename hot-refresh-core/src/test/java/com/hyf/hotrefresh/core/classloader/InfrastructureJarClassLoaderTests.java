@@ -3,6 +3,7 @@ package com.hyf.hotrefresh.core.classloader;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
+import com.hyf.hotrefresh.shadow.infrastructure.InfrastructureConstants;
 import org.junit.Test;
 
 import java.io.File;
@@ -52,11 +53,29 @@ public class InfrastructureJarClassLoaderTests {
 
     @Test
     public void testLoadDefaultInfrastructureJarClass() throws ClassNotFoundException {
-       boolean hasCustomByteBuddy = InfrastructureJarClassLoader.getDefaultIdentityMap().containsKey("byte-buddy");
+        boolean hasCustomByteBuddy = InfrastructureJarClassLoader.getDefaultIdentityMap().containsKey("byte-buddy");
         if (hasCustomByteBuddy) {
             Class<?> clazz = Util.getInfrastructureJarClassLoader().loadClass("net.bytebuddy.agent.ByteBuddyAgent");
             String location = clazz.getProtectionDomain().getCodeSource().getLocation().toString();
             assertTrue(location.contains("E:") || location.contains("6"));
         }
     }
+
+    @Test
+    public void testLoadInfraHotRefreshClass() {
+        InfrastructureJarClassLoader infra = Util.getInfrastructureJarClassLoader();
+        URL resource = infra.getResource("com/hyf/hotrefresh/core/agent/InstrumentationHolder" + InfrastructureConstants.FILE_SUFFIX);
+        assertNotNull(resource);
+        Class<?> clazz = InfraUtils.forName("com.hyf.hotrefresh.core.agent.InstrumentationHolder");
+        assertEquals(clazz.getClassLoader(), infra);
+    }
+
+    // TODO not support test scene
+    // @Test
+    // public void testLoadInfraClass() {
+    //     InfrastructureJarClassLoader infra = Util.getInfrastructureJarClassLoader();
+    //     URL resource = infra.getResource("com/hyf/hotrefresh/core/classloader/TestInfrastructureClass" + InfrastructureConstants.FILE_SUFFIX);
+    //     assertNotNull(resource);
+    // }
+
 }

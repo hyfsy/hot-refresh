@@ -62,11 +62,11 @@ public abstract class ReflectionUtils {
 
     public static <T> T newClassInstance(Class<T> clazz, Class<?>[] argsTypes, Object... args) {
         try {
-            Constructor<T> constructor = clazz.getConstructor(argsTypes);
+            Constructor<T> constructor = clazz.getDeclaredConstructor(argsTypes);
             constructor.setAccessible(true);
             return constructor.newInstance(args);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to new instance of " + clazz.getName() + " with args " + Arrays.stream(argsTypes).map(Class::getName).collect(Collectors.joining(",")));
+            throw new RuntimeException("Failed to new instance of " + clazz.getName() + " with args " + Arrays.stream(argsTypes).map(Class::getName).collect(Collectors.joining(",")), e);
         }
     }
 
