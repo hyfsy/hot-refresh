@@ -36,6 +36,7 @@ class HotRefreshManager {
     public static void start() {
         stop();
         getInstrumentation().addTransformer(hotRefreshTransformer, true);
+        // set the hotrefresh transformer before the skywalking agent transformer
         // AgentHelper.setTransformerToFirst(getInstrumentation(), hotRefreshTransformer, true);
     }
 
