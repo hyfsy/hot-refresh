@@ -10,16 +10,20 @@ import java.util.Optional;
  */
 public abstract class FastReflectionUtils extends ReflectionUtils {
 
-    public static Optional<Class<?>> forNameNoException(String className) {
+    public static Optional<Class<?>> forNameNoException(String className, ClassLoader classLoader) {
         try {
-            return Optional.of(Class.forName(className));
-        } catch (ClassNotFoundException e) {
+            return Optional.of(forName(className, classLoader));
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
 
     public static <T> T fastGetField(Class<?> clazz, String fieldName) {
         return fastGetField(null, clazz, fieldName);
+    }
+
+    public static <T> T fastGetField(Object o, String fieldName) {
+        return fastGetField(o, o.getClass(), fieldName);
     }
 
     public static <T> T fastGetField(Object o, Class<?> clazz, String fieldName) {
@@ -35,13 +39,37 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
         }
     }
 
+    public static <T> Optional<T> fastGetFieldNoException(Object o, String fieldName) {
+        return fastGetFieldNoException(o, o.getClass(), fieldName);
+    }
+
+    public static <T> Optional<T> fastGetFieldNoException(Object o, Class<?> clazz, String fieldName) {
+        try {
+            return Optional.ofNullable(fastGetField(o, clazz, fieldName));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     public static void fastSetField(Class<?> clazz, String fieldName, Object value) {
         fastSetField(null, clazz, fieldName, value);
+    }
+
+    public static void fastSetField(Object o, String fieldName, Object value) {
+        fastSetField(o, o.getClass(), fieldName, value);
     }
 
     public static void fastSetField(Object o, Class<?> clazz, String fieldName, Object value) {
         Field field = getField(clazz, fieldName);
         invokeFieldSet(field, o, value);
+    }
+
+    public static Optional<Boolean> fastSetFieldNoException(Class<?> clazz, String fieldName, Object value) {
+        return fastSetFieldNoException(null, clazz, fieldName, value);
+    }
+
+    public static Optional<Boolean> fastSetFieldNoException(Object o, String fieldName, Object value) {
+        return fastSetFieldNoException(o, o.getClass(), fieldName, value);
     }
 
     public static Optional<Boolean> fastSetFieldNoException(Object o, Class<?> clazz, String fieldName, Object value) {
@@ -50,14 +78,6 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
             return Optional.of(true);
         } catch (Exception e) {
             return Optional.of(false);
-        }
-    }
-
-    public static <T> Optional<T> fastGetFieldNoException(Object o, Class<?> clazz, String fieldName) {
-        try {
-            return Optional.ofNullable(fastGetField(o, clazz, fieldName));
-        } catch (Exception e) {
-            return Optional.empty();
         }
     }
 
@@ -70,8 +90,16 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
         return invokeMethod(method, o);
     }
 
+    public static <T> T fastInvokeMethod(Object o, String methodName) {
+        return fastInvokeMethod(o, o.getClass(), methodName);
+    }
+
     public static <T> T fastInvokeMethod(Class<?> clazz, String methodName, Class<?>[] argTypes, Object... args) {
         return fastInvokeMethod(null, clazz, methodName, argTypes, args);
+    }
+
+    public static <T> T fastInvokeMethod(Object o, String methodName, Class<?>[] argTypes, Object... args) {
+        return fastInvokeMethod(o, o.getClass(), methodName, argTypes, args);
     }
 
     public static <T> T fastInvokeMethod(Object o, Class<?> clazz, String methodName, Class<?>[] argTypes, Object... args) {
@@ -85,6 +113,10 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public static <T> Optional<T> fastInvokeMethodNoException(Object o, String methodName) {
+        return fastInvokeMethodNoException(o, o.getClass(), methodName);
     }
 
     public static <T> Optional<T> fastInvokeMethodNoException(Object o, Class<?> clazz, String methodName) {
@@ -101,6 +133,10 @@ public abstract class FastReflectionUtils extends ReflectionUtils {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public static <T> Optional<T> fastInvokeMethodNoException(Object o, String methodName, Class<?>[] argTypes, Object... args) {
+        return fastInvokeMethodNoException(o, o.getClass(), methodName, argTypes, args);
     }
 
     public static <T> Optional<T> fastInvokeMethodNoException(Object o, Class<?> clazz, String methodName, Class<?>[] argTypes, Object... args) {

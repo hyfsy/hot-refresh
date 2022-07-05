@@ -23,7 +23,7 @@ public class ClassBytesDumper {
 
     public static void dump(Class<?> clazz, OutputStream os) throws Throwable {
         byte[] bytes = dump(clazz);
-        if (os != null) {
+        if (bytes != null && os != null) {
             dump(bytes, os);
         }
     }

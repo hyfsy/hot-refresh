@@ -1,13 +1,18 @@
 package com.hyf.hotrefresh.core.agent;
 
+import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.common.util.ReflectionUtils;
-import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.io.File;
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author baB_hyf
@@ -76,5 +81,46 @@ public class AgentHelper {
         // Method premainMethod = ReflectUtils.getMethod(SpringLoadedAgentClass, "premain", String.class, Instrumentation.class);
         //
         // cl.invokeMethod(premainMethod, null, null, instrumentation);
+    }
+
+    public static synchronized void setTransformerToFirst(Instrumentation instrumentation, ClassFileTransformer classFileTransformer, boolean canRetransform) {
+        try {
+            Object transformerManager;
+            if (canRetransform) {
+                transformerManager = FastReflectionUtils.fastGetField(instrumentation, "mRetransfomableTransformerManager");
+            }
+            else {
+                transformerManager = FastReflectionUtils.fastGetField(instrumentation, "mTransformerManager");
+            }
+
+            if (transformerManager == null) {
+                instrumentation.addTransformer(classFileTransformer, canRetransform);
+                return;
+            }
+
+            Object[] snapshotTransformerList = FastReflectionUtils.fastInvokeMethod(transformerManager, "getSnapshotTransformerList");
+            if (snapshotTransformerList.length <= 0) {
+                instrumentation.addTransformer(classFileTransformer, canRetransform);
+                return;
+            }
+
+            // reflect set to first
+
+            Class<?> TransformerManager$TransformerInfoClass = snapshotTransformerList[0].getClass();
+            Object customTransformerInfo = ReflectionUtils.newClassInstance(TransformerManager$TransformerInfoClass,
+                    new Class[]{transformerManager.getClass() /* inner class must has this extra param */, ClassFileTransformer.class},
+                    transformerManager, classFileTransformer);
+            List<Object> transformerInfos = new ArrayList<>();
+            transformerInfos.add(customTransformerInfo);
+            transformerInfos.addAll(Arrays.asList(snapshotTransformerList));
+            Object mTransformerList = Array.newInstance(TransformerManager$TransformerInfoClass, transformerInfos.size());
+            for (int i = 0; i < transformerInfos.size(); i++) {
+                Array.set(mTransformerList, i, transformerInfos.get(i));
+            }
+            FastReflectionUtils.fastSetField(transformerManager, "mTransformerList", mTransformerList);
+
+        } catch (Throwable t) {
+            throw new RuntimeException("Failed to add transformer to first", t);
+        }
     }
 }

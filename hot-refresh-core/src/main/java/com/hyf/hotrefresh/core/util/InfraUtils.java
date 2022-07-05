@@ -1,11 +1,11 @@
 package com.hyf.hotrefresh.core.util;
 
+import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.core.agent.AgentHelper;
 
 import javax.tools.JavaCompiler;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -23,14 +23,20 @@ public abstract class InfraUtils {
     private static Class<?> classReaderClass   = null;
     private static Method   getClassNameMethod = null;
 
-    private static volatile JavaCompiler    compiler        = null;
-    private static volatile Instrumentation instrumentation = null;
+    private static volatile JavaCompiler    compiler                          = null;
+    private static volatile Instrumentation instrumentation                   = null;
+    private static volatile Instrumentation systemStartProcessInstrumentation = null;
 
     static {
         initByteBuddyEnvironment();
         initAsmEnvironment();
     }
 
+    /**
+     * not recommend to use, just a intermediate object
+     *
+     * @return agent attach generated instrumentation
+     */
     public static Instrumentation getInstrumentation() {
         if (instrumentation == null) {
             try {
@@ -44,13 +50,25 @@ public abstract class InfraUtils {
         return instrumentation;
     }
 
+    public static Instrumentation getSystemStartProcessInstrumentation() {
+        if (systemStartProcessInstrumentation == null) {
+            try {
+                Class<?> clazz = InfraUtils.forName(AgentHelper.class.getPackage().getName() + ".InstrumentationHolder");
+                systemStartProcessInstrumentation = FastReflectionUtils.fastInvokeMethod(clazz, "getSystemStartProcessInstrumentation");
+            } catch (Throwable t) {
+                throw new IllegalStateException("Failed to get systemStartProcessInstrumentation", t);
+            }
+        }
+        return systemStartProcessInstrumentation;
+    }
+
     public static String getClassName(byte[] bytes) {
         try {
             Object o = classReaderClass.getConstructor(byte[].class).newInstance((Object) bytes);
             String classNameWithPath = ReflectionUtils.invokeMethod(getClassNameMethod, o);
             return classNameWithPath.replace("/", ".");
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to getClassName", e);
+        } catch (Throwable t) {
+            throw new IllegalStateException("Failed to get className", t);
         }
     }
 
@@ -60,7 +78,8 @@ public abstract class InfraUtils {
                 Class<?> clazz = forName(JAVAC_TOOL_CLASS);
                 Method createMethod = ReflectionUtils.getMethod(clazz, "create");
                 compiler = ReflectionUtils.invokeMethod(createMethod, null);
-            } catch (Throwable ignored) {
+            } catch (Throwable t) {
+                throw new IllegalStateException("Failed to get java compiler", t);
             }
         }
 

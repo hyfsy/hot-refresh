@@ -34,6 +34,6 @@ public abstract class Util {
     }
 
     public static Instrumentation getInstrumentation() {
-        return InfraUtils.getInstrumentation();
+        return InfraUtils.getSystemStartProcessInstrumentation();
     }
 }

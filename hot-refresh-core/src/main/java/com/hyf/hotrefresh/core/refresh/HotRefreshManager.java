@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.core.refresh;
 
+import com.hyf.hotrefresh.core.agent.AgentHelper;
 import com.hyf.hotrefresh.core.exception.AgentException;
 import com.hyf.hotrefresh.core.util.Util;
 
@@ -35,6 +36,7 @@ class HotRefreshManager {
     public static void start() {
         stop();
         getInstrumentation().addTransformer(hotRefreshTransformer, true);
+        // AgentHelper.setTransformerToFirst(getInstrumentation(), hotRefreshTransformer, true);
     }
 
     public static void stop() {

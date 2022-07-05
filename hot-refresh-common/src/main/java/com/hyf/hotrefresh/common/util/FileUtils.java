@@ -65,11 +65,15 @@ public abstract class FileUtils {
     }
 
     public static File getFile(String path) {
+        return getFile(path, false);
+    }
+
+    public static File getFile(String path, boolean create) {
         File file = new File(path);
         if (file.getParentFile() != null && !file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
-        if (!file.exists()) {
+        if (create && !file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
