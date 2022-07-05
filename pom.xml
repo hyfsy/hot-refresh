@@ -24,6 +24,7 @@
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
 
         <!-- third -->
         <asm.version>5.2</asm.version>
@@ -47,6 +48,7 @@
         <module>hot-refresh-remoting</module>
         <module>hot-refresh-client</module>
         <module>hot-refresh-server</module>
+        <module>hot-refresh-shadow</module>
         <module>hot-refresh-client-distribution</module>
 
         <module>adapters</module>
@@ -89,6 +91,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-shadow</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-adapter-lombok</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -105,6 +112,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-adapter-mybatis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-skywalking</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -163,6 +175,24 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                            <configuration>
+                                <mainClass>${project.groupId}.shadow.infrastructure.InfrastructureClassShadow</mainClass>
+                                <!-- Reflections scan class use parallel stream lead to use ForkJoinPool -->
+                                <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
