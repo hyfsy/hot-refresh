@@ -6,8 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author baB_hyf
  * @date 2022/05/13
  */
-@ConfigurationProperties("hyf.hot-refresh")
+@ConfigurationProperties(HotRefreshProperties.PREFIX)
 public class HotRefreshProperties {
+
+    public static final String PREFIX = "hyf.hot-refresh";
 
     /**
      * 是否启用热刷新功能

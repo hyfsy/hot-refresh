@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Conditional(HotRefreshEnableCondition.class)
-@ConditionalOnProperty(prefix = "hyf.hot-refresh", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = HotRefreshProperties.PREFIX, name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(HotRefreshProperties.class)
-@Import(HotRefreshFilterConfiguration.class)
+@Import({HotRefreshFilterConfiguration.class, MappedInterceptorEscapeConfiguration.class})
 public class HotRefreshAutoConfiguration {
 
 }

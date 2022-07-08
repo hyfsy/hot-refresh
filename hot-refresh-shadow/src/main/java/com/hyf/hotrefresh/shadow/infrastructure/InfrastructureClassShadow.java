@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.shadow.infrastructure;
 
+import com.hyf.hotrefresh.common.util.FileUtils;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -15,10 +16,20 @@ public class InfrastructureClassShadow {
 
         ClassLoader ccl = Thread.currentThread().getContextClassLoader(); // maven plugin set to load target dir
 
+        URL rootResource = ccl.getResource("");
+        if (rootResource == null) {
+            return;
+        }
+
         for (Class<?> infrastructureClass : infrastructureClassSet) {
 
             URL resource = ccl.getResource(infrastructureClass.getName().replace(".", "/") + ".class");
             if (resource == null) {
+                continue;
+            }
+
+            // only this module class
+            if (!resource.getFile().startsWith(rootResource.getFile())) {
                 continue;
             }
 
@@ -64,8 +75,9 @@ public class InfrastructureClassShadow {
                 System.out.println("[WARN] Failed to delete file: " + target.getAbsolutePath());
             }
         }
-        if (!source.renameTo(target)) {
-            System.out.println("[WARN] Failed to rename file: " + source.getAbsolutePath());
+        // a module use other module infra class will lead to compile failed, so here must keep source file
+        if (!FileUtils.copy(source, target)) {
+            System.out.println("[WARN] Failed to copy file: " + source.getAbsolutePath());
         }
     }
 }
