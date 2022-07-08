@@ -17,12 +17,12 @@ public class HotRefreshProperties {
     /**
      * 是否启用热刷新功能
      */
-    public boolean enabled = true;
+    private boolean enabled = true;
 
     /**
      * 针对SpringMVC提供的拦截器的相关配置
      */
-    public final InterceptorEscape interceptorEscape = new InterceptorEscape();
+    private final InterceptorEscape interceptorEscape = new InterceptorEscape();
 
     public boolean isEnabled() {
         return enabled;
@@ -41,17 +41,17 @@ public class HotRefreshProperties {
         /**
          * SpringMVC提供的拦截器是否进行跳过-全局配置
          */
-        public boolean enabled = true;
+        private boolean enabled = true;
 
         /**
          * 跳过的类
          */
-        public List<Class<?>> includeClasses = new ArrayList<>();
+        private List<Class<?>> includeClasses = new ArrayList<>();
 
         /**
          * 不跳过的类
          */
-        public List<Class<?>> excludeClasses = new ArrayList<>();
+        private List<Class<?>> excludeClasses = new ArrayList<>();
 
         public boolean isEnabled() {
             return enabled;
