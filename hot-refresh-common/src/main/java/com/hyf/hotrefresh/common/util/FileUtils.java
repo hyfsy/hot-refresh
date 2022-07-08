@@ -3,6 +3,7 @@ package com.hyf.hotrefresh.common.util;
 import com.hyf.hotrefresh.common.Log;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 
 /**
@@ -81,5 +82,18 @@ public abstract class FileUtils {
             }
         }
         return file;
+    }
+
+    public static boolean copy(File source, File target) {
+        try (FileChannel inChannel = new FileInputStream(source).getChannel();
+            FileChannel outChannel = new FileOutputStream(target).getChannel()) {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            return true;
+        } catch (FileNotFoundException e) {
+            Log.error("Write file not exists: " + source.getAbsolutePath(), e);
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to copy file: " + source.getAbsolutePath(), e);
+        }
     }
 }
