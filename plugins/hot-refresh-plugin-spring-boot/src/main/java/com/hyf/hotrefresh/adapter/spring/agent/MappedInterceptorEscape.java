@@ -32,7 +32,7 @@ public class MappedInterceptorEscape {
                 new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/String", "endsWith", "(Ljava/lang/String;)Z",
                     false);
             JumpInsnNode ifConditionsEquals = new JumpInsnNode(Opcodes.IFEQ, firstInsnNode);
-            InsnNode addTrueReturnValue = new InsnNode(Opcodes.ICONST_1);
+            InsnNode addFalseReturnValue = new InsnNode(Opcodes.ICONST_0);
             InsnNode returnTrueValue = new InsnNode(Opcodes.IRETURN);
             FrameNode frameNode = new FrameNode(Opcodes.F_SAME, 0, null, 0, null);
 
@@ -43,7 +43,7 @@ public class MappedInterceptorEscape {
                 loadHotRefreshStringParam,
                 invokeEndsWithMethod,
                 ifConditionsEquals,
-                addTrueReturnValue,
+                addFalseReturnValue,
                 returnTrueValue,
                 frameNode
             );
