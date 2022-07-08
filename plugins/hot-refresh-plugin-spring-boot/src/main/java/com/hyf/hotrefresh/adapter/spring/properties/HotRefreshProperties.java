@@ -2,6 +2,7 @@ package com.hyf.hotrefresh.adapter.spring.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class HotRefreshProperties {
         return interceptorEscape;
     }
 
-    public static final class InterceptorEscape {
+    public static class InterceptorEscape {
 
         /**
          * SpringMVC提供的拦截器是否进行跳过-全局配置
@@ -45,12 +46,12 @@ public class HotRefreshProperties {
         /**
          * 跳过的类
          */
-        public List<Class<?>> includeClasses;
+        public List<Class<?>> includeClasses = new ArrayList<>();
 
         /**
          * 不跳过的类
          */
-        public List<Class<?>> excludeClasses;
+        public List<Class<?>> excludeClasses = new ArrayList<>();
 
         public boolean isEnabled() {
             return enabled;
