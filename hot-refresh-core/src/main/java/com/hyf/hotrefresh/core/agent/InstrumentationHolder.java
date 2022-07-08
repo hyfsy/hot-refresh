@@ -20,13 +20,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * this class is used for get the InstrumentationImpl created when the jvm process starting, same as normal -javaagent
- * <p>
- * cannot direct to use, to use, please refer to the following template:
- * <pre><code>
- * Class<?> clazz = InfraUtils.forName("com.hyf.hotrefresh.core.agent.InstrumentationHolder");
- * return FastReflectionUtils.fastInvokeMethod(clazz, "getSystemStartProcessInstrumentation");
- * </code></pre>
+ * this class is used for get the InstrumentationImpl created when the jvm process starting, same as normal VM OPTIONS: -javaagent:xxx.jar
  *
  * @author baB_hyf
  * @date 2022/07/03
@@ -34,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @see InfraUtils#getSystemStartProcessInstrumentation
  */
 @Infrastructure
-class InstrumentationHolder {
+public class InstrumentationHolder {
 
     private static final    AtomicBoolean        initialized                    = new AtomicBoolean(false);
     private static final    Set<Instrumentation> intermediateInstrumentationSet = new LinkedHashSet<>();
@@ -120,7 +114,7 @@ class InstrumentationHolder {
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 
             // try {
-            //     Method addInstrumentationMethod = Class.forName("com.hyf.hotrefresh.core.agent.InstrumentationHolder", false,
+            //     Method addInstrumentationMethod = Class.forName(InstrumentationHolder.class.getName(), false,
             //             Thread.currentThread().getContextClassLoader())
             //             .getMethod("addInstrumentation", Instrumentation.class);
             //     addInstrumentationMethod.setAccessible(true);

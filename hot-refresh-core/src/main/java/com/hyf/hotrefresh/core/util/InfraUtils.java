@@ -3,6 +3,7 @@ package com.hyf.hotrefresh.core.util;
 import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.core.agent.AgentHelper;
+import com.hyf.hotrefresh.core.agent.InstrumentationHolder;
 
 import javax.tools.JavaCompiler;
 import java.lang.instrument.Instrumentation;
@@ -53,7 +54,7 @@ public abstract class InfraUtils {
     public static Instrumentation getSystemStartProcessInstrumentation() {
         if (systemStartProcessInstrumentation == null) {
             try {
-                Class<?> clazz = InfraUtils.forName(AgentHelper.class.getPackage().getName() + ".InstrumentationHolder");
+                Class<?> clazz = InfraUtils.forName(InstrumentationHolder.class.getName());
                 systemStartProcessInstrumentation = FastReflectionUtils.fastInvokeMethod(clazz, "getSystemStartProcessInstrumentation");
             } catch (Throwable t) {
                 throw new IllegalStateException("Failed to get systemStartProcessInstrumentation", t);
