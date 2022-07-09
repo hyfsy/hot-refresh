@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Infrastructure
 public class PilingTransformer implements ClassFileTransformer {
 
-    private List<String> classResourceNames;
+    private List<String>        classResourceNames;
     private Consumer<ClassNode> classNodeConsumer;
 
     public PilingTransformer(Class<?> clazz, Consumer<ClassNode> classNodeConsumer) {
@@ -38,7 +38,7 @@ public class PilingTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-        ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 
         if (!classResourceNames.contains(className)) {
             return classfileBuffer;

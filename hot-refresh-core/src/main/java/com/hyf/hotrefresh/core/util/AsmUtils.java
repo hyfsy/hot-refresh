@@ -23,7 +23,7 @@ public abstract class AsmUtils {
 
     public static void replaceMethod(ClassNode classNode, MethodNode methodNode) {
         for (int index = 0; index < classNode.methods.size(); ++index) {
-            MethodNode tmp = (MethodNode)classNode.methods.get(index);
+            MethodNode tmp = (MethodNode) classNode.methods.get(index);
             if (tmp.name.equals(methodNode.name) && tmp.desc.equals(methodNode.desc)) {
                 classNode.methods.set(index, methodNode);
             }

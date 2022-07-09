@@ -12,13 +12,11 @@ import java.util.function.Consumer;
 
 public abstract class TransformUtils {
 
-    public static void signalTransformer(Class<?> clazz, Consumer<ClassNode> classNodeConsumer)
-        throws UnmodifiableClassException {
+    public static void signalTransformer(Class<?> clazz, Consumer<ClassNode> classNodeConsumer) throws UnmodifiableClassException {
         signalTransformer(Util.getInstrumentation(), clazz, classNodeConsumer, false);
     }
 
-    public static void signalTransformer(Instrumentation instrumentation, Class<?> clazz,
-        Consumer<ClassNode> classNodeConsumer, boolean ephemeral) throws UnmodifiableClassException {
+    public static void signalTransformer(Instrumentation instrumentation, Class<?> clazz, Consumer<ClassNode> classNodeConsumer, boolean ephemeral) throws UnmodifiableClassException {
 
         // for pilling code to use in transformer
         ClassLoader originClassLoader = Thread.currentThread().getContextClassLoader();
@@ -26,8 +24,8 @@ public abstract class TransformUtils {
 
         try {
             Class<?> transformerClass = InfraUtils.forName(PilingTransformer.class.getName());
-            ClassFileTransformer transformer = (ClassFileTransformer)ReflectionUtils.newClassInstance(transformerClass,
-                new Class[] {Class.class, Consumer.class}, clazz, classNodeConsumer);
+            ClassFileTransformer transformer = (ClassFileTransformer) ReflectionUtils.newClassInstance(transformerClass,
+                    new Class[]{Class.class, Consumer.class}, clazz, classNodeConsumer);
             instrumentation.addTransformer(transformer, true);
             try {
                 instrumentation.retransformClasses(clazz);
