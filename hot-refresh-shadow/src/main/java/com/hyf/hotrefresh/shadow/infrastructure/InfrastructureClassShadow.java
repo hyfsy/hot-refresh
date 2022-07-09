@@ -62,14 +62,14 @@ public class InfrastructureClassShadow {
 
     private static void renameToHotRefreshInfrastructureFile(File infraClassFile) {
         File renameInfraClassFile = new File(removeClassSuffix(infraClassFile.getAbsolutePath()) + InfrastructureConstants.FILE_SUFFIX);
-        renameTo(infraClassFile, renameInfraClassFile);
+        copy(infraClassFile, renameInfraClassFile);
     }
 
     private static String removeClassSuffix(String path) {
         return path.substring(0, path.lastIndexOf(".class"));
     }
 
-    private static void renameTo(File source, File target) {
+    private static void copy(File source, File target) {
         if (target.exists()) {
             if (!target.delete()) {
                 System.out.println("[WARN] Failed to delete file: " + target.getAbsolutePath());

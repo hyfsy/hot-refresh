@@ -86,7 +86,7 @@ public abstract class FileUtils {
 
     public static boolean copy(File source, File target) {
         try (FileChannel inChannel = new FileInputStream(source).getChannel();
-            FileChannel outChannel = new FileOutputStream(target).getChannel()) {
+             FileChannel outChannel = new FileOutputStream(target).getChannel()) {
             inChannel.transferTo(0, inChannel.size(), outChannel);
             return true;
         } catch (FileNotFoundException e) {

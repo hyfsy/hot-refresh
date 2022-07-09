@@ -22,30 +22,28 @@ public class MappedInterceptorEscape {
                 return;
             }
 
-            LabelNode firstInsnNode = (LabelNode)matchesMethodNode.instructions.getFirst();
+            LabelNode firstInsnNode = (LabelNode) matchesMethodNode.instructions.getFirst();
 
             VarInsnNode loadLookupPathParam = new VarInsnNode(Opcodes.ALOAD, 1);
             JumpInsnNode ifLoadLookupPathParamIsNull = new JumpInsnNode(Opcodes.IFNULL, firstInsnNode);
             VarInsnNode loadLookupPathParamSecond = new VarInsnNode(Opcodes.ALOAD, 1);
             LdcInsnNode loadHotRefreshStringParam = new LdcInsnNode(Constants.REFRESH_API);
-            MethodInsnNode invokeEndsWithMethod =
-                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/String", "endsWith", "(Ljava/lang/String;)Z",
-                    false);
+            MethodInsnNode invokeEndsWithMethod = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/String", "endsWith", "(Ljava/lang/String;)Z", false);
             JumpInsnNode ifConditionsEquals = new JumpInsnNode(Opcodes.IFEQ, firstInsnNode);
             InsnNode addFalseReturnValue = new InsnNode(Opcodes.ICONST_0);
             InsnNode returnTrueValue = new InsnNode(Opcodes.IRETURN);
             FrameNode frameNode = new FrameNode(Opcodes.F_SAME, 0, null, 0, null);
 
             AsmUtils.addInsnBeforeMethod(matchesMethodNode.instructions,
-                loadLookupPathParam,
-                ifLoadLookupPathParamIsNull,
-                loadLookupPathParamSecond,
-                loadHotRefreshStringParam,
-                invokeEndsWithMethod,
-                ifConditionsEquals,
-                addFalseReturnValue,
-                returnTrueValue,
-                frameNode
+                    loadLookupPathParam,
+                    ifLoadLookupPathParamIsNull,
+                    loadLookupPathParamSecond,
+                    loadHotRefreshStringParam,
+                    invokeEndsWithMethod,
+                    ifConditionsEquals,
+                    addFalseReturnValue,
+                    returnTrueValue,
+                    frameNode
             );
         });
     }
