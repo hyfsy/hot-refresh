@@ -22,6 +22,10 @@ public class MappedInterceptorEscape {
                 return;
             }
 
+            // if (lookupPath != null && lookupPath.endsWith("/hot-refresh")) {
+            //     return false;
+            // }
+
             LabelNode firstInsnNode = (LabelNode) matchesMethodNode.instructions.getFirst();
 
             VarInsnNode loadLookupPathParam = new VarInsnNode(Opcodes.ALOAD, 1);
