@@ -9,6 +9,7 @@
 - Support custom httpclient request builder.
 - Support assign infrastructure resource outer.
 - Support infra class loader to load the custom file with INFRA.hotrefresh suffix.
+- Support SpringMVC interceptor escape for /hot-refresh request path.
 - Fix lombok use with mapstruct occur some problem.
 - Fix extend class loader getResource... to load own resources.
 - Fix find resource use app class instead of infra class at compile time.
