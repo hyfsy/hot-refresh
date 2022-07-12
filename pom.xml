@@ -47,14 +47,15 @@
         <module>hot-refresh-core</module>
         <module>hot-refresh-remoting</module>
         <module>hot-refresh-client</module>
-        <module>hot-refresh-server</module>
-        <module>hot-refresh-shadow</module>
+        <module>hot-refresh-client-api</module>
         <module>hot-refresh-client-distribution</module>
+        <module>hot-refresh-server</module>
+        <module>hot-refresh-server-all</module>
+        <module>hot-refresh-shadow</module>
 
         <module>adapters</module>
         <module>plugins</module>
         <module>test-cases</module>
-        <module>hot-refresh-client-api</module>
     </modules>
 
     <dependencyManagement>
