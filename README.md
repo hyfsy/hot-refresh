@@ -13,7 +13,7 @@ IDEA小锤子的远程版
 ```xml
 <dependency>
     <groupId>com.hyf.hotrefresh</groupId>
-    <artifactId>hot-refresh-server</artifactId>
+    <artifactId>hot-refresh-server-all</artifactId>
     <version>1.3.0-SNAPSHOT</version>
 </dependency>
 ```
