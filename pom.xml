@@ -357,7 +357,7 @@
                                 <goal>java</goal>
                             </goals>
                             <configuration>
-                                <mainClass>${project.groupId}.shadow.infrastructure.InfrastructureClassShadow</mainClass>
+                                <mainClass>com.hyf.hotrefresh.shadow.infrastructure.InfrastructureClassShadow</mainClass>
                                 <!-- Reflections scan class use parallel stream lead to use ForkJoinPool -->
                                 <cleanupDaemonThreads>false</cleanupDaemonThreads>
                             </configuration>
