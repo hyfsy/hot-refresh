@@ -14,7 +14,7 @@ IDEA小锤子的远程版
 <dependency>
     <groupId>io.github.hyfsy</groupId>
     <artifactId>hot-refresh-server</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 </dependency>
 ```
 
