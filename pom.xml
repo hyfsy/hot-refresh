@@ -111,10 +111,10 @@
         <module>hot-refresh-remoting</module>
         <module>hot-refresh-client</module>
         <module>hot-refresh-client-api</module>
-        <module>hot-refresh-client-distribution</module>
         <module>hot-refresh-server</module>
         <module>hot-refresh-server-all</module>
         <module>hot-refresh-shadow</module>
+        <module>hot-refresh-client-distribution</module><!-- 注意：该位置不能调整 -->
 
         <module>adapters</module>
         <module>plugins</module>
