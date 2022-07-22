@@ -66,7 +66,7 @@ public abstract class FileUtils {
     }
 
     public static File getFile(String path) {
-        return getFile(path, false);
+        return getFile(path, true);
     }
 
     public static File getFile(String path, boolean create) {

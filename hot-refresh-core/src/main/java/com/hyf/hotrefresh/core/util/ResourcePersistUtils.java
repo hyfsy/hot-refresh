@@ -41,7 +41,7 @@ public abstract class ResourcePersistUtils {
 
     private static URL getLocalURL(URL url) {
 
-        File localFile = getLocalFile(url);
+        File localFile = getLocalFile(url, false);
 
         if (localFile.exists()) {
             try {
@@ -57,7 +57,7 @@ public abstract class ResourcePersistUtils {
 
     private static URL downloadToLocal(URL url) {
 
-        File localFile = getLocalFile(url);
+        File localFile = getLocalFile(url, true);
 
         try {
             URLConnection connection = url.openConnection();
@@ -78,9 +78,9 @@ public abstract class ResourcePersistUtils {
         }
     }
 
-    private static File getLocalFile(URL url) {
+    private static File getLocalFile(URL url, boolean create) {
         String urlFileName = url.toString().substring(url.toString().lastIndexOf("/"));
         String downloadFilePath = DOWNLOAD_HOME + urlFileName;
-        return FileUtils.getFile(downloadFilePath);
+        return FileUtils.getFile(downloadFilePath, create);
     }
 }
