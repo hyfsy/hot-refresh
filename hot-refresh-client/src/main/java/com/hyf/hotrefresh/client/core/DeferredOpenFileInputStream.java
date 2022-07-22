@@ -1,5 +1,7 @@
 package com.hyf.hotrefresh.client.core;
 
+import com.hyf.hotrefresh.client.exception.ClientException;
+
 import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -20,6 +22,7 @@ public class DeferredOpenFileInputStream extends FilterInputStream {
     public DeferredOpenFileInputStream(File file) {
         super(null);
         this.file = file;
+        checkValid(file);
     }
 
     @Override
@@ -81,6 +84,12 @@ public class DeferredOpenFileInputStream extends FilterInputStream {
             return in.markSupported();
         } catch (IOException e) {
             throw new RuntimeException("File open failed", e);
+        }
+    }
+
+    private void checkValid(File file) {
+        if (!file.exists()) {
+            throw new ClientException("File not exists: " + file.getAbsolutePath());
         }
     }
 
