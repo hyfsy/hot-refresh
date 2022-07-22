@@ -1,0 +1,32 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <!-- 仅充当文件后缀用，强制需要指定，可用作descriptorRef -->
+    <id>server-all</id>
+    <!-- 打包输出格式 -->
+    <formats>
+        <format>jar</format>
+        <!--<format>dir</format>-->
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <containerDescriptorHandlers>
+        <containerDescriptorHandler>
+            <handlerName>metaInf-services</handlerName>
+        </containerDescriptorHandler>
+    </containerDescriptorHandlers>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+            <excludes>
+                <exclude>org.reflections</exclude>
+                <exclude>org.javassist</exclude>
+                <exclude>com.google.code.findbugs</exclude>
+                <exclude>org.slf4j</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+</assembly>
