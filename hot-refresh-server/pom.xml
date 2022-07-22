@@ -50,5 +50,9 @@
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-plugin-execute</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-arthas</artifactId>
+        </dependency>
     </dependencies>
 </project>
