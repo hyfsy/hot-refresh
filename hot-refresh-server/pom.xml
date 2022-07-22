@@ -36,6 +36,10 @@
         </dependency>
         <dependency>
             <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-adapter-skywalking</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-plugin-web</artifactId>
         </dependency>
         <dependency>

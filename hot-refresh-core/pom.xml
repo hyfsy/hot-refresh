@@ -11,18 +11,24 @@
 
     <dependencies>
 
-        <!--<dependency>-->
-        <!--    <groupId>net.bytebuddy</groupId>-->
-        <!--    <artifactId>byte-buddy-agent</artifactId>-->
-        <!--    <version>${bytebuddy.version}</version>-->
-        <!--    <scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--    <groupId>org.ow2.asm</groupId>-->
-        <!--    <artifactId>asm</artifactId>-->
-        <!--    <version>${asm.version}</version>-->
-        <!--    <scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${bytebuddy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${asm.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!--<dependency>-->
         <!--    <groupId>com.sun</groupId>-->
@@ -41,7 +47,20 @@
         </dependency>
         <dependency>
             <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-shadow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

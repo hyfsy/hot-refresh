@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.hyfsy</groupId>
+        <artifactId>hot-refresh-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>hot-refresh-shadow</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-common</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!--<pluginManagement>-->
+        <!--    <plugins>-->
+        <!--        <plugin>-->
+        <!--            <groupId>org.codehaus.mojo</groupId>-->
+        <!--            <artifactId>exec-maven-plugin</artifactId>-->
+        <!--            <version>${exec-maven-plugin.version}</version>-->
+        <!--            <executions>-->
+        <!--                <execution>-->
+        <!--                    <phase>compile</phase>-->
+        <!--                    <goals>-->
+        <!--                        <goal>java</goal>-->
+        <!--                    </goals>-->
+        <!--                    <configuration>-->
+        <!--                        <mainClass>com.hyf.hotrefresh.shadow.infrastructure.InfrastructureClassShadow</mainClass>-->
+        <!--                    </configuration>-->
+        <!--                </execution>-->
+        <!--            </executions>-->
+        <!--        </plugin>-->
+        <!--    </plugins>-->
+        <!--</pluginManagement>-->
+    </build>
+</project>
