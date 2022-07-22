@@ -10,10 +10,11 @@
     <artifactId>hot-refresh-shadow</artifactId>
 
     <dependencies>
+        <!-- TODO 如何不强依赖？ -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
+            <version>${reflections.version}</version>
         </dependency>
 
         <dependency>
@@ -21,27 +22,4 @@
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <!--<pluginManagement>-->
-        <!--    <plugins>-->
-        <!--        <plugin>-->
-        <!--            <groupId>org.codehaus.mojo</groupId>-->
-        <!--            <artifactId>exec-maven-plugin</artifactId>-->
-        <!--            <version>${exec-maven-plugin.version}</version>-->
-        <!--            <executions>-->
-        <!--                <execution>-->
-        <!--                    <phase>compile</phase>-->
-        <!--                    <goals>-->
-        <!--                        <goal>java</goal>-->
-        <!--                    </goals>-->
-        <!--                    <configuration>-->
-        <!--                        <mainClass>com.hyf.hotrefresh.shadow.infrastructure.InfrastructureClassShadow</mainClass>-->
-        <!--                    </configuration>-->
-        <!--                </execution>-->
-        <!--            </executions>-->
-        <!--        </plugin>-->
-        <!--    </plugins>-->
-        <!--</pluginManagement>-->
-    </build>
 </project>
