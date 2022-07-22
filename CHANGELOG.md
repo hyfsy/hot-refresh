@@ -3,6 +3,7 @@
 ## 1.2.2 (Jul 22, 2022)
 
 - Fix server-all artifact load failed because of parent version.
+- Fix FileUtils.getFile default create file.
 
 
 ## 1.2.1 (Jul 22, 2022)
