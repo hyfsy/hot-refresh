@@ -1,6 +1,6 @@
 
 
-## 1.2.1 ()
+## 1.2.1 (Jul 22, 2022)
 
 - Optimize the client dependency to client and api jar for extension.
 - Upgrade rpc message version to 2.
