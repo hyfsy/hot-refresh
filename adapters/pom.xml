@@ -16,5 +16,6 @@
         <module>hot-refresh-adapter-mapstruct</module>
         <module>hot-refresh-adapter-spring-boot</module>
         <module>hot-refresh-adapter-mybatis</module>
+        <module>hot-refresh-adapter-skywalking</module>
     </modules>
 </project>
