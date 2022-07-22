@@ -190,6 +190,11 @@
                 <artifactId>hot-refresh-plugin-execute</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-arthas</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
