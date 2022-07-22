@@ -13,7 +13,7 @@ IDEA小锤子的远程版
 ```xml
 <dependency>
     <groupId>io.github.hyfsy</groupId>
-    <artifactId>hot-refresh-server</artifactId>
+    <artifactId>hot-refresh-server-all</artifactId>
     <version>1.2.2</version>
 </dependency>
 ```
