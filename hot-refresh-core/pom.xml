@@ -40,6 +40,18 @@
         <!--    <optional>true</optional>-->
         <!--</dependency>-->
 
+        <!--<dependency>-->
+        <!--    <groupId>com.allatori</groupId>-->
+        <!--    <artifactId>allatori</artifactId>-->
+        <!--    <version>${allatori.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--    <groupId>com.allatori</groupId>-->
+        <!--    <artifactId>allatori-annotations</artifactId>-->
+        <!--    <version>${allatori.version}</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-remoting</artifactId>
@@ -60,6 +72,26 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <!-- allatori混淆插件配置 -->
+                    <execution>
+                        <id>run-allatori</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-Xms256m</argument>
+                                <argument>-Xmx256m</argument>
+                                <argument>-jar</argument>
+                                <argument>${basedir}/../lib/com/allatori/allatori/8.2/allatori-8.2.jar</argument>
+                                <argument>${basedir}\target\classes\allatori.xml</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
