@@ -1,10 +1,10 @@
 package com.hyf.hotrefresh.shadow.infrastructure;
 
-import com.hyf.hotrefresh.common.util.FileUtils;
 import org.reflections.Reflections;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.Set;
 
 public class InfrastructureClassShadow {
@@ -76,8 +76,22 @@ public class InfrastructureClassShadow {
             }
         }
         // a module use other module infra class will lead to compile failed, so here must keep source file
-        if (!FileUtils.copy(source, target)) {
+        if (!doCopy(source, target)) {
             System.out.println("[WARN] Failed to copy file: " + source.getAbsolutePath());
+        }
+    }
+
+    private static boolean doCopy(File source, File target) {
+        try (FileChannel inChannel = new FileInputStream(source).getChannel();
+             FileChannel outChannel = new FileOutputStream(target).getChannel()) {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("Write file not exists: " + source.getAbsolutePath());
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to copy file: " + source.getAbsolutePath(), e);
         }
     }
 }
