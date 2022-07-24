@@ -1,2 +1,2 @@
 org.springframework.boot.SpringApplicationRunListener=\
-    com.hyf.hotrefresh.plugin.arthas.ArthasConfigurationDetector
+  com.hyf.hotrefresh.plugin.arthas.ArthasConfigurationDetector

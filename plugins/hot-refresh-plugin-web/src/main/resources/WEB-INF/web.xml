@@ -4,7 +4,7 @@
 
     <filter>
         <filter-name>HotRefreshFilter</filter-name>
-        <filter-class>com.hyf.hotrefresh.adapter.web.HotRefreshFilter</filter-class>
+        <filter-class>com.hyf.hotrefresh.plugin.web.HotRefreshFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
     <filter-mapping>

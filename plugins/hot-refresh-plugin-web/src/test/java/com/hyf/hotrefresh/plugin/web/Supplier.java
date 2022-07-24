@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.adapter.web;
+package com.hyf.hotrefresh.plugin.web;
 
 /**
  * @author baB_hyf

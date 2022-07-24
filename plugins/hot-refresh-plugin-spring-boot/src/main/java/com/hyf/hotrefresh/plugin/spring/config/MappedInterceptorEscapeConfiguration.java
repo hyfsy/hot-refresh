@@ -1,6 +1,6 @@
-package com.hyf.hotrefresh.adapter.spring.config;
+package com.hyf.hotrefresh.plugin.spring.config;
 
-import com.hyf.hotrefresh.adapter.spring.properties.HotRefreshProperties;
+import com.hyf.hotrefresh.plugin.spring.properties.HotRefreshProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
