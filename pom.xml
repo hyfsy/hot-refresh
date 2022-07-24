@@ -86,11 +86,12 @@
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <maven-shade-plugin.version>3.3.0</maven-shade-plugin.version>
         <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
         <build-helper-maven-plugin.version>1.10</build-helper-maven-plugin.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
         <!-- dependency version -->
         <asm.version>5.2</asm.version>
@@ -109,6 +110,7 @@
         <arthas.version>3.6.3</arthas.version>
         <arthas-spring-boot.version>3.3.6</arthas-spring-boot.version>
         <reflections.version>0.10.2</reflections.version>
+        <allatori.version>8.2</allatori.version>
     </properties>
 
     <modules>
@@ -338,12 +340,27 @@
     </profiles>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 资源文件填充占位符 -->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -356,6 +373,7 @@
                     <version>${exec-maven-plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>infra-shadow</id>
                             <phase>compile</phase>
                             <goals>
                                 <goal>java</goal>
@@ -364,9 +382,17 @@
                                 <mainClass>com.hyf.hotrefresh.shadow.infrastructure.InfrastructureClassShadow</mainClass>
                                 <!-- Reflections scan class use parallel stream lead to use ForkJoinPool -->
                                 <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                                <includePluginDependencies>true</includePluginDependencies>
                             </configuration>
                         </execution>
                     </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.reflections</groupId>
+                            <artifactId>reflections</artifactId>
+                            <version>${reflections.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -374,6 +400,7 @@
                     <version>${maven-shade-plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>shade</id>
                             <phase>package</phase>
                             <goals>
                                 <goal>shade</goal>
@@ -399,6 +426,24 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven-antrun-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                        <!-- 排除一些无用的配置文件 -->
+                        <excludes>
+                            <exclude>**/allatori.xml</exclude>
+                            <exclude>**/rebel.xml</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
