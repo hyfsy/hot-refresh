@@ -10,10 +10,15 @@ import java.util.Properties;
  */
 public class Version {
 
-    public static final String DEFAULT_VERSION = "";
+    public static final String DEFAULT_VERSION       = "";
     public static final String VERSION_RESOURCE_PATH = "version.properties";
 
     public static String getVersion() {
+        Package pkg = Version.class.getPackage();
+        return pkg != null ? pkg.getImplementationVersion() : getVersionFromFile();
+    }
+
+    public static String getVersionFromFile() {
         try (InputStream is = Version.class.getClassLoader().getResourceAsStream(VERSION_RESOURCE_PATH)) {
             if (is == null) {
                 return DEFAULT_VERSION;
