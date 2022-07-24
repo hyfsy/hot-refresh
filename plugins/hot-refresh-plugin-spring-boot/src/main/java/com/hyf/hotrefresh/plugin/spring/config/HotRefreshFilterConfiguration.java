@@ -1,6 +1,6 @@
-package com.hyf.hotrefresh.adapter.spring.config;
+package com.hyf.hotrefresh.plugin.spring.config;
 
-import com.hyf.hotrefresh.adapter.web.HotRefreshFilter;
+import com.hyf.hotrefresh.plugin.web.HotRefreshFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

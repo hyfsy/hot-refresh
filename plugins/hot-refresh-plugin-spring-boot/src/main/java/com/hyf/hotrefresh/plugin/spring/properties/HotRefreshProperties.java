@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.adapter.spring.properties;
+package com.hyf.hotrefresh.plugin.spring.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

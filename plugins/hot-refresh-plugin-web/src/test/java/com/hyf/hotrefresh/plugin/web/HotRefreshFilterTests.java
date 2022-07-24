@@ -1,19 +1,21 @@
-package com.hyf.hotrefresh.adapter.web;
+package com.hyf.hotrefresh.plugin.web;
 
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
-import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;

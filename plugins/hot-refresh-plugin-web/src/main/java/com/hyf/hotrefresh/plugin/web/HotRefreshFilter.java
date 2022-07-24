@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.adapter.web;
+package com.hyf.hotrefresh.plugin.web;
 
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;

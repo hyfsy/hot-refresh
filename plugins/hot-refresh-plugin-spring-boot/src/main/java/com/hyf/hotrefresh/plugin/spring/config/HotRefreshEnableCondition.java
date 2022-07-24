@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.adapter.spring.config;
+package com.hyf.hotrefresh.plugin.spring.config;
 
 import com.hyf.hotrefresh.core.install.CoreInstaller;
 import org.springframework.context.annotation.Condition;
