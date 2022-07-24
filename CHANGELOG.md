@@ -1,5 +1,14 @@
 
 
+## 1.2.3 (Jul 24, 2022)
+
+- Obfuscation the core module.
+- Optimize version get way.
+- Optimize shadow package remove the reflections' dependency.
+- Fix server-all artifact merge spring.factories.
+- Fix plugin-web/plugin-springboot wrong package path.
+
+
 ## 1.2.2 (Jul 22, 2022)
 
 - Fix server-all artifact load failed because of parent version.
