@@ -3,10 +3,10 @@
         <jar in="${basedir}/target/${project.build.finalName}.jar" out="${basedir}/target/${project.build.finalName}.jar"/>
     </jars>
 
-    <classpath>
-        <!--<jar name="${settings.localRepository}/com/alibaba/fastjson/**/*.jar" />-->
-        <!--<jar name="${settings.localRepository}/org/jasig/cas/client/**/*.jar" />-->
-    </classpath>
+    <!--<classpath>-->
+    <!--    <jar name="${settings.localRepository}/com/alibaba/fastjson/**/*.jar" />-->
+    <!--    <jar name="${settings.localRepository}/org/jasig/cas/client/**/*.jar" />-->
+    <!--</classpath>-->
 
     <keep-names>
         <class access="protected+">
@@ -22,6 +22,6 @@
     <!--    <class template="class com.hyf.basic.controller.authorize.exception.*" />-->
     <!--</ignore-classes>-->
 
-    <property name="log-file" value="allatori-log.xml"/>
+    <!--<property name="log-file" value="allatori-log.xml"/>-->
 </config>
 
