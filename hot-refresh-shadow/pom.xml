@@ -10,16 +10,12 @@
     <artifactId>hot-refresh-shadow</artifactId>
 
     <dependencies>
-        <!-- TODO 如何不强依赖？ -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.hyf.hotrefresh</groupId>
-            <artifactId>hot-refresh-common</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>
