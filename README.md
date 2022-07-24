@@ -25,7 +25,7 @@ IDEA小锤子的远程版
 4、解压后，启动本地服务器：
 
 ```bash
-bin/hot.cmd
+bin/hot.cmd -s http://localhost:8080
 ```
 
 - `-h`：本地编写代码的工作目录（默认当前命令行目录）
