@@ -12,9 +12,9 @@ IDEA小锤子的远程版
 
 ```xml
 <dependency>
-    <groupId>com.hyf.hotrefresh</groupId>
+    <groupId>io.github.hyfsy</groupId>
     <artifactId>hot-refresh-server-all</artifactId>
-    <version>${current.version}</version>
+    <version>1.2.3</version>
 </dependency>
 ```
 
