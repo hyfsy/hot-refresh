@@ -1,10 +1,7 @@
 package com.hyf.hotrefresh.adapter.spring;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -14,9 +11,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author baB_hyf
  * @date 2022/02/09
  */
-public class ApplicationContextUtils implements ApplicationContextAware, BeanFactoryAware {
-
-    private static volatile ConfigurableListableBeanFactory beanFactory;
+public class ApplicationContextUtils implements ApplicationContextAware {
 
     private static volatile ApplicationContext ctx;
 
@@ -30,18 +25,6 @@ public class ApplicationContextUtils implements ApplicationContextAware, BeanFac
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ApplicationContextUtils.ctx = applicationContext;
-    }
-
-    public static ConfigurableListableBeanFactory getBeanFactory() {
-        return beanFactory;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        if (!(beanFactory instanceof ConfigurableListableBeanFactory)) {
-            throw new RuntimeException("Unknown bean factory type: " + beanFactory.getClass().getName());
-        }
-        ApplicationContextUtils.beanFactory = (ConfigurableListableBeanFactory)beanFactory;
     }
 
     public static <T> T getBean(Class<T> clazz) {
