@@ -75,6 +75,12 @@
             <artifactId>hot-refresh-plugin-netty</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-shadow</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
