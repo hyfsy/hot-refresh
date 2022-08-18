@@ -22,16 +22,13 @@
             <version>${apache-httpcomponents.version}</version>
             <optional>true</optional>
         </dependency>
-
+        <!-- rpc -->
         <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-plugin-netty</artifactId>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-common</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-client-api</artifactId>

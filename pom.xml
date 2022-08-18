@@ -115,15 +115,15 @@
     </properties>
 
     <modules>
-        <module>hot-refresh-common</module>
-        <module>hot-refresh-core</module>
-        <module>hot-refresh-remoting</module>
-        <module>hot-refresh-client</module>
-        <module>hot-refresh-client-api</module>
-        <module>hot-refresh-server</module>
-        <module>hot-refresh-server-all</module>
-        <module>hot-refresh-shadow</module>
-        <module>hot-refresh-client-distribution</module><!-- 注意：该位置不能调整，防止打包出错 -->
+        <module>common</module>
+        <module>core</module>
+        <module>remoting</module>
+        <module>client</module>
+        <module>client-api</module>
+        <module>server</module>
+        <module>server-all</module>
+        <module>shadow</module>
+        <module>client-distribution</module><!-- 注意：该位置不能调整，防止打包出错 -->
 
         <module>adapters</module>
         <module>plugins</module>

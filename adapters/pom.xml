@@ -12,10 +12,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hot-refresh-adapter-lombok</module>
-        <module>hot-refresh-adapter-mapstruct</module>
-        <module>hot-refresh-adapter-spring-boot</module>
-        <module>hot-refresh-adapter-mybatis</module>
-        <module>hot-refresh-adapter-skywalking</module>
+        <module>adapter-lombok</module>
+        <module>adapter-mapstruct</module>
+        <module>adapter-spring-boot</module>
+        <module>adapter-mybatis</module>
+        <module>adapter-skywalking</module>
     </modules>
 </project>

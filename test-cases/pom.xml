@@ -12,9 +12,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hot-refresh-test-spring-boot</module>
-        <module>hot-refresh-test-jar-file</module>
-        <module>hot-refresh-test-execute</module>
+        <module>test-spring-boot</module>
+        <module>test-jar-file</module>
+        <module>test-execute</module>
     </modules>
 
     <build>

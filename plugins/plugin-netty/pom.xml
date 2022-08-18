@@ -22,5 +22,10 @@
             <artifactId>hot-refresh-remoting</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-client</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
