@@ -1,4 +1,8 @@
 
+## 1.2.4 ()
+
+- Support netty remoting feature.
+
 
 ## 1.2.3 (Jul 24, 2022)
 
