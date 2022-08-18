@@ -6,7 +6,6 @@ import com.hyf.hotrefresh.core.util.InfraUtils;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
 
 /**
@@ -37,8 +36,8 @@ public class ClassBytesDumper {
         HotRefresher.stop();
         try {
             instrumentation.retransformClasses(clazz);
-        } catch (UnmodifiableClassException e) {
-            e.printStackTrace();
+        } catch (Throwable ignored) {
+            // reTransform failed but the bytes has been collected
         } finally {
             instrumentation.removeTransformer(classDumpTransformer);
             HotRefresher.start();
