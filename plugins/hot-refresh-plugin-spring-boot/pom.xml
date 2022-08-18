@@ -58,10 +58,22 @@
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-plugin-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-netty</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -25,6 +25,11 @@
 
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-netty</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-common</artifactId>
         </dependency>
         <dependency>
