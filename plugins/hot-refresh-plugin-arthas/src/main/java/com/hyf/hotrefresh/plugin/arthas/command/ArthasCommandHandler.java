@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.plugin.arthas.command;
 
 import com.hyf.hotrefresh.client.api.command.AbstractCommandHandler;
-import com.hyf.hotrefresh.client.core.HotRefreshClient;
+import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
 import com.hyf.hotrefresh.plugin.arthas.remoting.payload.RpcArthasCommandRequest;
 
 import java.util.HashMap;

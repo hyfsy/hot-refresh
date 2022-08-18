@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author baB_hyf
  * @date 2021/12/11
+ * @deprecated recommend to use {@link com.hyf.hotrefresh.client.core.client.Client}
  */
 public class RpcClient {
 

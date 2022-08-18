@@ -1,12 +1,13 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
+import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
-import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -47,10 +48,12 @@ public class RpcClientTests {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
                 Socket socket = serverSocket.accept();
-                try (OutputStream os = socket.getOutputStream()) {
+                try (InputStream is = socket.getInputStream();
+                     OutputStream os = socket.getOutputStream()) {
                     os.write("HTTP/1.1 200 OK\r\n\r\n".getBytes(RemotingConstants.DEFAULT_ENCODING.getCharset()));
+                    Message request = MessageCodec.decode(IOUtils.readAsByteArray(is));
                     RpcResponse response = new RpcResponse();
-                    Message message = MessageFactory.createMessage(response);
+                    Message message = MessageFactory.createResponseMessage(request, response);
                     os.write(MessageCodec.encode(message));
                     os.flush();
                 }

@@ -4,7 +4,6 @@ import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.remoting.rpc.enums.HandleSide;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +24,9 @@ public class RpcMessageHandlerRegistry {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     /** message type -> handler */
-    private Map<Byte, RpcMessageHandler<?, ?>> handlers = new HashMap<>();
+    private Map<Byte, RpcMessageHandler<?, ?>> handlers = new ConcurrentHashMap<>();
 
-    private Map<HandleSide, Map<Byte, RpcMessageHandler<?, ?>>> sideRpcMessageHandlerMap = new HashMap<>();
+    private Map<HandleSide, Map<Byte, RpcMessageHandler<?, ?>>> sideRpcMessageHandlerMap = new ConcurrentHashMap<>();
 
     public static RpcMessageHandlerRegistry getInstance() {
         return INSTANCE;
@@ -64,7 +63,8 @@ public class RpcMessageHandlerRegistry {
     }
 
     public Map<Byte, RpcMessageHandler<?, ?>> getHandlersByHandleSide(HandleSide handleSide) {
-        return Collections.unmodifiableMap(sideRpcMessageHandlerMap.get(handleSide));
+        Map<Byte, RpcMessageHandler<?, ?>> rpcMessageHandlerMap = sideRpcMessageHandlerMap.get(handleSide);
+        return rpcMessageHandlerMap == null ? Collections.emptyMap() : Collections.unmodifiableMap(rpcMessageHandlerMap);
     }
 
     public void initDefaultHandler() {

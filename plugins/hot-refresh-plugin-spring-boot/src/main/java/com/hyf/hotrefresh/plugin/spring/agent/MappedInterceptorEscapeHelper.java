@@ -1,9 +1,8 @@
-package com.hyf.hotrefresh.plugin.spring.config;
+package com.hyf.hotrefresh.plugin.spring.agent;
 
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
-import com.hyf.hotrefresh.plugin.spring.agent.MappedInterceptorEscape;
 
 import javax.annotation.PostConstruct;
 

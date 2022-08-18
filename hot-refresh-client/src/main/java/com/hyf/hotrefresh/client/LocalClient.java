@@ -1,17 +1,13 @@
 package com.hyf.hotrefresh.client;
 
 import com.hyf.hotrefresh.client.api.plugin.PluginBootstrap;
-import com.hyf.hotrefresh.client.core.rpc.RpcClient;
+import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Version;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
-import com.hyf.hotrefresh.common.util.UrlUtils;
-import com.hyf.hotrefresh.remoting.message.Message;
-import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.io.File;
-import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import static com.hyf.hotrefresh.common.Constants.*;
@@ -89,18 +85,10 @@ public class LocalClient {
 
         Log.info("Wait for connect......");
 
-        String serverAddress = UrlUtils.concat(ArgumentHolder.get(ARG_SERVER_URL), REFRESH_API);
-        try {
-            URL url = new URL(serverAddress);
-            url.openConnection();
-        } catch (Exception e) {
-            throw new RuntimeException("Url invalid: " + serverAddress, e);
-        }
-
+        String serverAddress = ArgumentHolder.get(ARG_SERVER_URL);
         try {
             RpcHeartbeatRequest request = new RpcHeartbeatRequest();
-            Message message = MessageFactory.createMessage(request);
-            RpcClient.getInstance().sync(serverAddress, message);
+            HotRefreshClient.getInstance().sendRequest(request);
         } catch (Exception e) {
             throw new RuntimeException("Failed to connect server: " + serverAddress, e);
         }

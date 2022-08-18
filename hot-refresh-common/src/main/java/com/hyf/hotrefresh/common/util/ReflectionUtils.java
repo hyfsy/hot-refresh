@@ -77,4 +77,17 @@ public abstract class ReflectionUtils {
             throw new RuntimeException("Failed to get class: " + className, e);
         }
     }
+
+    public static boolean exists(String className) {
+        return exists(className, Thread.currentThread().getContextClassLoader());
+    }
+
+    public static boolean exists(String className, ClassLoader classLoader) {
+        try {
+            forName(className, classLoader);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

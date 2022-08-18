@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.client.command;
 
 import com.hyf.hotrefresh.client.api.command.AbstractCommandHandler;
-import com.hyf.hotrefresh.client.core.HotRefreshClient;
+import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
 import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.refresh.HotRefreshCommand;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshCommandRequest;

@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.plugin.spring.config;
 
+import com.hyf.hotrefresh.plugin.spring.agent.MappedInterceptorEscapeHelper;
 import com.hyf.hotrefresh.plugin.spring.properties.HotRefreshProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

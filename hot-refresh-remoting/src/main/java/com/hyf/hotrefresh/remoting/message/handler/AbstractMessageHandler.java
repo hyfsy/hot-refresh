@@ -35,14 +35,14 @@ public abstract class AbstractMessageHandler implements MessageHandler {
                 throw new IllegalStateException("Rpc message type related handler not exist: " + rpcMessage.getClass());
             }
             RpcMessage response = rpcMessageHandler.handle(rpcMessage);
-            return MessageFactory.createMessage(response);
+            return MessageFactory.createResponseMessage(request, response);
         } catch (Throwable t) {
             if (Log.isDebugMode()) {
                 Log.error("Handle message failed", t);
             }
             RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
             rpcErrorResponse.setThrowable(t);
-            return MessageFactory.createMessage(rpcErrorResponse);
+            return MessageFactory.createResponseMessage(request, rpcErrorResponse);
         }
     }
 
