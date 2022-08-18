@@ -31,7 +31,9 @@ public class HotRefresher {
 
             Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
             if (compiledBytes == null || compiledBytes.isEmpty()) {
-                Log.info("Non class compiled: " + javaFileName);
+                if (Log.isDebugMode()) {
+                    Log.info("Non class compiled: " + javaFileName);
+                }
                 return;
             }
 
