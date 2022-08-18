@@ -33,4 +33,20 @@ public class MessageFactory {
         message.setBody(rpcMessage);
         return message;
     }
+
+    public static Message createResponseMessage(Message request, RpcMessage rpcMessage) {
+        Message message = new Message();
+        message.setId(request.getId());
+        message.setEncoding(request.getEncoding());
+        message.setCodec(request.getCodec());
+        message.setCompress(request.getCompress());
+
+        if (rpcMessage == null) {
+            return message;
+        }
+
+        message.setMessageType(rpcMessage.getMessageCode());
+        message.setBody(rpcMessage);
+        return message;
+    }
 }

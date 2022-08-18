@@ -11,9 +11,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
-        if (!"/error".equals(request.getRequestURI())) {
-            throw new AssertionError("Cannot happen");
-        }
+        // if (!"/error".equals(request.getRequestURI())) {
+        //     throw new AssertionError("Cannot happen");
+        // }
         return true;
     }
 

@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.client.exception;
+package com.hyf.hotrefresh.remoting.exception;
 
 /**
  * @author baB_hyf

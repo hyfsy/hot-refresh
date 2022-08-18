@@ -1,7 +1,5 @@
 package com.hyf.hotrefresh.client.core;
 
-import com.hyf.hotrefresh.client.exception.ClientException;
-
 import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -89,7 +87,7 @@ public class DeferredOpenFileInputStream extends FilterInputStream {
 
     private void checkValid(File file) {
         if (!file.exists()) {
-            throw new ClientException("File not exists: " + file.getAbsolutePath());
+            throw new IllegalArgumentException("File not exists: " + file.getAbsolutePath());
         }
     }
 

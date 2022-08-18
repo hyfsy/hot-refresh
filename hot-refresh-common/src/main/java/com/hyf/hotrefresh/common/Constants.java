@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class Constants {
 
+    public static final String PROPERTIES_PREFIX = "hotrefresh";
+
     public static final String REFRESH_HOME = System.getProperty("user.home") + File.separator + ".hot-refresh";
 
     public static final String REFRESH_API = "/hot-refresh";
@@ -25,5 +27,6 @@ public class Constants {
     public static final String ARG_DEBUG = "debug";
     public static final String ARG_WATCH_HOME = "watchHome";
     public static final String ARG_SERVER_URL = "serverURL";
+    public static final String ARG_SERVER_TIMEOUT = "serverTimeout";
 
 }

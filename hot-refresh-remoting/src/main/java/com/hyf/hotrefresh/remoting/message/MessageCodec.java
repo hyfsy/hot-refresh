@@ -92,9 +92,16 @@ public class MessageCodec {
             throw new IllegalArgumentException("bytes is null");
         }
 
-        try {
-            ByteBuffer buf = ByteBuffer.wrap(bytes);
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        return decode(buf);
+    }
 
+    public static Message decode(ByteBuffer buf) {
+        if (buf == null) {
+            throw new IllegalArgumentException("buf is null");
+        }
+
+        try {
             byte[] magic = new byte[MAGIC.length];
             buf.get(magic);
             if (!Arrays.equals(magic, MAGIC)) {
@@ -136,6 +143,7 @@ public class MessageCodec {
             rpcMessage.decode(dataBuf, encoding, codec);
 
             Message message = MessageFactory.createEmptyMessage();
+            message.setId(id);
             message.setEncoding(encodingCode);
             message.setCodec(codecCode);
             message.setCompress(compressionCode);
@@ -144,6 +152,9 @@ public class MessageCodec {
             message.setBody(rpcMessage);
             return message;
         } catch (Exception e) {
+            buf.flip();
+            byte[] bytes = new byte[buf.limit()];
+            buf.get(bytes);
             Log.error("Failed to decode message: " + Arrays.toString(bytes), e);
             throw e;
         }

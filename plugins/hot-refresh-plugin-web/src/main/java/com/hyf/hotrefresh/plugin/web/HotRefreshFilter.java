@@ -3,16 +3,17 @@ package com.hyf.hotrefresh.plugin.web;
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
+import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.exception.ServerException;
+import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcErrorResponse;
-import com.hyf.hotrefresh.remoting.server.HotRefreshServer;
-import com.hyf.hotrefresh.remoting.server.RpcServer;
+import com.hyf.hotrefresh.remoting.server.DefaultRpcServer;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -36,7 +37,7 @@ public class HotRefreshFilter implements Filter {
         add("HotRefreshFilter");
     }};
 
-    private final RpcServer server = new HotRefreshServer();
+    private final DefaultRpcServer server = new DefaultRpcServer();
 
     private Exception serverException = null;
 
@@ -97,14 +98,15 @@ public class HotRefreshFilter implements Filter {
 
         // server start failed
         if (serverException != null) {
+            Message requestMessage = MessageCodec.decode(IOUtils.readAsByteArray(req.getInputStream()));
             ServletOutputStream os = resp.getOutputStream();
             RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
             rpcErrorResponse.setThrowable(serverException);
-            os.write(MessageCodec.encode(MessageFactory.createMessage(rpcErrorResponse)));
+            os.write(MessageCodec.encode(MessageFactory.createResponseMessage(requestMessage, rpcErrorResponse)));
             os.flush();
         }
 
-        server.handle(req.getInputStream(), resp.getOutputStream());
+        handleRequest(req, resp);
     }
 
     protected boolean uriMatch(HttpServletRequest req) {
@@ -164,6 +166,36 @@ public class HotRefreshFilter implements Filter {
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        ServletInputStream is = request.getInputStream();
+        ServletOutputStream os = response.getOutputStream();
+
+        try {
+            Message message = MessageCodec.decode(IOUtils.readAsByteArray(is));
+            Message rtn = server.handle(message);
+            os.write(MessageCodec.encode(rtn));
+            os.flush();
+        } catch (Throwable t) {
+            if (Log.isDebugMode()) {
+                Log.error("Handle message failed", t);
+            }
+            // TODO exception handle
+            Message message = MessageCodec.decode(IOUtils.readAsByteArray(is));
+            RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
+            rpcErrorResponse.setThrowable(t);
+            Message rtn = MessageFactory.createResponseMessage(message, rpcErrorResponse);
+            try {
+                os.write(MessageCodec.encode(rtn));
+                os.flush();
+            } catch (IOException e) {
+                if (Log.isDebugMode()) {
+                    Log.error("Output write failed", e);
+                }
+            }
         }
     }
 

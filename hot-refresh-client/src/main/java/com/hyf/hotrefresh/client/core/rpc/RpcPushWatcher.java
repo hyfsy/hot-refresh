@@ -1,11 +1,13 @@
 package com.hyf.hotrefresh.client.core.rpc;
 
-import com.hyf.hotrefresh.client.core.DeferredOpenFileInputStream;
-import com.hyf.hotrefresh.client.core.HotRefreshClient;
 import com.hyf.hotrefresh.client.api.watch.Watcher;
+import com.hyf.hotrefresh.client.core.DeferredOpenFileInputStream;
+import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
 import com.hyf.hotrefresh.common.ChangeType;
+import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
+import com.hyf.hotrefresh.remoting.exception.ClientException;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 
 import java.io.File;
@@ -55,7 +57,11 @@ public class RpcPushWatcher extends Thread implements Watcher {
     @Override
     public void run() {
         while (!closed) {
-            handleFileChangeRequest();
+            try {
+                handleFileChangeRequest();
+            } catch (Throwable t) {
+                Log.error("Hotrefresh request handle failed", t);
+            }
 
             // 避免文件修改触发的抖动
             try {
@@ -80,7 +86,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
         }
     }
 
-    private void handleFileChangeRequest() {
+    private void handleFileChangeRequest() throws ClientException {
         List<RpcMessage> messages = new ArrayList<>();
         int i = rpcMessageQueue.drainTo(messages);
         if (i == 0) {
