@@ -14,7 +14,7 @@ public class MessageFactory {
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
     public static Message createEmptyMessage() {
-        return createMessage(null);
+        return new Message();
     }
 
     public static Message createMessage(RpcMessage rpcMessage) {
@@ -34,19 +34,19 @@ public class MessageFactory {
         return message;
     }
 
-    public static Message createResponseMessage(Message request, RpcMessage rpcMessage) {
+    public static Message createResponseMessage(Message request, RpcMessage response) {
         Message message = new Message();
         message.setId(request.getId());
         message.setEncoding(request.getEncoding());
         message.setCodec(request.getCodec());
         message.setCompress(request.getCompress());
 
-        if (rpcMessage == null) {
+        if (response == null) {
             return message;
         }
 
-        message.setMessageType(rpcMessage.getMessageCode());
-        message.setBody(rpcMessage);
+        message.setMessageType(response.getMessageCode());
+        message.setBody(response);
         return message;
     }
 }

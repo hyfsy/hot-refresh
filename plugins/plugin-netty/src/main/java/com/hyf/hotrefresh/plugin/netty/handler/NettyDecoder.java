@@ -1,10 +1,14 @@
 package com.hyf.hotrefresh.plugin.netty.handler;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.plugin.netty.client.ConnectionManager;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+
+import java.nio.ByteBuffer;
 
 
 /**
@@ -28,16 +32,28 @@ public class NettyDecoder extends LengthFieldBasedFrameDecoder {
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        Object decoded = super.decode(ctx, in);
-        if (decoded instanceof ByteBuf) {
-            ByteBuf frame = (ByteBuf) decoded;
-            if (frame.isDirect()) {
-                byte[] bytes = new byte[frame.readableBytes()];
-                frame.readBytes(bytes);
-                return MessageCodec.decode(bytes);
+        ByteBuf decoded = null;
+        try {
+            decoded = (ByteBuf) super.decode(ctx, in); // null is false
+            if (decoded == null) {
+                return null;
+            }
+
+            if (decoded.isDirect()) {
+                ByteBuffer byteBuffer = decoded.nioBuffer();
+                return MessageCodec.decode(byteBuffer);
             }
             else {
-                return MessageCodec.decode(frame.array());
+                return MessageCodec.decode(decoded.array());
+            }
+        } catch (Exception e) {
+            if (Log.isDebugMode()) {
+                Log.error("Decode failed", e);
+            }
+            ConnectionManager.closeChannel(ctx.channel());
+        } finally {
+            if (decoded != null) {
+                decoded.release();
             }
         }
         return decoded;

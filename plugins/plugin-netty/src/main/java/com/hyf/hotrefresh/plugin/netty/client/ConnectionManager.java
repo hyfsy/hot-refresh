@@ -30,6 +30,22 @@ public class ConnectionManager implements Disposable {
         this.nettyClientConfig = nettyClientConfig;
     }
 
+    public static void closeChannel(Channel channel) {
+        if (channel == null) {
+            return;
+        }
+
+        String address = RemotingUtils.parseAddress(channel.remoteAddress());
+        channel.close().addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (Log.isDebugMode()) {
+                    Log.info("Channel close, address: " + address);
+                }
+            }
+        });
+    }
+
     /**
      * 获取或创建连接通道
      *
@@ -69,12 +85,7 @@ public class ConnectionManager implements Disposable {
                 channelTables.remove(address);
             }
 
-            channel.close().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                    Log.info("Channel close, address: " + address);
-                }
-            });
+            closeChannel(channel);
         }
     }
 
