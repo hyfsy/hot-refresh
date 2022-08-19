@@ -13,7 +13,7 @@ public class MessageCodecTests {
 
     @Test
     public void testDecode() {
-        Message emptyMessage = MessageFactory.createEmptyMessage();
+        Message emptyMessage = MessageFactory.createMessage(null);
         emptyMessage.setMessageType(RpcMessageType.REQUEST_HEARTBEAT);
         byte[] encode = MessageCodec.encode(emptyMessage);
         ByteBuffer buf = ByteBuffer.allocateDirect(encode.length);
