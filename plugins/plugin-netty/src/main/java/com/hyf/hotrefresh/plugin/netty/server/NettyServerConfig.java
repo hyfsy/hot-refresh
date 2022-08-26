@@ -9,24 +9,26 @@ import io.netty.util.NettyRuntime;
  */
 public class NettyServerConfig {
 
+    public static final String NETTY_PROPERTIES_PREFIX = Constants.PROPERTIES_PREFIX + ".netty";
+
     private int     serverBossThreads                  = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverBossThreads", String.valueOf(1)));
+            NETTY_PROPERTIES_PREFIX + ".serverBossThreads", String.valueOf(1)));
     private int     serverWorkerThreads                = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverWorkerThreads", String.valueOf(NettyRuntime.availableProcessors() * 2)));
+            NETTY_PROPERTIES_PREFIX + ".serverWorkerThreads", String.valueOf(NettyRuntime.availableProcessors() * 2)));
     private int     soBackLogSize                      = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".soBackLogSize", String.valueOf(1024)));
+            NETTY_PROPERTIES_PREFIX + ".soBackLogSize", String.valueOf(1024)));
     private int     serverSocketSndBufSize             = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverSocketSndBufSize", String.valueOf(65535)));
+            NETTY_PROPERTIES_PREFIX + ".serverSocketSndBufSize", String.valueOf(65535)));
     private int     serverSocketRcvBufSize             = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverSocketRcvBufSize", String.valueOf(65535)));
+            NETTY_PROPERTIES_PREFIX + ".serverSocketRcvBufSize", String.valueOf(65535)));
     private int     listenPort                         = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".listenPort", String.valueOf(5946)));
+            NETTY_PROPERTIES_PREFIX + ".listenPort", String.valueOf(5946)));
     private int     serverChannelMaxIdleTimeSeconds    = Integer.parseInt(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverChannelMaxIdleTimeSeconds", String.valueOf(120)));
+            NETTY_PROPERTIES_PREFIX + ".serverChannelMaxIdleTimeSeconds", String.valueOf(120)));
     private boolean serverPooledByteBufAllocatorEnable = Boolean.parseBoolean(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".serverPooledByteBufAllocatorEnable", String.valueOf(true)));
+            NETTY_PROPERTIES_PREFIX + ".serverPooledByteBufAllocatorEnable", String.valueOf(true)));
     private boolean useEpollNativeSelector             = Boolean.parseBoolean(System.getProperty(
-            Constants.PROPERTIES_PREFIX + ".useEpollNativeSelector", String.valueOf(true)));
+            NETTY_PROPERTIES_PREFIX + ".useEpollNativeSelector", String.valueOf(true)));
 
     public int getServerBossThreads() {
         return serverBossThreads;

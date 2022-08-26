@@ -37,6 +37,10 @@ public class MessageCodec {
 
     public static final int FIXED_LENGTH = MAGIC.length + 1 + 4 + 4 + 1 + 1 + 1 + 1 + 4 + 4;
 
+    public static ByteBuffer encodeByteBuffer(Message message) {
+        return ByteBuffer.wrap(encode(message));
+    }
+
     public static byte[] encode(Message message) {
         if (message == null) {
             throw new IllegalArgumentException("message is null");
