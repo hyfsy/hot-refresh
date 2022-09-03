@@ -143,14 +143,18 @@ public class WatchCenter {
                                     continue;
                                 }
 
-                                if (ENTRY_CREATE.equals(kind)) {
-                                    watcher.onCreate(changedFile);
-                                }
-                                else if (ENTRY_MODIFY.equals(kind)) {
-                                    watcher.onModify(changedFile);
-                                }
-                                else if (ENTRY_DELETE.equals(kind)) {
-                                    watcher.onDelete(changedFile);
+                                try {
+                                    if (ENTRY_CREATE.equals(kind)) {
+                                        watcher.onCreate(changedFile);
+                                    }
+                                    else if (ENTRY_MODIFY.equals(kind)) {
+                                        watcher.onModify(changedFile);
+                                    }
+                                    else if (ENTRY_DELETE.equals(kind)) {
+                                        watcher.onDelete(changedFile);
+                                    }
+                                } catch (Throwable t) {
+                                    Log.error("Failed to handle file watch", t);
                                 }
                             }
                         }
