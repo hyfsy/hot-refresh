@@ -31,9 +31,9 @@ public class EmbeddedRpcServer extends DefaultRpcServer {
         this.embeddedServerConfig = embeddedServerConfig;
         this.serverBootstrap = new EmbeddedRpcServerBootstrap();
         this.embeddedServerBossExecutor = Executors.newFixedThreadPool(embeddedServerConfig.getServerBossThreads(),
-                new NamedThreadFactory("EmbeddedServerBossExecutor_", embeddedServerConfig.getServerBossThreads()));
+                new NamedThreadFactory("EmbeddedServerBossExecutor", embeddedServerConfig.getServerBossThreads()));
         this.embeddedServerWorkerExecutor = Executors.newFixedThreadPool(embeddedServerConfig.getServerWorkerThreads(),
-                new NamedThreadFactory("EmbeddedServerWorkerExecutor_", embeddedServerConfig.getServerWorkerThreads()));
+                new NamedThreadFactory("EmbeddedServerWorkerExecutor", embeddedServerConfig.getServerWorkerThreads()));
     }
 
     @Override

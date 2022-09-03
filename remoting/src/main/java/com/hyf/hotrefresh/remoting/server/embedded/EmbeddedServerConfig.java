@@ -8,6 +8,8 @@ import com.hyf.hotrefresh.common.Constants;
  */
 public class EmbeddedServerConfig {
 
+    public static final boolean TCP_DEBUG = false;
+
     public static final String EMBEDDED_PROPERTIES_PREFIX = Constants.PROPERTIES_PREFIX + ".embedded";
 
     private int serverBossThreads      = Integer.parseInt(System.getProperty(

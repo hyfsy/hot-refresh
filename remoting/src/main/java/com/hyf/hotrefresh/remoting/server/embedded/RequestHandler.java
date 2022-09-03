@@ -2,7 +2,6 @@ package com.hyf.hotrefresh.remoting.server.embedded;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 
 /**
  * @author baB_hyf
@@ -10,11 +9,12 @@ import java.nio.channels.SocketChannel;
  */
 interface RequestHandler {
 
-    ByteBuffer read(SocketChannel sc) throws IOException;
+    ByteBuffer read(SocketChannelContext scc) throws IOException;
 
-    ByteBuffer handle(ByteBuffer buf) throws Throwable;
+    ByteBuffer handle(SocketChannelContext scc, /* @Nullable */ ByteBuffer request) throws Throwable;
 
-    void write(SocketChannel sc, ByteBuffer buf) throws IOException;
+    void write(SocketChannelContext scc, /* @Nullable */ ByteBuffer response) throws IOException;
 
-    void caught(SocketChannel sc, /* @Nullable */ ByteBuffer buf, Throwable t);
+    void caught(SocketChannelContext scc, /* @Nullable */ ByteBuffer request, /* @Nullable */ ByteBuffer response, Throwable t);
+
 }
