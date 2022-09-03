@@ -5,6 +5,7 @@ import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.hook.Disposable;
 import com.hyf.hotrefresh.common.hook.ShutdownHook;
 import com.hyf.hotrefresh.remoting.MessageCallback;
+import com.hyf.hotrefresh.remoting.exception.ClientException;
 import com.hyf.hotrefresh.remoting.exception.RemotingException;
 import com.hyf.hotrefresh.remoting.exception.ServerException;
 import com.hyf.hotrefresh.remoting.message.Message;
@@ -54,8 +55,12 @@ public class DefaultRpcServer implements RpcServer, Disposable {
     @Override
     public void requestAsync(String addr, Message message, long timeoutMillis, MessageCallback callback) throws RemotingException {
         // TODO
-        Message response = request(addr, message, timeoutMillis);
-        callback.handle(response);
+        try {
+            Message response = request(addr, message, timeoutMillis);
+            callback.handle(response, null);
+        } catch (ClientException e) {
+            callback.handle(null, e);
+        }
     }
 
     // TODO 服务端功能无

@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.hyf.hotrefresh.plugin.spring.config.HotRefreshAutoConfiguration
+  com.hyf.hotrefresh.plugin.spring.config.HotRefreshAutoConfiguration,\
+  com.hyf.hotrefresh.plugin.spring.config.HotRefreshEmbeddedRpcServerConfiguration,\
+  com.hyf.hotrefresh.plugin.spring.config.HotRefreshNettyRpcServerConfiguration
