@@ -8,6 +8,6 @@ import com.hyf.hotrefresh.remoting.message.Message;
  */
 public interface MessageCallback {
 
-    void handle(Message message);
+    void handle(Message message, Throwable t);
 
 }

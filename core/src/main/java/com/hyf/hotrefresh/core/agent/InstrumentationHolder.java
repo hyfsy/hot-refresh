@@ -15,8 +15,8 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InstrumentationHolder {
 
     private static final    AtomicBoolean        initialized                    = new AtomicBoolean(false);
-    private static final    Set<Instrumentation> intermediateInstrumentationSet = new LinkedHashSet<>();
+    private static final    Set<Instrumentation> intermediateInstrumentationSet = new CopyOnWriteArraySet<>();
     private static volatile Instrumentation      systemStartProcessInstrumentation;
 
     static {

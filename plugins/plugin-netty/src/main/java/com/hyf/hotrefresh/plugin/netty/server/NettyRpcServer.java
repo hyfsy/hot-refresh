@@ -55,15 +55,15 @@ public class NettyRpcServer extends DefaultRpcServer {
 
         if (useEpoll()) {
             this.eventLoopGroupBoss = new EpollEventLoopGroup(nettyServerConfig.getServerBossThreads(),
-                    new NamedThreadFactory("NettyServerBossExecutor_", nettyServerConfig.getServerBossThreads()));
+                    new NamedThreadFactory("NettyServerBossExecutor", nettyServerConfig.getServerBossThreads()));
             this.eventLoopGroupWorker = new EpollEventLoopGroup(nettyServerConfig.getServerWorkerThreads(),
-                    new NamedThreadFactory("NettyServerWorkerExecutor_", nettyServerConfig.getServerWorkerThreads()));
+                    new NamedThreadFactory("NettyServerWorkerExecutor", nettyServerConfig.getServerWorkerThreads()));
         }
         else {
             this.eventLoopGroupBoss = new NioEventLoopGroup(nettyServerConfig.getServerBossThreads(),
-                    new NamedThreadFactory("NettyServerBossExecutor_", nettyServerConfig.getServerBossThreads()));
+                    new NamedThreadFactory("NettyServerBossExecutor", nettyServerConfig.getServerBossThreads()));
             this.eventLoopGroupWorker = new NioEventLoopGroup(nettyServerConfig.getServerWorkerThreads(),
-                    new NamedThreadFactory("NettyServerWorkerExecutor_", nettyServerConfig.getServerWorkerThreads()));
+                    new NamedThreadFactory("NettyServerWorkerExecutor", nettyServerConfig.getServerWorkerThreads()));
         }
     }
 

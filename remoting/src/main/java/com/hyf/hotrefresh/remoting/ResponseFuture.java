@@ -5,8 +5,10 @@ import com.hyf.hotrefresh.remoting.exception.RemotingInterruptedException;
 import com.hyf.hotrefresh.remoting.exception.RemotingTimeoutException;
 import com.hyf.hotrefresh.remoting.message.Message;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author baB_hyf
@@ -14,34 +16,29 @@ import java.util.concurrent.TimeUnit;
  */
 public class ResponseFuture {
 
-    private final CountDownLatch latch = new CountDownLatch(1);
-
-    private volatile Message   message;
-    private volatile Throwable t;
+    private final CompletableFuture<Message> future = new CompletableFuture<>();
 
     public Message get(long timeoutMillis) throws RemotingInterruptedException, RemotingTimeoutException, RemotingExecutionException {
         try {
-            if (!latch.await(timeoutMillis, TimeUnit.MILLISECONDS)) {
-                throw new RemotingTimeoutException("Response result await timeout");
-            }
-
-            if (t != null) {
-                throw new RemotingExecutionException("Response result handle error", t);
-            }
-
-            return message;
+            return future.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             throw new RemotingInterruptedException("Response result await interrupted", e);
+        } catch (ExecutionException e) {
+            throw new RemotingExecutionException("Response result handle failed", e);
+        } catch (TimeoutException e) {
+            throw new RemotingTimeoutException("Response result await timeout");
         }
     }
 
     public void success(Message message) {
-        this.message = message;
-        latch.countDown();
+        future.complete(message);
     }
 
     public void fail(Throwable t) {
-        this.t = t;
-        latch.countDown();
+        future.completeExceptionally(t);
+    }
+
+    public void setCallback(MessageCallback callback) {
+        future.whenComplete(callback::handle);
     }
 }

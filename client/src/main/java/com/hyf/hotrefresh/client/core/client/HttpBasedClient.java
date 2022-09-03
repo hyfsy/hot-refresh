@@ -125,8 +125,12 @@ public class HttpBasedClient implements Client {
 
     @Override
     public void async(String addr, Message message, long timeoutMillis, MessageCallback callback) throws ClientException {
-        Message response = sync(addr, message, timeoutMillis);
-        callback.handle(response);
+        try {
+            Message response = sync(addr, message, timeoutMillis);
+            callback.handle(response, null);
+        } catch (ClientException e) {
+            callback.handle(null, e);
+        }
     }
 
     public void sync(String url, Message request, ResponseHandler callback) throws ClientException {
