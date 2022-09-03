@@ -46,7 +46,7 @@ public class NettyRpcClient extends DefaultRpcClient {
         this.nettyClientConfig = nettyClientConfig;
         this.bootstrap = new Bootstrap();
         this.eventLoopGroupWorker = new NioEventLoopGroup(nettyClientConfig.getClientSelectorThreadSize(),
-                new NamedThreadFactory("NettyClientSelector_", nettyClientConfig.getClientSelectorThreadSize()));
+                new NamedThreadFactory("NettyClientSelector", nettyClientConfig.getClientSelectorThreadSize()));
 
         this.connectionManager = new ConnectionManager(this.bootstrap, this.nettyClientConfig);
     }
@@ -110,8 +110,29 @@ public class NettyRpcClient extends DefaultRpcClient {
 
     @Override
     public void requestAsync(String addr, Message message, long timeoutMillis, MessageCallback callback) throws RemotingException {
-        // TODO
-        super.requestAsync(addr, message, timeoutMillis, callback);
+        Channel channel = connectionManager.getOrCreateChannel(addr);
+        if (channel != null && channel.isActive()) {
+
+            customizeMessage(message);
+
+            ResponseFuture responseFuture = new ResponseFuture();
+            responseFuture.setCallback(callback);
+
+            futureTables.put(message.getId(), responseFuture);
+
+            channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if (!channelFuture.isSuccess()) {
+                        responseFuture.fail(channelFuture.cause());
+                    }
+                }
+            });
+        }
+        else {
+            connectionManager.closeChannel(addr, channel);
+            throw new RemotingException("Failed to connect remote address: " + addr);
+        }
     }
 
     @Override

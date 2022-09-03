@@ -71,8 +71,12 @@ public class DefaultRpcClient implements RpcClient, Disposable {
 
     @Override
     public void requestAsync(String addr, Message message, long timeoutMillis, MessageCallback callback) throws RemotingException {
-        Message response = request(addr, message, timeoutMillis);
-        callback.handle(response);
+        try {
+            Message response = request(addr, message, timeoutMillis);
+            callback.handle(response, null);
+        } catch (RemotingException e) {
+            callback.handle(null, e);
+        }
     }
 
     protected void customizeMessage(Message message) {
