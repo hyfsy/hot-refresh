@@ -8,15 +8,13 @@ import java.net.SocketAddress;
 import java.net.SocketOption;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
 
 import static com.hyf.hotrefresh.remoting.server.embedded.EmbeddedServerConfig.TCP_DEBUG;
 
@@ -29,28 +27,21 @@ public class EmbeddedRpcServerBootstrap {
     private final Map<SocketOption<?>, Object> options      = new HashMap<>();
     private final Map<SocketOption<?>, Object> childOptions = new HashMap<>();
 
-    private ExecutorService boss;
-    private ExecutorService worker;
-    private SocketAddress   localAddress;
-    private RequestHandler  requestHandler;
-    private int             backlog = 1024;
+    private EventLoop      boss;
+    private EventLoop      worker;
+    private SocketAddress  localAddress;
+    private RequestHandler requestHandler;
+    private int            backlog = 1024;
 
-    private int             selectorParallel = 1;
-    private SelectorWrapper selectorWrapper;
-    private Thread          bootThread;
-
-    public EmbeddedRpcServerBootstrap group(ExecutorService executorService) {
+    public EmbeddedRpcServerBootstrap group(EventLoop executorService) {
         this.boss = executorService;
         this.worker = executorService;
         return this;
     }
 
-    public EmbeddedRpcServerBootstrap group(ExecutorService boss, ExecutorService worker) {
+    public EmbeddedRpcServerBootstrap group(EventLoop boss, EventLoop worker) {
         this.boss = boss;
         this.worker = worker;
-        if (boss instanceof ThreadPoolExecutor) {
-            this.selectorParallel = ((ThreadPoolExecutor) boss).getCorePoolSize();
-        }
         return this;
     }
 
@@ -88,14 +79,11 @@ public class EmbeddedRpcServerBootstrap {
     }
 
     public void shutdownGracefully() {
-        if (bootThread != null) {
-            bootThread.interrupt();
+        if (boss != null) {
+            boss.shutdownGracefully();
         }
         if (worker != null) {
-            worker.shutdown();
-        }
-        if (boss != null) {
-            boss.shutdown();
+            worker.shutdownGracefully();
         }
     }
 
@@ -116,117 +104,86 @@ public class EmbeddedRpcServerBootstrap {
 
     private void init() throws ServerException {
         try {
-            prepare();
-            start();
+            ServerSocketChannel ssc = ServerSocketChannel.open();
+            ssc.bind(localAddress, backlog);
+            ssc.configureBlocking(false);
+            for (SocketOption<?> op : options.keySet()) {
+                ssc.setOption((SocketOption) op, options.get(op));
+            }
+
+            boss.start();
+            new Acceptor(ssc, boss, worker, childOptions, requestHandler);
         } catch (IOException e) {
             throw new ServerException("Failed to start server", e);
         }
     }
 
-    private void prepare() throws IOException {
-        ServerSocketChannel ssc = ServerSocketChannel.open();
-        ssc.bind(localAddress, backlog);
-        ssc.configureBlocking(false);
-        for (SocketOption<?> op : options.keySet()) {
-            ssc.setOption((SocketOption) op, options.get(op));
-        }
-
-        Selector[] selectors = new Selector[selectorParallel];
-        this.selectorWrapper = new SelectorWrapper(selectors);
-        for (int i = 0; i < selectorParallel; i++) {
-            selectors[i] = Selector.open();
-            SelectionKey key = ssc.register(selectors[i], 0);
-            key.interestOps(SelectionKey.OP_ACCEPT);
-            key.attach(new Acceptor(ssc, key, boss, worker, childOptions, requestHandler));
-        }
-    }
-
-    private void start() {
-        bootThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.interrupted()) {
-                    try {
-                        Selector selector = selectorWrapper.chooseSelector();
-                        selector.select();
-                        Set<SelectionKey> selectionKeys = selector.selectedKeys();
-                        Iterator<SelectionKey> it = selectionKeys.iterator();
-                        while (it.hasNext()) {
-                            dispatch(it.next());
-                            it.remove();
-                        }
-                    } catch (Throwable t) {
-                        if (Log.isDebugMode()) {
-                            Log.error("Failed to select key", t);
-                        }
-                    }
-                }
-            }
-        }, "EmbeddedServerSelector");
-        bootThread.start();
-    }
-
-    private void dispatch(SelectionKey key) {
-        Runnable r = (Runnable) key.attachment();
-        r.run();
-    }
-
-    private static class SelectorWrapper {
-        private final Selector[] selectors;
-        private       int        nextIdx = 0; // 单线程内被使用，无需考虑并发问题
-
-        public SelectorWrapper(Selector[] selectors) {
-            this.selectors = selectors;
-        }
-
-        public Selector chooseSelector() {
-            Selector selector = selectors[nextIdx++ & selectors.length];
-            if (nextIdx == selectors.length) {
-                nextIdx = 0;
-            }
-            return selector;
-        }
-    }
-
     private static class Acceptor implements Runnable {
 
+        private final SelectorWrapper              selectorWrapper;
         private final ServerSocketChannel          serverSocketChannel;
-        private final SelectionKey                 key;
-        private final Selector                     selector;
-        private final ExecutorService              boss;
-        private final ExecutorService              worker;
+        private final EventLoop                    boss;
         private final Map<SocketOption<?>, Object> childOptions;
         private final RequestHandler               requestHandler;
 
-        public Acceptor(ServerSocketChannel serverSocketChannel, SelectionKey key, ExecutorService boss, ExecutorService worker, Map<SocketOption<?>, Object> childOptions, RequestHandler requestHandler) throws IOException {
+        public Acceptor(ServerSocketChannel serverSocketChannel, EventLoop boss, EventLoop worker, Map<SocketOption<?>, Object> childOptions, RequestHandler requestHandler) throws IOException {
+            this.selectorWrapper = new SelectorWrapper(worker.getExecutor());
             this.serverSocketChannel = serverSocketChannel;
-            this.key = key;
-            this.selector = key.selector();
             this.boss = boss;
-            this.worker = worker;
             this.childOptions = childOptions;
             this.requestHandler = requestHandler;
+            boss.register(serverSocketChannel, SelectionKey.OP_ACCEPT, this);
         }
 
         @Override
         public void run() {
-            // boss.submit(new Runnable() { // 不要异步，不然register会阻塞
-            //     @Override
-            //     public void run() {
+            if (boss.inEventLoop()) {
+                accept();
+            }
+            else {
+                boss.addTask(this::accept);
+            }
+        }
+
+        private void accept() {
             try {
                 SocketChannel sc = serverSocketChannel.accept();
-                sc.configureBlocking(false);
-                for (SocketOption<?> op : childOptions.keySet()) {
-                    sc.setOption((SocketOption) op, childOptions.get(op));
+                if (sc != null) {
+                    sc.configureBlocking(false);
+                    for (SocketOption<?> op : childOptions.keySet()) {
+                        sc.setOption((SocketOption) op, childOptions.get(op));
+                    }
+                    new Handler(sc, selectorWrapper.chooseSelector(), requestHandler);
                 }
-                new Handler(sc, selector, worker, requestHandler);
             } catch (IOException e) {
                 if (Log.isDebugMode()) {
                     Log.error("Failed to accept connection", e);
                 }
             }
-            // }
-            // });
+        }
+    }
+
+    private static class SelectorWrapper {
+        private static final int         selectorParallel = 1;
+        private final        EventLoop[] eventLoops;
+        private              int         nextIdx          = 0; // 单线程内被使用，无需考虑并发问题
+
+        public SelectorWrapper(Executor executor) {
+            EventLoop[] eventLoops = new EventLoop[selectorParallel];
+            for (int i = 0; i < selectorParallel; i++) {
+                EventLoop eventLoop = new EventLoop(executor);
+                eventLoop.start();
+                eventLoops[i] = eventLoop;
+            }
+            this.eventLoops = eventLoops;
+        }
+
+        public EventLoop chooseSelector() {
+            EventLoop eventLoop = eventLoops[nextIdx++ & eventLoops.length];
+            if (nextIdx == eventLoops.length) {
+                nextIdx = 0;
+            }
+            return eventLoop;
         }
     }
 
@@ -234,53 +191,68 @@ public class EmbeddedRpcServerBootstrap {
 
         public static int READING = 0, PROCESSING = 1, WRITING = 2;
 
-        private final SocketChannel        sc;
         private final SocketChannelContext scc;
-        private final SelectionKey         key;
+        private final EventLoop            worker;
         private final RequestHandler       requestHandler;
-        private final ExecutorService      worker;
+
+        private SelectionKey key;
 
         private volatile int        state          = READING;
         private volatile ByteBuffer request;
         private volatile ByteBuffer response;
         private volatile boolean    handleComplete = false;
 
-        public Handler(SocketChannel sc, Selector selector, ExecutorService worker, RequestHandler requestHandler) throws IOException {
-            this.sc = sc;
+        public Handler(SocketChannel sc, EventLoop worker, RequestHandler requestHandler) throws IOException {
             this.scc = new SocketChannelContext(sc);
-            this.key = sc.register(selector, SelectionKey.OP_READ, this);
             this.worker = worker;
             this.requestHandler = requestHandler;
-            selector.wakeup(); // register selectionKey work on the next select invoke
+            this.doRegister(sc, worker);
+        }
+
+        private void doRegister(SocketChannel sc, EventLoop eventLoop) {
+            Future<SelectionKey> future = eventLoop.register(sc, SelectionKey.OP_READ, Handler.this);
+            try {
+                this.key = future.get();
+            } catch (Throwable e) {
+                close();
+                if (Log.isDebugMode()) {
+                    Log.error("Failed to register read io event", e);
+                }
+            }
         }
 
         @Override
         public void run() {
-            worker.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (state == READING) {
-                            if (TCP_DEBUG) {
-                                Log.debug("r");
-                            }
-                            read();
-                        }
-                        else if (state == WRITING) {
-                            if (TCP_DEBUG) {
-                                Log.debug("w");
-                            }
-                            write();
-                        }
-                    } catch (Throwable t) {
-                        caught(t);
+            if (worker.inEventLoop()) {
+                process();
+            }
+            else {
+                worker.addTask(this::process);
+            }
+        }
+
+        private void process() {
+            try {
+                if (state == READING) {
+                    if (TCP_DEBUG) {
+                        Log.info("r");
                     }
+                    read();
                 }
-            });
+                else if (state == WRITING) {
+                    if (TCP_DEBUG) {
+                        Log.info("w");
+                    }
+                    write();
+                }
+            } catch (Throwable t) {
+                caught(t);
+            }
         }
 
         private void read() throws IOException {
-            this.scc.getReadLock().lock();
+            Lock readLock = this.scc.getReadLock();
+            readLock.lock();
             try {
                 if (this.scc.isReadComplete()) {
                     return;
@@ -291,15 +263,16 @@ public class EmbeddedRpcServerBootstrap {
                 }
                 if (this.scc.isReadComplete()) {
                     this.state = Handler.PROCESSING;
-                    worker.submit(new Processor(this));
+                    worker.execute(new Processor(this)); // worker threads
                 }
             } finally {
-                this.scc.getReadLock().unlock();
+                readLock.unlock();
             }
         }
 
         private void write() throws IOException {
-            this.scc.getWriteLock().lock();
+            Lock writeLock = this.scc.getWriteLock();
+            writeLock.lock();
             try {
                 if (this.scc.isWriteComplete()) {
                     return;
@@ -309,10 +282,10 @@ public class EmbeddedRpcServerBootstrap {
                     this.scc.setWriteComplete(true);
                 }
                 if (this.scc.isWriteComplete()) {
-                    reset();
+                    close();
                 }
             } finally {
-                this.scc.getWriteLock().unlock();
+                writeLock.unlock();
             }
         }
 
@@ -331,16 +304,14 @@ public class EmbeddedRpcServerBootstrap {
             this.handleComplete = false;
             this.scc.reset();
             this.key.interestOps(SelectionKey.OP_READ); // TODO 长连接管理
-            this.key.selector().wakeup();
+            this.key.selector().wakeup(); // register selectionKey work on the next select invoke
         }
 
         private void close() {
-            try {
-                this.sc.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (this.key != null) {
+                this.key.cancel();
             }
-            this.key.cancel();
+            this.scc.close();
         }
 
         public ByteBuffer getRequest() {
@@ -390,7 +361,7 @@ public class EmbeddedRpcServerBootstrap {
             try {
                 response = handler.getRequestHandler().handle(scc, handler.getRequest());
             } catch (Throwable t) {
-                handler.getRequestHandler().caught(scc, handler.getRequest(), handler.getResponse(), t);
+                handler.getRequestHandler().caught(scc, handler.getRequest(), null, t);
             } finally {
                 handler.setResponse(response);
                 handler.setHandleComplete();

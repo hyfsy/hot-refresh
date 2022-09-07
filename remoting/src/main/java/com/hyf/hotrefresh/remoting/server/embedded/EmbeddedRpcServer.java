@@ -9,7 +9,6 @@ import com.hyf.hotrefresh.remoting.server.DefaultRpcServer;
 
 import java.net.InetSocketAddress;
 import java.net.StandardSocketOptions;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -20,8 +19,8 @@ public class EmbeddedRpcServer extends DefaultRpcServer {
 
     private final EmbeddedServerConfig       embeddedServerConfig;
     private final EmbeddedRpcServerBootstrap serverBootstrap;
-    private final ExecutorService            embeddedServerBossExecutor;
-    private final ExecutorService            embeddedServerWorkerExecutor;
+    private final EventLoop                  embeddedServerBossExecutor;
+    private final EventLoop                  embeddedServerWorkerExecutor;
 
     public EmbeddedRpcServer() {
         this(new EmbeddedServerConfig());
@@ -30,10 +29,10 @@ public class EmbeddedRpcServer extends DefaultRpcServer {
     public EmbeddedRpcServer(EmbeddedServerConfig embeddedServerConfig) {
         this.embeddedServerConfig = embeddedServerConfig;
         this.serverBootstrap = new EmbeddedRpcServerBootstrap();
-        this.embeddedServerBossExecutor = Executors.newFixedThreadPool(embeddedServerConfig.getServerBossThreads(),
-                new NamedThreadFactory("EmbeddedServerBossExecutor", embeddedServerConfig.getServerBossThreads()));
-        this.embeddedServerWorkerExecutor = Executors.newFixedThreadPool(embeddedServerConfig.getServerWorkerThreads(),
-                new NamedThreadFactory("EmbeddedServerWorkerExecutor", embeddedServerConfig.getServerWorkerThreads()));
+        this.embeddedServerBossExecutor = new EventLoop(Executors.newFixedThreadPool(embeddedServerConfig.getServerBossThreads(),
+                new NamedThreadFactory("EmbeddedServerBossExecutor", embeddedServerConfig.getServerBossThreads())));
+        this.embeddedServerWorkerExecutor = new EventLoop(Executors.newFixedThreadPool(embeddedServerConfig.getServerWorkerThreads(),
+                new NamedThreadFactory("EmbeddedServerWorkerExecutor", embeddedServerConfig.getServerWorkerThreads())));
     }
 
     @Override

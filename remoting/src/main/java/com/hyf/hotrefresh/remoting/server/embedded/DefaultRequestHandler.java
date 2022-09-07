@@ -36,7 +36,7 @@ public class DefaultRequestHandler implements RequestHandler {
     @Override
     public ByteBuffer read(SocketChannelContext scc) throws IOException {
         if (TCP_DEBUG) {
-            Log.debug("read");
+            Log.info("read");
         }
 
         ByteBuffer buf = getAdaptiveRcvBuffer(scc);
@@ -47,7 +47,7 @@ public class DefaultRequestHandler implements RequestHandler {
         if (read == -1) {
             scc.setReadComplete(true);
             if (TCP_DEBUG) {
-                Log.debug("read -1");
+                Log.info("read -1");
             }
             return null;
         }
@@ -70,7 +70,7 @@ public class DefaultRequestHandler implements RequestHandler {
         }
 
         if (TCP_DEBUG) {
-            Log.debug("read null");
+            Log.info("read null");
         }
 
         return null;
@@ -79,7 +79,7 @@ public class DefaultRequestHandler implements RequestHandler {
     @Override
     public ByteBuffer handle(SocketChannelContext scc, ByteBuffer buf) throws Throwable {
         if (TCP_DEBUG) {
-            Log.debug("handle");
+            Log.info("handle");
         }
 
         if (buf == null) {
@@ -94,7 +94,7 @@ public class DefaultRequestHandler implements RequestHandler {
     @Override
     public void write(SocketChannelContext scc, ByteBuffer buf) throws IOException {
         if (TCP_DEBUG) {
-            Log.debug("write");
+            Log.info("write");
         }
 
         if (buf == null) {
@@ -108,7 +108,7 @@ public class DefaultRequestHandler implements RequestHandler {
         if (write == -1) {
             scc.setWriteComplete(true);
             if (TCP_DEBUG) {
-                Log.debug("write -1");
+                Log.info("write -1");
             }
         }
     }
@@ -116,7 +116,7 @@ public class DefaultRequestHandler implements RequestHandler {
     @Override
     public void caught(SocketChannelContext scc, ByteBuffer request, ByteBuffer response, Throwable t) {
         if (TCP_DEBUG) {
-            Log.debug("caught");
+            Log.info("caught");
         }
 
         try {
@@ -152,6 +152,7 @@ public class DefaultRequestHandler implements RequestHandler {
                 rcvBuf = scc.getRcvBuf();
                 if (rcvBuf == null) {
                     rcvBuf = allocator.alloc();
+                    scc.setRcvBuf(rcvBuf);
                 }
             }
         }
