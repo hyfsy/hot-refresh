@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
 import static com.hyf.hotrefresh.remoting.server.embedded.EmbeddedServerConfig.TCP_DEBUG;
@@ -165,8 +166,8 @@ public class EmbeddedRpcServerBootstrap {
 
     private static class SelectorWrapper {
         private static final int         selectorParallel = 1;
+        private final        AtomicLong  nextIdx          = new AtomicLong();
         private final        EventLoop[] eventLoops;
-        private              int         nextIdx          = 0; // 单线程内被使用，无需考虑并发问题
 
         public SelectorWrapper(Executor executor) {
             EventLoop[] eventLoops = new EventLoop[selectorParallel];
@@ -179,11 +180,7 @@ public class EmbeddedRpcServerBootstrap {
         }
 
         public EventLoop chooseSelector() {
-            EventLoop eventLoop = eventLoops[nextIdx++ & eventLoops.length];
-            if (nextIdx == eventLoops.length) {
-                nextIdx = 0;
-            }
-            return eventLoop;
+            return eventLoops[(int) Math.abs(nextIdx.getAndIncrement() % eventLoops.length)];
         }
     }
 
