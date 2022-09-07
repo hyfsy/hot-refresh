@@ -33,9 +33,9 @@ public class EmbeddedRpcServerBootstrap {
     private RequestHandler requestHandler;
     private int            backlog = 1024;
 
-    public EmbeddedRpcServerBootstrap group(EventLoop executorService) {
-        this.boss = executorService;
-        this.worker = executorService;
+    public EmbeddedRpcServerBootstrap group(EventLoop eventLoop) {
+        this.boss = eventLoop;
+        this.worker = eventLoop;
         return this;
     }
 
@@ -74,7 +74,7 @@ public class EmbeddedRpcServerBootstrap {
 
     public SocketAddress bind() throws ServerException {
         check();
-        init();
+        doBind();
         return localAddress;
     }
 
@@ -102,7 +102,7 @@ public class EmbeddedRpcServerBootstrap {
         }
     }
 
-    private void init() throws ServerException {
+    private void doBind() throws ServerException {
         try {
             ServerSocketChannel ssc = ServerSocketChannel.open();
             ssc.bind(localAddress, backlog);
@@ -282,7 +282,7 @@ public class EmbeddedRpcServerBootstrap {
                     this.scc.setWriteComplete(true);
                 }
                 if (this.scc.isWriteComplete()) {
-                    close();
+                    reset();
                 }
             } finally {
                 writeLock.unlock();
