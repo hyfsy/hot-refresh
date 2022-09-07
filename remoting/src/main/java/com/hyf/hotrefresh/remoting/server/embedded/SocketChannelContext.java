@@ -1,5 +1,8 @@
 package com.hyf.hotrefresh.remoting.server.embedded;
 
+import com.hyf.hotrefresh.common.Log;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
@@ -89,6 +92,16 @@ public class SocketChannelContext {
     public void reset() {
         this.readComplete = false;
         this.writeComplete = false;
+    }
+
+    public void close() {
+        try {
+            socketChannel.close();
+        } catch (IOException e) {
+            if (Log.isDebugMode()) {
+                Log.error("Failed to close socket channel: " + socketChannel, e);
+            }
+        }
     }
 
     private void clearClosedChannel() {
