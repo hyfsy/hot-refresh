@@ -1,1 +1,2 @@
 com.hyf.hotrefresh.client.command.HotRefreshCommandHandler
+com.hyf.hotrefresh.client.command.ClientCommandHandler
