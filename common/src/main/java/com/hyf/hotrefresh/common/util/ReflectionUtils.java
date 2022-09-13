@@ -71,6 +71,12 @@ public abstract class ReflectionUtils {
     }
 
     public static Class<?> forName(String className, ClassLoader classLoader) {
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader == null) {
+                classLoader = ReflectionUtils.class.getClassLoader();
+            }
+        }
         try {
             return Class.forName(className, false, classLoader);
         } catch (ClassNotFoundException e) {

@@ -2,6 +2,8 @@
 ## 1.2.4 ()
 
 - Support netty remoting feature.
+- Support embedded remoting future.
+- Support client stop command.
 
 
 ## 1.2.3 (Jul 24, 2022)
