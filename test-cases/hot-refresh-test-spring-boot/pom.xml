@@ -66,6 +66,16 @@
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-server</artifactId>
+            <!--<exclusions>-->
+            <!--    <exclusion>-->
+            <!--        <groupId>io.github.hyfsy</groupId>-->
+            <!--        <artifactId>hot-refresh-plugin-web</artifactId>-->
+            <!--    </exclusion>-->
+            <!--</exclusions>-->
+        </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-plugin-netty</artifactId>
         </dependency>
 
         <dependency>

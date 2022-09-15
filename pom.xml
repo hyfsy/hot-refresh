@@ -111,6 +111,7 @@
         <arthas-spring-boot.version>3.3.6</arthas-spring-boot.version>
         <reflections.version>0.10.2</reflections.version>
         <allatori.version>8.2</allatori.version>
+        <netty.version>4.1.76.Final</netty.version>
     </properties>
 
     <modules>
@@ -194,6 +195,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-plugin-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-plugin-netty</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

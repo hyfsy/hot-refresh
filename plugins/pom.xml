@@ -13,6 +13,7 @@
 
     <modules>
         <module>hot-refresh-plugin-web</module>
+        <module>hot-refresh-plugin-netty</module>
         <module>hot-refresh-plugin-spring-boot</module>
         <module>hot-refresh-plugin-fastjson</module>
         <module>hot-refresh-plugin-execute</module>
