@@ -12,11 +12,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hot-refresh-plugin-web</module>
-        <module>hot-refresh-plugin-netty</module>
-        <module>hot-refresh-plugin-spring-boot</module>
-        <module>hot-refresh-plugin-fastjson</module>
-        <module>hot-refresh-plugin-execute</module>
-        <module>hot-refresh-plugin-arthas</module>
+        <module>plugin-web</module>
+        <module>plugin-netty</module>
+        <module>plugin-spring-boot</module>
+        <module>plugin-fastjson</module>
+        <module>plugin-execute</module>
+        <module>plugin-arthas</module>
     </modules>
 </project>
