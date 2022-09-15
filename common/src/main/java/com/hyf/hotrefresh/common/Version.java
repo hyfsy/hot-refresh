@@ -14,8 +14,11 @@ public class Version {
     public static final String VERSION_RESOURCE_PATH = "version.properties";
 
     public static String getVersion() {
-        Package pkg = Version.class.getPackage();
-        return pkg != null ? pkg.getImplementationVersion() : getVersionFromFile();
+        String implementationVersion = Version.class.getPackage().getImplementationVersion();
+        if (implementationVersion != null) {
+            return implementationVersion;
+        }
+        return getVersionFromFile();
     }
 
     public static String getVersionFromFile() {
