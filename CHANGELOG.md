@@ -1,5 +1,5 @@
 
-## 1.2.4 ()
+## 1.2.4 (Sept 15, 2022)
 
 - Support netty remoting feature.
 - Support embedded remoting future.
