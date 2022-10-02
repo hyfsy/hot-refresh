@@ -16,6 +16,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class ResponseFuture {
 
+    // TODO 内存泄漏，remove
     private final CompletableFuture<Message> future = new CompletableFuture<>();
 
     public Message get(long timeoutMillis) throws RemotingInterruptedException, RemotingTimeoutException, RemotingExecutionException {

@@ -13,7 +13,7 @@ import com.hyf.hotrefresh.remoting.message.Message;
  */
 public class RpcClientAdapter implements Client {
 
-    private RpcClient client;
+    private final RpcClient client;
 
     public RpcClientAdapter(RpcClient client) {
         this.client = client;

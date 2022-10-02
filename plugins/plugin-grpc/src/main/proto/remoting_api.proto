@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package hotrefresh.v1;
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "com.hyf.hotrefresh.plugin.grpc.generate";
+option java_outer_classname = "RemotingApiProto";
+
+message Message {
+  int32 id = 1;
+  bytes encoding = 2;
+  bytes codec = 3;
+  bytes compress = 4;
+  bytes messageType = 5;
+  map<string, string> metadata = 6;
+  google.protobuf.Any body = 7;
+}
+
+service RemotingApi {
+  rpc Request(Message) returns (Message);
+  rpc RequestStream(stream Message) returns (Message);
+  rpc ResponseStream(Message) returns (stream Message);
+  rpc BiStream(stream Message) returns (stream Message);
+}

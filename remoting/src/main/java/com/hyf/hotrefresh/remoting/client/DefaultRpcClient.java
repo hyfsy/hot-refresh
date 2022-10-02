@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author baB_hyf
@@ -26,10 +28,14 @@ import java.util.List;
  */
 public class DefaultRpcClient implements RpcClient, Disposable {
 
-    private final List<MessageCustomizer> messageCustomizers;
+    protected final List<MessageCustomizer> messageCustomizers = new ArrayList<>();
+
+    protected final ResponseFutureManager responseFutureManager = new ResponseFutureManager();
+
+    private volatile boolean stopped = false;
 
     public DefaultRpcClient() {
-        this.messageCustomizers = Services.gets(MessageCustomizer.class);
+        this.messageCustomizers.addAll(Services.gets(MessageCustomizer.class));
     }
 
     @Override
@@ -39,7 +45,7 @@ public class DefaultRpcClient implements RpcClient, Disposable {
 
     @Override
     public void stop() throws ClientException {
-
+        stopped = true;
     }
 
     @Override
@@ -96,5 +102,13 @@ public class DefaultRpcClient implements RpcClient, Disposable {
 
     public void addMessageCustomizer(MessageCustomizer messageCustomizer) {
         messageCustomizers.add(messageCustomizer);
+    }
+
+    public ResponseFutureManager getResponseFutureManager() {
+        return responseFutureManager;
+    }
+
+    public boolean stopped() {
+        return stopped;
     }
 }

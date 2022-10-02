@@ -19,9 +19,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * @author baB_hyf
  * @date 2022/08/16
@@ -33,8 +30,6 @@ public class NettyRpcClient extends DefaultRpcClient {
     private final EventLoopGroup    eventLoopGroupWorker;
 
     private final ConnectionManager connectionManager;
-
-    private final Map<Integer, ResponseFuture> futureTables = new ConcurrentHashMap<>();
 
     public NettyRpcClient() {
         this(new NettyClientConfig());
@@ -53,10 +48,8 @@ public class NettyRpcClient extends DefaultRpcClient {
 
     @Override
     public void start() throws ClientException {
-        super.start();
-
         this.bootstrap.group(this.eventLoopGroupWorker)
-                .channel(NioSocketChannel.class)
+                .channel(NioSocketChannel.class) // TODO epoll
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, nettyClientConfig.getConnectTimeoutMillis())
@@ -78,6 +71,15 @@ public class NettyRpcClient extends DefaultRpcClient {
                 });
 
         ShutdownHook.getInstance().addDisposable(connectionManager);
+
+        super.start();
+    }
+
+    @Override
+    public void stop() throws ClientException {
+        this.eventLoopGroupWorker.shutdownGracefully();
+
+        super.stop();
     }
 
     @Override
@@ -89,7 +91,7 @@ public class NettyRpcClient extends DefaultRpcClient {
 
             ResponseFuture responseFuture = new ResponseFuture();
 
-            futureTables.put(message.getId(), responseFuture);
+            responseFutureManager.put(message.getId(), responseFuture);
 
             channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
                 @Override
@@ -118,7 +120,7 @@ public class NettyRpcClient extends DefaultRpcClient {
             ResponseFuture responseFuture = new ResponseFuture();
             responseFuture.setCallback(callback);
 
-            futureTables.put(message.getId(), responseFuture);
+            responseFutureManager.put(message.getId(), responseFuture);
 
             channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
                 @Override
@@ -133,16 +135,5 @@ public class NettyRpcClient extends DefaultRpcClient {
             connectionManager.closeChannel(addr, channel);
             throw new RemotingException("Failed to connect remote address: " + addr);
         }
-    }
-
-    @Override
-    public void stop() throws ClientException {
-        super.stop();
-
-        this.eventLoopGroupWorker.shutdownGracefully();
-    }
-
-    public Map<Integer, ResponseFuture> getFutureTables() {
-        return futureTables;
     }
 }

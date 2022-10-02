@@ -1,35 +1,24 @@
-package com.hyf.hotrefresh.plugin.netty.server;
+package com.hyf.hotrefresh.plugin.spring.properties;
 
-import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
-import io.netty.util.NettyRuntime;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author baB_hyf
- * @date 2022/08/16
+ * @date 2022/10/01
  */
-public class NettyServerConfig {
+@ConfigurationProperties(HotRefreshProperties.PREFIX + ".server.netty")
+public class NettyServerProperties {
 
-    public static final String NETTY_PROPERTIES_PREFIX = Constants.PROPERTIES_PREFIX + ".netty";
-
-    private int     serverBossThreads                  = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverBossThreads", String.valueOf(1)));
-    private int     serverWorkerThreads                = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverWorkerThreads", String.valueOf(NettyRuntime.availableProcessors() * 2)));
-    private int     soBackLogSize                      = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".soBackLogSize", String.valueOf(1024)));
-    private int     serverSocketSndBufSize             = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverSocketSndBufSize", String.valueOf(65535)));
-    private int     serverSocketRcvBufSize             = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverSocketRcvBufSize", String.valueOf(65535)));
-    private int     listenPort                         = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".listenPort", String.valueOf(RemotingConstants.DEFAULT_RPC_PORT)));
-    private int     serverChannelMaxIdleTimeSeconds    = Integer.parseInt(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverChannelMaxIdleTimeSeconds", String.valueOf(120)));
-    private boolean serverPooledByteBufAllocatorEnable = Boolean.parseBoolean(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".serverPooledByteBufAllocatorEnable", String.valueOf(true)));
-    private boolean useEpollNativeSelector             = Boolean.parseBoolean(System.getProperty(
-            NETTY_PROPERTIES_PREFIX + ".useEpollNativeSelector", String.valueOf(true)));
+    private int     serverBossThreads                  = 1;
+    private int     serverWorkerThreads                = Runtime.getRuntime().availableProcessors() * 2;
+    private int     soBackLogSize                      = 1024;
+    private int     serverSocketSndBufSize             = 65535;
+    private int     serverSocketRcvBufSize             = 65535;
+    private int     listenPort                         = RemotingConstants.DEFAULT_RPC_PORT;
+    private int     serverChannelMaxIdleTimeSeconds    = 120;
+    private boolean serverPooledByteBufAllocatorEnable = true;
+    private boolean useEpollNativeSelector             = true;
 
     public int getServerBossThreads() {
         return serverBossThreads;

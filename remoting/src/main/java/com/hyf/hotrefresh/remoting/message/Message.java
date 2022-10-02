@@ -15,7 +15,7 @@ public class Message {
     private byte                codec;
     private byte                compress;
     private byte                messageType;
-    private Map<String, Object> headerMap = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
     private Object              body;
 
     public int getId() {
@@ -58,12 +58,12 @@ public class Message {
         this.messageType = messageType;
     }
 
-    public Map<String, Object> getHeaderMap() {
-        return headerMap;
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
-    public void setHeaderMap(Map<String, Object> headerMap) {
-        this.headerMap = headerMap;
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
     public Object getBody() {
@@ -99,7 +99,7 @@ public class Message {
                 ", codec=" + codec +
                 ", compress=" + compress +
                 ", messageType=" + messageType +
-                ", headerMap=" + headerMap +
+                ", headerMap=" + metadata +
                 ", body=" + body +
                 '}';
     }
