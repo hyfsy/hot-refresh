@@ -14,6 +14,7 @@
     <modules>
         <module>plugin-web</module>
         <module>plugin-netty</module>
+        <module>plugin-grpc</module>
         <module>plugin-spring-boot</module>
         <module>plugin-fastjson</module>
         <module>plugin-execute</module>

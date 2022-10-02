@@ -22,12 +22,6 @@
             <version>${apache-httpcomponents.version}</version>
             <optional>true</optional>
         </dependency>
-        <!-- rpc -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
@@ -42,6 +36,42 @@
             <artifactId>hot-refresh-remoting</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>client-with-netty</id>
+            <dependencies>
+                <!-- rpc -->
+                <dependency>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-all</artifactId>
+                    <version>${netty.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>client-with-grpc</id>
+            <dependencies>
+                <!-- grpc -->
+                <dependency>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-netty-shaded</artifactId>
+                    <version>${grpc.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-protobuf</artifactId>
+                    <version>${grpc.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-stub</artifactId>
+                    <version>${grpc.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>hot-refresh-client</finalName>
         <plugins>

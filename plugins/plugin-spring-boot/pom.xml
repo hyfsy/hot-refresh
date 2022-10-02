@@ -71,6 +71,11 @@
         </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-plugin-grpc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-shadow</artifactId>
             <scope>compile</scope>
             <optional>true</optional>
