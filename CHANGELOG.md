@@ -1,5 +1,10 @@
 
-## 1.2.4 (Sept 15, 2022)
+## 1.2.5 ()
+
+- Support grpc remoting feature.
+
+
+## 1.2.4 (Sep 15, 2022)
 
 - Support netty remoting feature.
 - Support embedded remoting future.

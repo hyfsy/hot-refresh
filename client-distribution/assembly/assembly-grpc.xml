@@ -21,6 +21,11 @@
             <outputDirectory>lib/plugins</outputDirectory>
             <fileMode>0775</fileMode>
         </file>
+        <file>
+            <source>../plugins/plugin-grpc/target/hot-refresh-plugin-grpc-${project.version}.jar</source>
+            <outputDirectory>lib/plugins</outputDirectory>
+            <fileMode>0775</fileMode>
+        </file>
     </files>
 
     <fileSets>

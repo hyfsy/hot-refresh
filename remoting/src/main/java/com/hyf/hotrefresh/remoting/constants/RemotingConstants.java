@@ -30,4 +30,6 @@ public class RemotingConstants {
     public static final String EXTRA_EXCEPTION_NESTED = "nestedExceptionMessage";
     public static final String EXTRA_EXCEPTION_STACK  = "stackExceptionMessage";
 
+    public static final int DEFAULT_RPC_PORT = 5946;
+
 }

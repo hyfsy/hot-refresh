@@ -25,7 +25,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         try {
-            ResponseFuture responseFuture = nettyRpcClient.getFutureTables().get(message.getId());
+            ResponseFuture responseFuture = nettyRpcClient.getResponseFutureManager().remove(message.getId());
             if (responseFuture != null) {
                 responseFuture.success(message);
             }

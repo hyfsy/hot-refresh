@@ -54,8 +54,8 @@ public class MessageCodec {
             RpcMessageCompression compression = RpcMessageCompression.getCompression(message.getCompress());
 
             // header
-            Map<String, Object> headMap = message.getHeaderMap();
-            byte[] headerData = encodeObject(headMap, encoding, codec);
+            Map<String, String> metadata = message.getMetadata();
+            byte[] headerData = encodeObject(metadata, encoding, codec);
             headerData = compression.compress(headerData);
 
             // body
@@ -131,10 +131,10 @@ public class MessageCodec {
 
             // header
             int headerLength = buf.getInt();
-            byte[] headerData = new byte[headerLength];
-            buf.get(headerData);
-            headerData = compression.decompress(headerData);
-            Map<String, Object> headerMap = decodeObject(headerData, encoding, codec);
+            byte[] metadataData = new byte[headerLength];
+            buf.get(metadataData);
+            metadataData = compression.decompress(metadataData);
+            Map<String, String> metadata = decodeObject(metadataData, encoding, codec);
 
             // body
             int bodyLength = buf.getInt();
@@ -152,7 +152,7 @@ public class MessageCodec {
             message.setCodec(codecCode);
             message.setCompress(compressionCode);
             message.setMessageType(messageTypeCode);
-            message.setHeaderMap(headerMap);
+            message.setMetadata(metadata);
             message.setBody(rpcMessage);
             return message;
         } catch (Exception e) {

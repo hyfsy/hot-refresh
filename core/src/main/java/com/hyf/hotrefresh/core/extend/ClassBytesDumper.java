@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.extend;
 
 import com.hyf.hotrefresh.common.util.FileUtils;
+import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 
@@ -23,7 +24,7 @@ public class ClassBytesDumper {
     public static void dump(Class<?> clazz, OutputStream os) throws Throwable {
         byte[] bytes = dump(clazz);
         if (bytes != null && os != null) {
-            dump(bytes, os);
+            FileUtils.safeWrite(new ByteArrayInputStream(bytes), os);
         }
     }
 
@@ -46,6 +47,22 @@ public class ClassBytesDumper {
         return classDumpTransformer.getDumpResult().get(clazz);
     }
 
+    public static void dumpNoTransformed(Class<?> clazz, String storePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(FileUtils.getFile(storePath))) {
+            dumpNoTransformed(clazz, fos);
+        }
+    }
+
+    public static void dumpNoTransformed(Class<?> clazz, OutputStream os) throws IOException {
+        String classFilePath = clazz.getName().replace('.', '/') + ".class";
+        InputStream is = clazz.getClassLoader().getResourceAsStream(classFilePath);
+        if (is == null) {
+            throw new FileNotFoundException(classFilePath);
+        }
+        byte[] bytes = IOUtils.readAsByteArray(is);
+        dump(bytes, os);
+    }
+
     public static void dump(byte[] bytes, String storePath) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(FileUtils.getFile(storePath))) {
             dump(bytes, fos);
@@ -53,7 +70,6 @@ public class ClassBytesDumper {
     }
 
     public static void dump(byte[] bytes, OutputStream os) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        FileUtils.safeWrite(bais, os);
+        FileUtils.safeWrite(new ByteArrayInputStream(bytes), os);
     }
 }

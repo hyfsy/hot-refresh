@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.remoting.server.embedded;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 
 /**
  * @author baB_hyf
@@ -23,7 +24,7 @@ public class EmbeddedServerConfig {
     private int serverSocketRcvBufSize = Integer.parseInt(System.getProperty(
             EMBEDDED_PROPERTIES_PREFIX + ".serverSocketRcvBufSize", String.valueOf(65535)));
     private int listenPort             = Integer.parseInt(System.getProperty(
-            EMBEDDED_PROPERTIES_PREFIX + ".listenPort", String.valueOf(5946)));
+            EMBEDDED_PROPERTIES_PREFIX + ".listenPort", String.valueOf(RemotingConstants.DEFAULT_RPC_PORT)));
 
     public int getServerBossThreads() {
         return serverBossThreads;

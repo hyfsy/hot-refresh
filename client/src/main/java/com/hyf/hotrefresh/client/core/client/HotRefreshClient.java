@@ -91,10 +91,6 @@ public class HotRefreshClient implements Disposable {
         }
     }
 
-    private boolean isHttp(String address) {
-        return address.startsWith("http");
-    }
-
     @Override
     public void destroy() throws Exception {
         client.stop();
