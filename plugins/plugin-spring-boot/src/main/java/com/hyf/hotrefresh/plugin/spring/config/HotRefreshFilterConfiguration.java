@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -16,7 +17,7 @@ import java.util.Collections;
  * @author baB_hyf
  * @date 2021/12/12
  */
-@ConditionalOnClass(HotRefreshFilter.class)
+@ConditionalOnClass({Filter.class, HotRefreshFilter.class})
 public class HotRefreshFilterConfiguration {
 
     @Bean
@@ -26,6 +27,7 @@ public class HotRefreshFilterConfiguration {
         filterFilterRegistrationBean.setFilter(getFilter());
         filterFilterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
         filterFilterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST);
+        filterFilterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterFilterRegistrationBean;
     }
 
