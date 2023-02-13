@@ -52,7 +52,7 @@ public class MemoryClassLoader extends ClassLoader {
                 Log.warn("class file storage home must not be null");
                 return;
             }
-            File outputHome = FileUtils.getFile(storageHome);
+            File outputHome = FileUtils.getDirectory(storageHome);
             try {
                 URL outputURL = outputHome.toURI().toURL();
                 if (!Arrays.asList(((URLClassLoader) scl).getURLs()).contains(outputURL)) {

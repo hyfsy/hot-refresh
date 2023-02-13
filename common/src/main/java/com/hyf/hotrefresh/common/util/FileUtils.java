@@ -65,6 +65,20 @@ public abstract class FileUtils {
         file.delete();
     }
 
+    public static File getDirectory(String path) {
+        return getDirectory(path, true);
+    }
+
+    public static File getDirectory(String path, boolean create) {
+        File file = new File(path);
+        if (!file.exists() && create) {
+            if (!file.mkdirs()) {
+                throw new RuntimeException("Failed to create file, path: " + file.getPath());
+            }
+        }
+        return file;
+    }
+
     public static File getFile(String path) {
         return getFile(path, true);
     }
@@ -72,13 +86,15 @@ public abstract class FileUtils {
     public static File getFile(String path, boolean create) {
         File file = new File(path);
         if (file.getParentFile() != null && !file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
+            if (!file.getParentFile().mkdirs()) {
+                throw new RuntimeException("Failed to create parent directory, path: " + file.getParent());
+            }
         }
-        if (create && !file.exists()) {
+        if (!file.exists() && create) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                throw new RuntimeException("Failed to create file", e);
+                throw new RuntimeException("Failed to create file, path: " + file.getPath(), e);
             }
         }
         return file;
