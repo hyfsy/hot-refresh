@@ -26,19 +26,20 @@
 
         <!-- 版本需要不一样，否则没效果 -->
 
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>${java.version}</version>
-            <scope>system</scope>
-            <!--<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            <!--<optional>true</optional>-->
-        </dependency>
+        <!-- <dependency> -->
+        <!--     <groupId>com.sun</groupId> -->
+        <!--     <artifactId>tools</artifactId> -->
+        <!--     <version>${java.version}</version> -->
+        <!--     <scope>system</scope> -->
+        <!--     &lt;!&ndash;<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>&ndash;&gt; -->
+        <!--     <systemPath>${java.home}/../lib/tools.jar</systemPath> -->
+        <!--     &lt;!&ndash;<optional>true</optional>&ndash;&gt; -->
+        <!-- </dependency> -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.14</version>
+            <!-- <version>1.18.14</version> -->
+            <version>${lombok.version}</version>
             <!--<scope>provided</scope>-->
         </dependency>
         <dependency>

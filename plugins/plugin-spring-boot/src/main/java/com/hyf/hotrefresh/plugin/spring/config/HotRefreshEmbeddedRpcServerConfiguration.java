@@ -6,14 +6,13 @@ import com.hyf.hotrefresh.remoting.server.RpcServer;
 import com.hyf.hotrefresh.remoting.server.embedded.EmbeddedRpcServer;
 import com.hyf.hotrefresh.remoting.server.embedded.EmbeddedServerConfig;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * @author baB_hyf
@@ -25,7 +24,7 @@ import javax.annotation.Resource;
 @EnableConfigurationProperties(EmbeddedServerProperties.class)
 public class HotRefreshEmbeddedRpcServerConfiguration {
 
-    @Resource
+    @Autowired
     private EmbeddedServerProperties properties;
 
     @Bean(initMethod = "start", destroyMethod = "stop")
@@ -34,8 +33,7 @@ public class HotRefreshEmbeddedRpcServerConfiguration {
         EmbeddedServerConfig embeddedServerConfig = embeddedServerConfigProvider.getIfAvailable();
         if (embeddedServerConfig != null) {
             return new EmbeddedRpcServer(embeddedServerConfig);
-        }
-        else {
+        } else {
             return new EmbeddedRpcServer(createDefaultConfig());
         }
     }

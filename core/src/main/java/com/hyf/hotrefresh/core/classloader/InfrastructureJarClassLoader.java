@@ -25,9 +25,9 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
 
     public static final String INFRASTRUCTURE_FILE_RESOURCE_PATH = "infrastructure.properties";
 
-    private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
-    private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
-    private static final String ASM_TREE_LOCAL_PATH   = "lib/asm-tree-5.2.jar";
+    private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.9.9.jar";
+    private static final String ASM_LOCAL_PATH        = "lib/asm-9.4.jar";
+    private static final String ASM_TREE_LOCAL_PATH   = "lib/asm-tree-9.4.jar";
 
     private static volatile Map<String, String> DEFAULT_IDENTITY_MAP;
 

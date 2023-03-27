@@ -3,13 +3,12 @@ package com.hyf.hotrefresh.plugin.spring.agent;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.FastReflectionUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
+import org.springframework.beans.factory.InitializingBean;
 
-import javax.annotation.PostConstruct;
+public class MappedInterceptorEscapeHelper implements InitializingBean {
 
-public class MappedInterceptorEscapeHelper {
-
-    @PostConstruct
-    public void post() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         try {
             Class<?> MappedInterceptorEscapeClass = InfraUtils.forName(MappedInterceptorEscape.class.getName());
             FastReflectionUtils.fastInvokeMethod(MappedInterceptorEscapeClass, "escapeMappedInterceptor");

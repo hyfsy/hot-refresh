@@ -1,11 +1,13 @@
 package com.hyf.hotrefresh.plugin.arthas;
 
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,12 +21,14 @@ public class ArthasConfigurationDetector implements SpringApplicationRunListener
 
     }
 
-    @Override
+    // ============================================spring6x-====================================================
+
+    // @Override
     public void started() {
 
     }
 
-    @Override
+    // @Override
     public void environmentPrepared(ConfigurableEnvironment configurableEnvironment) {
         if (ArthasUtils.existArthasConfiguration()) {
             Map<String, Object> properties = new HashMap<>();
@@ -34,18 +38,45 @@ public class ArthasConfigurationDetector implements SpringApplicationRunListener
         }
     }
 
-    @Override
-    public void contextPrepared(ConfigurableApplicationContext configurableApplicationContext) {
+    // @Override
+    // public void contextPrepared(ConfigurableApplicationContext configurableApplicationContext) {
+    //
+    // }
+    //
+    // @Override
+    // public void contextLoaded(ConfigurableApplicationContext configurableApplicationContext) {
+    //
+    // }
 
-    }
-
-    @Override
-    public void contextLoaded(ConfigurableApplicationContext configurableApplicationContext) {
-
-    }
-
-    @Override
+    // @Override
     public void finished(ConfigurableApplicationContext configurableApplicationContext, Throwable throwable) {
 
     }
+
+    // ============================================spring6x+====================================================
+
+    public void starting(ConfigurableBootstrapContext bootstrapContext) {
+    }
+
+    public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment environment) {
+    }
+
+    public void contextPrepared(ConfigurableApplicationContext context) {
+    }
+
+    public void contextLoaded(ConfigurableApplicationContext context) {
+    }
+
+    public void started(ConfigurableApplicationContext context, Duration timeTaken) {
+    }
+
+    public void ready(ConfigurableApplicationContext context, Duration timeTaken) {
+    }
+
+    public void failed(ConfigurableApplicationContext context, Throwable exception) {
+    }
+
+
+
+
 }

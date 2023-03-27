@@ -7,6 +7,7 @@ import com.hyf.hotrefresh.plugin.spring.properties.HotRefreshProperties;
 import com.hyf.hotrefresh.remoting.server.RpcServer;
 import io.grpc.Grpc;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,8 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * @author baB_hyf
@@ -28,7 +27,7 @@ import javax.annotation.Resource;
 @EnableConfigurationProperties(GrpcServerProperties.class)
 public class HotRefreshGrpcServerConfiguration {
 
-    @Resource
+    @Autowired
     private GrpcServerProperties properties;
 
     @Bean(initMethod = "start", destroyMethod = "stop")
@@ -37,8 +36,7 @@ public class HotRefreshGrpcServerConfiguration {
         GrpcServerConfig grpcServerConfig = grpcServerConfigProvider.getIfAvailable();
         if (grpcServerConfig != null) {
             return new GrpcServer(grpcServerConfig);
-        }
-        else {
+        } else {
             return new GrpcServer(createDefaultConfig());
         }
     }

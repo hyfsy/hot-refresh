@@ -4,9 +4,9 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.39.0)",
-    comments = "Source: remoting_api.proto")
+// @javax.annotation.Generated(
+//     value = "by gRPC proto compiler (version 1.39.0)",
+//     comments = "Source: remoting_api.proto")
 public final class RemotingApiGrpc {
 
   private RemotingApiGrpc() {}
