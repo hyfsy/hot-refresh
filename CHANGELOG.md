@@ -1,7 +1,8 @@
 
-## 1.2.5 ()
+## 1.2.5 (Mar 27, 2023)
 
 - Support grpc remoting feature.
+- Fix load damaged jar
 
 
 ## 1.2.4 (Sep 15, 2022)
