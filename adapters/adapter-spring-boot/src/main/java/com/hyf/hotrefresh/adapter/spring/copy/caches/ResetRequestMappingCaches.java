@@ -40,19 +40,39 @@ import static com.hyf.hotrefresh.common.util.ReflectionUtils.invokeMethod;
  */
 public class ResetRequestMappingCaches {
 
-    private static Class<?> getHandlerMethodMappingClassOrNull() {
-        try {
-            //This is probably a bad idea as Class.forName has lots of issues but this was easiest for now.
-            return Class.forName("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping");
-        } catch (ClassNotFoundException e) {
+    public static void reset(DefaultListableBeanFactory beanFactory) {
+        resetMethodArgumentResolverCache(beanFactory);
+        resetRequestMappingCache(beanFactory);
+    }
+
+    public static void resetMethodArgumentResolverCache(DefaultListableBeanFactory beanFactory) {
+
+        Class<?> c = getAbstractNamedValueMethodArgumentResolverOrNull();
+        if (c == null) {
+            return;
+        }
+
+        Map<String, ?> resolvers =
+                BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, c, true, false);
+        if (resolvers.isEmpty()) {
             if (Log.isDebugMode()) {
-                Log.debug("HandlerMethodMapping class not found");
+                Log.debug("Spring: no MethodArgumentResolvers found");
             }
-            return null;
+        }
+        try {
+            for (Entry<String, ?> e : resolvers.entrySet()) {
+                Object am = e.getValue();
+                if (Log.isDebugMode()) {
+                    Log.debug("Spring: clearing MethodArgumentResolver for " + am.getClass());
+                }
+                ((Map) fastGetField(c, "namedValueInfoCache")).clear();
+            }
+        } catch (Exception e) {
+            Log.error("Failed to clear MethodArgumentResolvers", e);
         }
     }
 
-    public static void reset(DefaultListableBeanFactory beanFactory) {
+    public static void resetRequestMappingCache(DefaultListableBeanFactory beanFactory) {
 
         Class<?> c = getHandlerMethodMappingClassOrNull();
         if (c == null) {
@@ -104,6 +124,31 @@ public class ResetRequestMappingCaches {
             }
         } catch (Exception e) {
             Log.error("Failed to clear HandlerMappings", e);
+        }
+    }
+
+    private static Class<?> getAbstractNamedValueMethodArgumentResolverOrNull() {
+        try {
+            //This is probably a bad idea as Class.forName has lots of issues but this was easiest for now.
+            return Class.forName("org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver");
+        } catch (ClassNotFoundException e) {
+            if (Log.isDebugMode()) {
+                Log.debug("AbstractNamedValueMethodArgumentResolver class not found");
+            }
+            return null;
+        }
+
+    }
+
+    private static Class<?> getHandlerMethodMappingClassOrNull() {
+        try {
+            //This is probably a bad idea as Class.forName has lots of issues but this was easiest for now.
+            return Class.forName("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping");
+        } catch (ClassNotFoundException e) {
+            if (Log.isDebugMode()) {
+                Log.debug("HandlerMethodMapping class not found");
+            }
+            return null;
         }
     }
 }
