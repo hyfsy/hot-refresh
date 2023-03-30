@@ -9,4 +9,23 @@
     </parent>
     <artifactId>hot-refresh-common</artifactId>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>version.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--
+                    资源文件填充占位符，不能用于二进制文件，否则会产生问题
+                     https://maven.apache.org/plugins/maven-resources-plugin/examples/binaries-filtering.html
+                -->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
