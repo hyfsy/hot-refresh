@@ -40,9 +40,6 @@
     <profiles>
         <profile>
             <id>client-with-netty</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <!-- rpc -->
                 <dependency>
