@@ -17,6 +17,9 @@
     <profiles>
         <profile>
             <id>client-with-netty</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
