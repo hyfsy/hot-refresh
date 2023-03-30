@@ -1,8 +1,9 @@
 
-## 1.2.5 (Mar 27, 2023)
+## 1.2.5 (Mar 30, 2023)
 
 - Support grpc remoting feature.
 - Fix load damaged jar.
+- Fix RequestMapping's MethodArgumentResolvers cache.
 
 
 ## 1.2.4 (Sep 15, 2022)
