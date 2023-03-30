@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.hyfsy</groupId>
+        <artifactId>hot-refresh-plugins</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>hot-refresh-plugin-grpc</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-remoting</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hyfsy</groupId>
+            <artifactId>hot-refresh-client</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- 更新proto时放开 -->
+        <!--&lt;!&ndash; 提前执行，获取系统信息，protobuf需要下载maven上的protoc插件，需要用到系统信息 &ndash;&gt;-->
+        <!--<extensions>-->
+        <!--    <extension>-->
+        <!--        <groupId>kr.motd.maven</groupId>-->
+        <!--        <artifactId>os-maven-plugin</artifactId>-->
+        <!--        <version>1.6.2</version>-->
+        <!--    </extension>-->
+        <!--</extensions>-->
+        <!--<plugins>-->
+        <!--    &lt;!&ndash; protobuf插件 &ndash;&gt;-->
+        <!--    <plugin>-->
+        <!--        <groupId>org.xolstice.maven.plugins</groupId>-->
+        <!--        <artifactId>protobuf-maven-plugin</artifactId>-->
+        <!--        <version>${protobuf-maven-plugin.version}</version>-->
+        <!--        <configuration>-->
+        <!--            &lt;!&ndash; 下载protoc的地址 &ndash;&gt;-->
+        <!--            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>-->
+        <!--            <pluginId>grpc-java</pluginId>-->
+        <!--            &lt;!&ndash; grpc &ndash;&gt;-->
+        <!--            <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>-->
+        <!--        </configuration>-->
+        <!--        <executions>-->
+        <!--            <execution>-->
+        <!--                <goals>-->
+        <!--                    <goal>compile</goal>-->
+        <!--                    <goal>compile-custom</goal>-->
+        <!--                </goals>-->
+        <!--            </execution>-->
+        <!--        </executions>-->
+        <!--    </plugin>-->
+        <!--</plugins>-->
+    </build>
+</project>
