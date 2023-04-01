@@ -11,21 +11,16 @@
     <artifactId>hot-refresh-test-cases</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <install.skip>true</install.skip>
+        <deploy.skip>true</deploy.skip>
+        <staging.skip>true</staging.skip>
+    </properties>
+
     <modules>
         <module>test-spring-boot</module>
         <module>test-jar-file</module>
         <module>test-execute</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

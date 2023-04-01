@@ -11,12 +11,15 @@
     <packaging>pom</packaging>
 
     <properties>
-        <build.skip>true</build.skip>
+        <install.skip>true</install.skip>
+        <deploy.skip>true</deploy.skip>
+        <!-- 允许发布到nexus上 -->
+        <!--<staging.skip>true</staging.skip>-->
     </properties>
 
     <profiles>
         <profile>
-            <id>client-with-netty</id>
+            <id>client-netty</id>
             <build>
                 <plugins>
                     <plugin>
@@ -44,7 +47,7 @@
             </build>
         </profile>
         <profile>
-            <id>client-with-grpc</id>
+            <id>client-grpc</id>
             <build>
                 <plugins>
                     <plugin>
@@ -96,20 +99,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <configuration>
-                    <skip>${build.skip}</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>${build.skip}</skip>
-                </configuration>
             </plugin>
         </plugins>
     </build>
