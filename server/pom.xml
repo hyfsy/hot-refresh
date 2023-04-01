@@ -34,10 +34,10 @@
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-adapter-mybatis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-adapter-skywalking</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>io.github.hyfsy</groupId>-->
+        <!--    <artifactId>hot-refresh-adapter-skywalking</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-plugin-web</artifactId>
@@ -54,9 +54,9 @@
             <groupId>io.github.hyfsy</groupId>
             <artifactId>hot-refresh-plugin-execute</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.hyfsy</groupId>
-            <artifactId>hot-refresh-plugin-arthas</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>io.github.hyfsy</groupId>-->
+        <!--    <artifactId>hot-refresh-plugin-arthas</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 </project>
