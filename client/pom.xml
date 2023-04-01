@@ -39,10 +39,7 @@
 
     <profiles>
         <profile>
-            <id>client-with-netty</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>client-netty</id>
             <dependencies>
                 <!-- rpc -->
                 <dependency>
@@ -53,7 +50,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>client-with-grpc</id>
+            <id>client-grpc</id>
             <dependencies>
                 <!-- grpc -->
                 <dependency>

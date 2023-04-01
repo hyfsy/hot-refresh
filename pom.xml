@@ -75,7 +75,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <javadoc.skip>false</javadoc.skip>
+        <install.skip>false</install.skip>
         <gpg.skip>false</gpg.skip>
+        <deploy.skip>false</deploy.skip>
+        <staging.skip>false</staging.skip>
         <auto.close.and.release>false</auto.close.and.release>
 
         <!-- plugin version -->
@@ -330,11 +333,17 @@
                         <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
+                            <!-- true禁用默认的staging特色，直接在模块生命周期内进行发布，指定为false的则会放到最后延迟发布 -->
+                            <skipLocalStaging>true</skipLocalStaging>
+                            <!-- false整个插件功能禁用，配合 skipLocalStaging，这个参数不是'全局'的 -->
+                            <skipNexusStagingDeployMojo>${staging.skip}</skipNexusStagingDeployMojo>
+
                             <!-- id要与settings.xml里的server指定的id保持一致 -->
                             <serverId>sonatype-oss</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                             <!-- 发布到阶段存储库成功后是否自动Release，进行中央仓库的同步，这里我们默认去网页上手动进行同步 -->
                             <autoReleaseAfterClose>${auto.close.and.release}</autoReleaseAfterClose>
+                            <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -370,16 +379,6 @@
                             </manifest>
                         </archive>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven-install-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven-deploy-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -457,6 +456,22 @@
                             <exclude>**/allatori.xml</exclude>
                             <exclude>**/rebel.xml</exclude>
                         </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                    <configuration>
+                        <skip>${install.skip}</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                    <configuration>
+                        <skip>${deploy.skip}</skip>
                     </configuration>
                 </plugin>
             </plugins>

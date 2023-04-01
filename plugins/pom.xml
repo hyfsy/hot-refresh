@@ -18,6 +18,6 @@
         <module>plugin-spring-boot</module>
         <module>plugin-fastjson</module>
         <module>plugin-execute</module>
-        <module>plugin-arthas</module>
+        <!--<module>plugin-arthas</module>-->
     </modules>
 </project>
