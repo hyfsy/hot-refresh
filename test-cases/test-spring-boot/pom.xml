@@ -78,7 +78,7 @@
         <!--    <artifactId>hot-refresh-plugin-netty</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-        <!--    <groupId>com.hyf.hotrefresh</groupId>-->
+        <!--    <groupId>io.github.hyfsy</groupId>-->
         <!--    <artifactId>hot-refresh-plugin-grpc</artifactId>-->
         <!--</dependency>-->
 
