@@ -15,7 +15,9 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <!--<version>${spring-boot.version}</version>-->
+                <!-- 使用高版本防止test不兼容出错 -->
+                <version>2.3.12.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -24,17 +26,16 @@
 
     <dependencies>
 
-        <!-- 版本需要不一样，否则没效果 -->
+        <!--<dependency>-->
+        <!--    <groupId>com.sun</groupId>-->
+        <!--    <artifactId>tools</artifactId>-->
+        <!--    <version>${java.version}</version>-->
+        <!--    <scope>system</scope>-->
+        <!--    <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
+        <!--    &lt;!&ndash;<optional>true</optional>&ndash;&gt;-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>${java.version}</version>
-            <scope>system</scope>
-            <!--<systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            <!--<optional>true</optional>-->
-        </dependency>
+        <!-- 版本需要不一样，否则没效果 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
