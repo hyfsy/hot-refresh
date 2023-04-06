@@ -15,7 +15,13 @@ import java.util.stream.Collectors;
 public abstract class ByteUtils {
 
     public static byte[] parse(String str) {
+        if (str == null) {
+            throw new IllegalArgumentException("str is null");
+        }
         str = str.trim();
+        if (str.isEmpty()) {
+            throw new IllegalArgumentException("str is empty");
+        }
         str = str.substring(1, str.length() - 1);
         str = str.replaceAll("\r", "").replaceAll("\n", "").replace("\t", "");
         List<String> bytesList = Arrays.stream(str.split(",")).map(String::trim).collect(Collectors.toList());

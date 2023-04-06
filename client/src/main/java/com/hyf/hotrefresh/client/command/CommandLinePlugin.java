@@ -1,6 +1,5 @@
 package com.hyf.hotrefresh.client.command;
 
-import com.hyf.hotrefresh.client.api.command.CommandLineHandler;
 import com.hyf.hotrefresh.client.api.plugin.Plugin;
 
 /**
@@ -9,8 +8,17 @@ import com.hyf.hotrefresh.client.api.plugin.Plugin;
  */
 public class CommandLinePlugin implements Plugin {
 
+    private CommandLineHandler commandLineHandler;
+
     @Override
-    public void setup() throws Exception {
-        new CommandLineHandler().start();
+    public void install() throws Exception {
+        this.commandLineHandler = new CommandLineHandler();
+        this.commandLineHandler.start();
+    }
+
+    @Override
+    public void uninstall() {
+        // TODO ?
+        this.commandLineHandler.interrupt();
     }
 }

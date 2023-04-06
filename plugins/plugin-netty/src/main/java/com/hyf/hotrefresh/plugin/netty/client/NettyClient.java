@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.plugin.netty.client;
 
-import com.hyf.hotrefresh.client.core.client.RpcClientAdapter;
+import com.hyf.hotrefresh.client.api.client.RpcClientAdapter;
 
 /**
  * @author baB_hyf

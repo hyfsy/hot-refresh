@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.client.core.client;
 
+import com.hyf.hotrefresh.client.api.client.RpcClientAdapter;
 import com.hyf.hotrefresh.remoting.client.DefaultRpcClient;
 
 /**

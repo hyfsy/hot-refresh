@@ -36,7 +36,6 @@ public class HttpPushWatcher extends Thread implements Watcher {
 
     public HttpPushWatcher() {
         serverAddress = UrlUtils.concat(ArgumentHolder.get(ARG_SERVER_URL), REFRESH_API);
-        start();
     }
 
     @Override
@@ -52,6 +51,11 @@ public class HttpPushWatcher extends Thread implements Watcher {
     @Override
     public void onChange(File file, ChangeType type) {
         addRequest(file, type);
+    }
+
+    @Override
+    public void startWatch() {
+        start();
     }
 
     @Override

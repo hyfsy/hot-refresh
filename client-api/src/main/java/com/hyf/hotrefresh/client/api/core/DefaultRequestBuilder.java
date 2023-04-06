@@ -1,6 +1,5 @@
-package com.hyf.hotrefresh.client.core;
+package com.hyf.hotrefresh.client.api.core;
 
-import com.hyf.hotrefresh.client.api.core.RequestBuilder;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;

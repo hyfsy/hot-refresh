@@ -15,8 +15,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author baB_hyf
@@ -24,15 +24,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class RpcPushWatcher extends Thread implements Watcher {
 
-    private final BlockingQueue<RpcMessage> rpcMessageQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<RpcMessage> rpcMessageQueue = new ArrayBlockingQueue<>(1000);
 
     private final HotRefreshClient client = HotRefreshClient.getInstance();
 
     private volatile boolean closed = false;
-
-    public RpcPushWatcher() {
-        start();
-    }
 
     @Override
     public boolean interest(Object context) {
@@ -50,6 +46,11 @@ public class RpcPushWatcher extends Thread implements Watcher {
     }
 
     @Override
+    public void startWatch() {
+        start();
+    }
+
+    @Override
     public void stopWatch() {
         closed = true;
     }
@@ -61,13 +62,6 @@ public class RpcPushWatcher extends Thread implements Watcher {
                 handleFileChangeRequest();
             } catch (Throwable t) {
                 Log.error("Hotrefresh request handle failed", t);
-            }
-
-            // 避免文件修改触发的抖动
-            try {
-                Thread.sleep(500L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         }
     }
@@ -87,19 +81,31 @@ public class RpcPushWatcher extends Thread implements Watcher {
     }
 
     private void handleFileChangeRequest() throws ClientException {
-        List<RpcMessage> messages = new ArrayList<>();
-        int i = rpcMessageQueue.drainTo(messages);
-        if (i == 0) {
-            return;
-        }
+        try {
+            List<RpcMessage> messages = new ArrayList<>();
+            messages.add(rpcMessageQueue.take());
+            preventFluctuation();
+            rpcMessageQueue.drainTo(messages);
 
-        messages = new ArrayList<>(new HashSet<>(messages));
+            messages = new ArrayList<>(new HashSet<>(messages));
 
-        if (messages.size() == 1) {
-            client.sendRequest(messages.get(0));
+            if (messages.size() == 1) {
+                client.sendRequest(messages.get(0));
+            }
+            else {
+                client.sendBatchRequest(messages);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
-        else {
-            client.sendBatchRequest(messages);
+    }
+
+    private void preventFluctuation() {
+        // 避免文件修改触发的抖动
+        try {
+            Thread.sleep(500L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

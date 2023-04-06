@@ -1,10 +1,9 @@
 package com.hyf.hotrefresh.client.core.client;
 
 import com.hyf.hotrefresh.client.api.client.Client;
+import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.common.args.ArgumentHolder;
-import com.hyf.hotrefresh.common.hook.Disposable;
-import com.hyf.hotrefresh.common.hook.ShutdownHook;
 import com.hyf.hotrefresh.remoting.exception.ClientException;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
@@ -12,8 +11,10 @@ import com.hyf.hotrefresh.remoting.message.handler.MessageHandler;
 import com.hyf.hotrefresh.remoting.message.handler.MessageHandlerFactory;
 import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcBatchRequest;
+import com.hyf.hotrefresh.remoting.rpc.payload.RpcHeartbeatRequest;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.hyf.hotrefresh.common.Constants.ARG_SERVER_TIMEOUT;
 import static com.hyf.hotrefresh.common.Constants.ARG_SERVER_URL;
@@ -22,9 +23,12 @@ import static com.hyf.hotrefresh.common.Constants.ARG_SERVER_URL;
  * @author baB_hyf
  * @date 2022/05/18
  */
-public class HotRefreshClient implements Disposable {
+public class HotRefreshClient {
 
     private static volatile HotRefreshClient INSTANCE;
+
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final AtomicBoolean stopped = new AtomicBoolean(true);
 
     private final Client         client;
     private final MessageHandler clientMessageHandler;
@@ -52,22 +56,42 @@ public class HotRefreshClient implements Disposable {
         if (INSTANCE == null) {
             synchronized (HotRefreshClient.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = createClient();
+                    INSTANCE = new HotRefreshClient();
                 }
             }
         }
         return INSTANCE;
     }
 
-    private static HotRefreshClient createClient() {
-        HotRefreshClient client = new HotRefreshClient();
+    public void start() {
+        if (!started.compareAndSet(false, true)) {
+            return;
+        }
+
         client.start();
-        return client;
+        stopped.set(false);
     }
 
-    private void start() {
-        client.start();
-        ShutdownHook.getInstance().addDisposable(this);
+    public void stop() {
+        if (!stopped.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            client.stop();
+        } catch (Exception e) {
+            Log.error("Stop client failed", e);
+        }
+        started.set(false);
+    }
+
+    public void heartbeat() throws ClientException {
+        try {
+            RpcHeartbeatRequest request = new RpcHeartbeatRequest();
+            sendRequest(request);
+        } catch (Exception e) {
+            throw new ClientException("Failed to connect server: " + serverAddress, e);
+        }
     }
 
     public void sendRequest(RpcMessage request) throws ClientException {
@@ -89,10 +113,5 @@ public class HotRefreshClient implements Disposable {
         } catch (Exception e) {
             throw new ClientException("Failed to handle response", e);
         }
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        client.stop();
     }
 }

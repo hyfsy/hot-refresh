@@ -2,6 +2,7 @@ package com.hyf.hotrefresh.client.watch;
 
 import com.hyf.hotrefresh.client.api.watch.Watcher;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.hook.ShutdownHook;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class WatchCenter {
     private static final AtomicBoolean PURGING = new AtomicBoolean(false);
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(WatchCenter::purge));
+        ShutdownHook.getInstance().addDisposable(WatchCenter::purge);
     }
 
     public static synchronized void registerWatcher(String path, Watcher watcher) {
@@ -57,7 +58,6 @@ public class WatchCenter {
     }
 
     public static void purge() {
-        Log.info("exiting...");
 
         if (!PURGING.compareAndSet(false, true)) {
             return;
@@ -170,14 +170,22 @@ public class WatchCenter {
         public void shutdown() {
             stopped = true;
             singleExecutor.shutdown();
+
+            for (Watcher watcher : watchers.keySet()) {
+                removeWatcher(watcher);
+            }
         }
 
         public void addWatcher(Watcher watcher) {
-            watchers.put(watcher, FILL);
+            if (watchers.put(watcher, FILL) == null) {
+                watcher.startWatch();
+            }
         }
 
         public void removeWatcher(Watcher watcher) {
-            watchers.remove(watcher);
+            if (watchers.remove(watcher) != null) {
+                watcher.stopWatch();
+            }
         }
 
         public String getWatchPath() {

@@ -6,5 +6,7 @@ package com.hyf.hotrefresh.client.api.plugin;
  */
 public interface Plugin {
 
-    void setup() throws Exception;
+    void install() throws Exception;
+
+    void uninstall();
 }

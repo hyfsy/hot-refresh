@@ -1,6 +1,5 @@
-package com.hyf.hotrefresh.client.core.client;
+package com.hyf.hotrefresh.client.api.client;
 
-import com.hyf.hotrefresh.client.api.client.Client;
 import com.hyf.hotrefresh.remoting.MessageCallback;
 import com.hyf.hotrefresh.remoting.client.RpcClient;
 import com.hyf.hotrefresh.remoting.exception.ClientException;

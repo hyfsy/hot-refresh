@@ -1,5 +1,6 @@
-package com.hyf.hotrefresh.client.api.command;
+package com.hyf.hotrefresh.client.command;
 
+import com.hyf.hotrefresh.client.api.command.CommandHandler;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 
@@ -12,7 +13,7 @@ import java.util.Scanner;
  */
 public class CommandLineHandler extends Thread {
 
-    private List<CommandHandler> commandHandlers;
+    private final List<CommandHandler> commandHandlers;
 
     public CommandLineHandler() {
         setName("command-line-handler");
@@ -24,7 +25,7 @@ public class CommandLineHandler extends Thread {
 
         Scanner scanner = new Scanner(System.in);
 
-        while (scanner.hasNextLine()) {
+        while (scanner.hasNextLine() || Thread.interrupted()) {
             String command = scanner.nextLine();
             command = command.trim();
             if ("".equals(command)) {

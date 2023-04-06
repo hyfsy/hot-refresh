@@ -25,6 +25,10 @@ public class ArgumentHolder {
             AnnotatedArgumentParser parser = new AnnotatedArgumentParserAdapter(argumentParser);
             parser.init(initArgs);
             for (String supportArg : parser.value()) {
+                AnnotatedArgumentParser annotatedArgumentParser = parserMap.get(supportArg);
+                if (annotatedArgumentParser != null) {
+                    throw new IllegalStateException("Argument is repeated: " + supportArg);
+                }
                 parserMap.put(supportArg, parser);
             }
         }
@@ -83,8 +87,9 @@ public class ArgumentHolder {
         ARGS.put(name, value);
     }
 
-    public static void remove(String name) {
-        ARGS.remove(name);
+    @SuppressWarnings("unchecked")
+    public static <T> T remove(String name) {
+        return (T) ARGS.remove(name);
     }
 
     public static Map<String, Object> getMap() {

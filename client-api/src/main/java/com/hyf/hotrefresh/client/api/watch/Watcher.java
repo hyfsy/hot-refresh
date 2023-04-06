@@ -28,6 +28,8 @@ public interface Watcher {
         onChange(file, ChangeType.MODIFY);
     }
 
+    void startWatch();
+
     void stopWatch();
 
 }

@@ -2,6 +2,7 @@ package com.hyf.hotrefresh.client.command;
 
 import com.hyf.hotrefresh.client.api.command.AbstractCommandHandler;
 import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
+import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.refresh.HotRefreshCommand;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshCommandRequest;
@@ -24,6 +25,12 @@ public class HotRefreshCommandHandler extends AbstractCommandHandler {
 
     @Override
     protected void doHandle(String[] commands) throws Exception {
+
+        if (commands.length < 1) {
+            Log.warn("Unknown command");
+            return;
+        }
+
         String commandName = commands[0];
 
         HotRefreshCommand command = HotRefreshCommand.getCommand(commandName);

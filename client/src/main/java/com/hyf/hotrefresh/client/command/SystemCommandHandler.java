@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @author baB_hyf
  * @date 2022/09/09
  */
-public class ClientCommandHandler implements CommandHandler {
+public class SystemCommandHandler implements CommandHandler {
 
     @Override
     public boolean support(String command) {
