@@ -28,6 +28,7 @@ public class URLOperateExportClassLoaderTests {
         assertEquals(0, ucp.getURLs().length);
         classLoader.addPath("test", "Test.java");
         assertEquals(1, ucp.getURLs().length);
+        classLoader.removePath("test");
     }
 
     @Test

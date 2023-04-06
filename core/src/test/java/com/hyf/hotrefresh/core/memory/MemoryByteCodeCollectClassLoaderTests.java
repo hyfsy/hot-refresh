@@ -4,6 +4,7 @@ import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
 import com.hyf.hotrefresh.core.exception.CompileException;
+import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class MemoryByteCodeCollectClassLoaderTests {
 
     @Before
     public void before() {
-        classLoader = new MemoryByteCodeCollectClassLoader();
+        classLoader = new MemoryByteCodeCollectClassLoader(MemoryClassLoader.newInstance(Util.getInfrastructureJarClassLoader()));
         memoryByteCode = new MemoryByteCode(CLASS_NAME);
     }
 

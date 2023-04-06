@@ -20,6 +20,11 @@ public class HelloController {
     private ApplicationContext context;
 
     @RequestMapping("1")
+    public boolean modifySelf() {
+        return false;
+    }
+
+    @RequestMapping("2")
     public boolean loadOuterClass() {
         try {
             // see resource directory
@@ -31,7 +36,7 @@ public class HelloController {
         return false;
     }
 
-    @RequestMapping("2")
+    @RequestMapping("3")
     public boolean invokeOuterClass() {
         try {
             Class<?> clazz = ClassUtils.forName("com.hyf.hotrefresh.hello.Test", null);
@@ -43,13 +48,17 @@ public class HelloController {
         return false;
     }
 
-    @RequestMapping("3")
-    public boolean modifySelf() {
-        return false;
-    }
-
     @RequestMapping("4")
     public String compileParameters(String param) {
         return "4";
+    }
+
+    @RequestMapping("5")
+    public boolean modifyStaticMethod() {
+        return HelloController.staticMethod();
+    }
+
+    public static boolean staticMethod() {
+        return false;
     }
 }

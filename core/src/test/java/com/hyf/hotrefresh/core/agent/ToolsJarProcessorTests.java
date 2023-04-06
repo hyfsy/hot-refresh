@@ -1,6 +1,8 @@
 package com.hyf.hotrefresh.core.agent;
 
 import com.hyf.hotrefresh.common.Constants;
+import com.hyf.hotrefresh.common.util.FastReflectionUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,6 +16,11 @@ import static org.junit.Assert.*;
 public class ToolsJarProcessorTests {
 
     public static final String NOT_EXIST_TOOLS_JAR_PATH = Constants.REFRESH_HOME + File.separator + "test";
+
+    @Before
+    public void before() {
+        FastReflectionUtils.fastSetField(ToolsJarProcessor.class, "toolsJarPath", null);
+    }
 
     @Test
     public void testGetToolsJarPath() {

@@ -2,12 +2,13 @@ package com.hyf.hotrefresh.plugin.web;
 
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
+import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.message.Message;
 import com.hyf.hotrefresh.remoting.message.MessageCodec;
 import com.hyf.hotrefresh.remoting.message.MessageFactory;
-import com.hyf.hotrefresh.remoting.rpc.enums.RpcMessageEncoding;
 import com.hyf.hotrefresh.remoting.rpc.payload.RpcResponse;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,6 +42,11 @@ public class HotRefreshFilterTests {
     @Mock
     private FilterChain         chain;
 
+    @After
+    public void after() {
+        Util.getThrowawayHotRefreshClassLoader().clear();
+    }
+
     @Test
     public void testSuccessRefresh() throws Exception {
 
@@ -56,8 +62,6 @@ public class HotRefreshFilterTests {
         ByteArrayServletInputStream basis = new ByteArrayServletInputStream(new ByteArrayInputStream(encode));
 
         when(this.request.getRequestURI()).thenReturn("/ctxPath/rest/hot-refresh");
-        when(this.request.getContextPath()).thenReturn("/ctxPath");
-        when(this.request.getServletPath()).thenReturn("/rest");
         when(this.request.getContentType()).thenReturn(RemotingConstants.DEFAULT_CONTENT_TYPE);
         when(this.request.getParameter("reset")).thenReturn(null);
         when(this.request.getInputStream()).thenReturn(basis);
@@ -66,6 +70,8 @@ public class HotRefreshFilterTests {
         ByteArrayServletOutputStream basos = new ByteArrayServletOutputStream(baos);
         when(response.getOutputStream()).thenReturn(basos);
 
+        assertFalse(Supplier.get());
+
         HotRefreshFilter filter = new HotRefreshFilter();
         filter.doFilter(this.request, response, chain);
 
@@ -73,19 +79,13 @@ public class HotRefreshFilterTests {
         Message response = MessageCodec.decode(bytes);
         RpcResponse rpcResponse = (RpcResponse) response.getBody();
 
-        String msg = new String(rpcResponse.getData(), RpcMessageEncoding.getEncoding(response.getEncoding()).getCharset());
-        assertEquals(msg, "");
+        assertNull(rpcResponse.getData());
 
         assertTrue(Supplier.get());
     }
 
     private InputStream getJavaFileInputStream() {
-        String s = "package com.hyf.hotrefresh.adapter.web;\n" +
-                "\n" +
-                "/**\n" +
-                " * @author baB_hyf\n" +
-                " * @date 2022/05/14\n" +
-                " */\n" +
+        String s = "package com.hyf.hotrefresh.plugin.web;\n" +
                 "public class Supplier {\n" +
                 "\n" +
                 "    public static boolean get() {\n" +

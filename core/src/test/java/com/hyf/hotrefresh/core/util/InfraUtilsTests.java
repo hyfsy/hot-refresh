@@ -17,6 +17,7 @@ public class InfraUtilsTests {
 
     @Test
     public void testSimpleOperation() {
+        assertNotNull(InfraUtils.getDefaultInstrumentation());
         assertNotNull(InfraUtils.getInstrumentation());
         assertNotNull(InfraUtils.getJavaCompiler());
 

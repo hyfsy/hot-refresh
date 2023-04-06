@@ -1,13 +1,12 @@
 package com.hyf.hello;
 
 import com.hyf.hotrefresh.common.ChangeType;
-import com.hyf.hotrefresh.common.Constants;
-import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.exception.RefreshException;
-import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefreshClassLoader;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.hello.controller.HelloController;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,9 +14,6 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
@@ -29,37 +25,71 @@ public class HelloControllerTests {
     @Resource
     private HelloController helloController;
 
-    @Test
-    public void testLoadOuterClass() throws IOException, RefreshException {
-        assertFalse(helloController.loadOuterClass());
-        try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream("Test.java");
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            IOUtils.writeTo(is, baos);
-            HotRefresher.refresh("Test.java", baos.toString(Constants.MESSAGE_ENCODING.name()), ChangeType.MODIFY.name());
-        }
-        MemoryClassLoader.bind();
-        assertTrue(helloController.loadOuterClass());
-        MemoryClassLoader.unBind();
+    @After
+    public void after() {
+        Util.getThrowawayHotRefreshClassLoader().clear();
     }
 
     @Test
-    public void testInvokeOuterClass() throws IOException, RefreshException {
+    public void testLoadOuterClass() throws RefreshException {
+        assertFalse(helloController.loadOuterClass());
         assertFalse(helloController.invokeOuterClass());
-        try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream("Test.java");
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            IOUtils.writeTo(is, baos);
-            HotRefresher.refresh("Test.java", baos.toString(Constants.MESSAGE_ENCODING.name()), ChangeType.MODIFY.name());
-        }
-        MemoryClassLoader.bind();
+
+        HotRefresher.refresh("Test.java", getTestClassCode(), ChangeType.MODIFY.name());
+
+        HotRefreshClassLoader.bind();
+        assertTrue(helloController.loadOuterClass());
         assertTrue(helloController.invokeOuterClass());
-        MemoryClassLoader.unBind();
+        HotRefreshClassLoader.unBind();
     }
 
     @Test
     public void testModifySelf() throws RefreshException {
         assertFalse(helloController.modifySelf());
 
-        String content = "package com.hyf.hotrefresh.hello.controller;\n" +
+        String content = getControllerCode();
+
+        content = content.replace(
+                "    @RequestMapping(\"1\")\n" +
+                        "    public boolean modifySelf() {\n" +
+                        "        return false;\n" +
+                        "    }\n",
+                "    @RequestMapping(\"1\")\n" +
+                        "    public boolean modifySelf() {\n" +
+                        "        return true;\n" +
+                        "    }\n");
+
+        HotRefresher.refresh("HelloController.java", content, ChangeType.MODIFY.name());
+
+        assertTrue(helloController.modifySelf());
+    }
+
+    @Test
+    public void testCompileParameters() throws NoSuchMethodException {
+        DefaultParameterNameDiscoverer defaultParameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+        Method compileParametersMethod = helloController.getClass().getMethod("compileParameters", String.class);
+        String[] parameterNames = defaultParameterNameDiscoverer.getParameterNames(compileParametersMethod);
+        assertArrayEquals(parameterNames, new String[]{"param"});
+    }
+
+    private String getTestClassCode() {
+        return "package com.hyf.hotrefresh.hello;\n" +
+                "\n" +
+                "/**\n" +
+                " * @author baB_hyf\n" +
+                " * @date 2021/12/11\n" +
+                " */\n" +
+                "public class Test\n" +
+                "{\n" +
+                "\n" +
+                "    public static boolean get() {\n" +
+                "        return true;\n" +
+                "    }\n" +
+                "}\n";
+    }
+
+    private String getControllerCode() {
+        return "package com.hyf.hotrefresh.hello.controller;\n" +
                 "\n" +
                 "import org.springframework.context.ApplicationContext;\n" +
                 "import org.springframework.util.ClassUtils;\n" +
@@ -81,6 +111,11 @@ public class HelloControllerTests {
                 "    private ApplicationContext context;\n" +
                 "\n" +
                 "    @RequestMapping(\"1\")\n" +
+                "    public boolean modifySelf() {\n" +
+                "        return false;\n" +
+                "    }\n" +
+                "\n" +
+                "    @RequestMapping(\"2\")\n" +
                 "    public boolean loadOuterClass() {\n" +
                 "        try {\n" +
                 "            // see resource directory\n" +
@@ -92,7 +127,7 @@ public class HelloControllerTests {
                 "        return false;\n" +
                 "    }\n" +
                 "\n" +
-                "    @RequestMapping(\"2\")\n" +
+                "    @RequestMapping(\"3\")\n" +
                 "    public boolean invokeOuterClass() {\n" +
                 "        try {\n" +
                 "            Class<?> clazz = ClassUtils.forName(\"com.hyf.hotrefresh.hello.Test\", null);\n" +
@@ -104,37 +139,19 @@ public class HelloControllerTests {
                 "        return false;\n" +
                 "    }\n" +
                 "\n" +
-                "    @RequestMapping(\"3\")\n" +
-                "    public boolean modifySelf() {\n" +
-                "        return false;\n" +
-                "    }\n" +
-                "\n" +
                 "    @RequestMapping(\"4\")\n" +
                 "    public String compileParameters(String param) {\n" +
                 "        return \"4\";\n" +
                 "    }\n" +
+                "\n" +
+                "    @RequestMapping(\"5\")\n" +
+                "    public boolean modifyStaticMethod() {\n" +
+                "        return HelloController.staticMethod();\n" +
+                "    }\n" +
+                "\n" +
+                "    public static boolean staticMethod() {\n" +
+                "        return false;\n" +
+                "    }\n" +
                 "}\n";
-
-        content = content.replace(
-                "    @RequestMapping(\"3\")\n" +
-                        "    public boolean modifySelf() {\n" +
-                        "        return false;\n" +
-                        "    }",
-                "    @RequestMapping(\"3\")\n" +
-                        "    public boolean modifySelf() {\n" +
-                        "        return true;\n" +
-                        "    }");
-
-        HotRefresher.refresh("HelloController.java", content, ChangeType.MODIFY.name());
-
-        assertTrue(helloController.modifySelf());
-    }
-
-    @Test
-    public void testCompileParameters() throws NoSuchMethodException {
-        DefaultParameterNameDiscoverer defaultParameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-        Method compileParametersMethod = helloController.getClass().getMethod("compileParameters", String.class);
-        String[] parameterNames = defaultParameterNameDiscoverer.getParameterNames(compileParametersMethod);
-        assertArrayEquals(parameterNames, new String[]{"param"});
     }
 }

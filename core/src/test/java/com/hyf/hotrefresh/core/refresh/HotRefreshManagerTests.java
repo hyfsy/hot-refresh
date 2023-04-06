@@ -7,6 +7,7 @@ import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
+import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -36,12 +37,13 @@ public class HotRefreshManagerTests {
 
         HotRefreshManager.reTransform(clazz);
 
-        clazz = MemoryClassLoader.newInstance().getClass(TestJavaFileUtils.getClassName());
+        clazz = Util.getThrowawayHotRefreshClassLoader().getClass(TestJavaFileUtils.getClassName());
         assertTrue(invokeMethod(clazz));
+        Util.getThrowawayHotRefreshClassLoader().clear();
     }
 
     private Class<?> compile(String content) throws CompileException {
-        MemoryClassLoader memoryClassLoader = MemoryClassLoader.newInstance();
+        MemoryClassLoader memoryClassLoader = HotRefreshClassLoader.newInstance();
         MemoryCode memoryCode = new MemoryCode(TestJavaFileUtils.getFileName(), content);
         Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(memoryCode);
         memoryClassLoader.store(compiledBytes);

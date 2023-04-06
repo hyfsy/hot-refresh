@@ -34,9 +34,9 @@ public class ArgumentHolderTests {
         assertTrue(ArgumentHolder.get("put"));
         ArgumentHolder.put("put", false);
         assertFalse(ArgumentHolder.get("put"));
-        ArgumentHolder.remove("put");
+        Object put = ArgumentHolder.remove("put");
+        assertFalse((boolean) put);
         assertNull(ArgumentHolder.get("put"));
-
     }
 
     @Argument(value = {"-mock-a", "-mock-b"}, argc = 1)

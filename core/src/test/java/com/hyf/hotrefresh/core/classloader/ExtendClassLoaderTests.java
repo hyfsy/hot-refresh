@@ -32,8 +32,7 @@ public class ExtendClassLoaderTests {
 
     @Before
     public void before() throws ClassNotFoundException {
-        when(mockCanLoadParentClassLoader.loadClass(CLASS_NAME)).thenReturn((Class) ExtendClassLoaderTests.class);
-        when(mockCannotLoadParentClassLoader.loadClass(CLASS_NAME)).thenThrow(new ClassNotFoundException());
+        when(mockCanLoadParentClassLoader.loadClass(CLASS_NAME, false)).thenReturn((Class) ExtendClassLoaderTests.class);
     }
 
     @Test

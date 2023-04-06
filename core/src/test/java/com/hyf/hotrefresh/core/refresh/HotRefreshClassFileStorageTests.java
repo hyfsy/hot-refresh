@@ -1,7 +1,8 @@
-package com.hyf.hotrefresh.core.memory;
+package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.Services;
+import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,14 +13,12 @@ import static org.junit.Assert.*;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public class ClassFileStorageTests {
+public class HotRefreshClassFileStorageTests {
 
-    public static final String CLASS_NAME = "com.hyf.test.classfilestorage.Test";
+    private static final String CLASS_NAME = "com.hyf.test.classfilestorage.Test";
 
     @Test
     public void testOperate() {
-        MemoryClassLoader.newInstance(); // load for clear file storage home
-
         List<ClassFileStorage> classFileStorages = Services.gets(ClassFileStorage.class);
         assertTrue(classFileStorages.iterator().hasNext());
 
@@ -32,10 +31,12 @@ public class ClassFileStorageTests {
         assertTrue(classFileStorage.getClassFile(CLASS_NAME).exists());
         classFileStorage.delete(CLASS_NAME);
         assertFalse(classFileStorage.getClassFile(CLASS_NAME).exists());
+        classFileStorage.write(CLASS_NAME, "aaa".getBytes(Constants.MESSAGE_ENCODING));
         classFileStorage.clear();
+        assertFalse(classFileStorage.getClassFile(CLASS_NAME).exists());
     }
 
-    public static class MockClassFileStorage extends MemoryClassFileStorage {
+    public static class MockClassFileStorage extends HotRefreshClassFileStorage {
 
     }
 }

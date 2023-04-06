@@ -1,12 +1,10 @@
 package com.hyf.hotrefresh.adapter.lombok;
 
-import com.hyf.hotrefresh.core.memory.AnnotationProcessorCompositeClassLoader;
 import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.memory.AnnotationProcessorCompositeClassLoader;
 import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,23 +33,13 @@ public class LombokAdapterInstallerTests {
         InfrastructureJarClassLoader.getInstance().loadClass("lombok.launch.Main");
     }
 
-    @Test(expected = ClassNotFoundException.class)
-    public void testCannotLoadAnnotationProcessor() throws ClassNotFoundException {
-        String processorClass = "lombok.launch.AnnotationProcessorHider$AnnotationProcessor";
-
-        List<ClassLoader> classLoaders = AnnotationProcessorCompositeClassLoader.getInstance().getClassLoaders();
-        classLoaders.removeIf(cl -> cl instanceof LombokShadowClassLoaderDelegate);
-
-        AnnotationProcessorCompositeClassLoader.getInstance().loadClass(processorClass);
-    }
-
     @Test
     public void testCanLoadAnnotationProcessor() throws ClassNotFoundException {
         String processorClass = "lombok.launch.AnnotationProcessorHider$AnnotationProcessor";
         Class<?> clazz = AnnotationProcessorCompositeClassLoader.getInstance().loadClass(processorClass);
 
-        ClassLoader shadowClassLoader = installer.getShadowClassLoader();
-        assertEquals(clazz.getClassLoader(), shadowClassLoader);
+        ClassLoader classLoader = Util.getInfrastructureJarClassLoader();
+        assertEquals(clazz.getClassLoader(), classLoader);
     }
 
 }

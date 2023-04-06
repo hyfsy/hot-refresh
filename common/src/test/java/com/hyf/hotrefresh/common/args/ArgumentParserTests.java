@@ -1,5 +1,6 @@
 package com.hyf.hotrefresh.common.args;
 
+import com.hyf.hotrefresh.common.Constants;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,26 +17,26 @@ public class ArgumentParserTests {
     @Test
     public void testParserDefaultAnnotation() {
 
-        String[] args = new String[]{"-mock-a", "mockA", "-mock-b", "mockB"};
+        String[] args = new String[]{"-mock-a2", "mockA", "-mock-b2", "mockB"};
 
-        assertFalse(ArgumentHolder.get("mock"));
+        assertFalse(ArgumentHolder.get(MockArgumentParser.class.getName()));
 
         ArgumentHolder.parse(args);
 
-        assertTrue(ArgumentHolder.get("mock"));
+        assertTrue(ArgumentHolder.get(MockArgumentParser.class.getName()));
     }
 
-    @Argument(value = {"-mock-a", "-mock-b"}, argc = 1)
+    @Argument(value = {"-mock-a2", "-mock-b2"}, argc = 1)
     public static class MockArgumentParser implements ArgumentParser {
 
         @Override
         public void init(Map<String, Object> initArgs) {
-            initArgs.put("mock", false);
+            initArgs.put(MockArgumentParser.class.getName(), false);
         }
 
         @Override
         public void parse(Map<String, Object> parsedArgs, List<String> segments) {
-            parsedArgs.put("mock", true);
+            parsedArgs.put(MockArgumentParser.class.getName(), true);
         }
     }
 }

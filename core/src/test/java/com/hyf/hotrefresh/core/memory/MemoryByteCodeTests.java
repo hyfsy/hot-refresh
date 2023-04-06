@@ -17,8 +17,8 @@ public class MemoryByteCodeTests {
 
     private static final String CLASS_NAME = "com.hyf.hotrefresh.classloader.Test";
 
-    private MemoryByteCode memoryByteCode;
-    private byte[]         content = "aaa".getBytes(Constants.MESSAGE_ENCODING);
+    private final byte[]         content = "aaa".getBytes(Constants.MESSAGE_ENCODING);
+    private       MemoryByteCode memoryByteCode;
 
     @Before
     public void before() {

@@ -3,7 +3,10 @@ package com.hyf.hotrefresh.common.util;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author baB_hyf
@@ -11,11 +14,15 @@ import java.io.FileOutputStream;
  */
 public class ByteUtilsTests {
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParse() throws Exception {
-        String filePath = "E:\\G.class";
-        byte[] parse = ByteUtils.parse(getS());
-        IOUtils.writeTo(new ByteArrayInputStream(parse), new FileOutputStream(filePath));
+        Path hotrefresh = Files.createTempFile(null, null);
+        try (FileOutputStream fos = new FileOutputStream(hotrefresh.toFile())) {
+            byte[] parse = ByteUtils.parse(getS());
+            IOUtils.writeTo(new ByteArrayInputStream(parse), fos);
+        } finally {
+            Files.delete(hotrefresh);
+        }
     }
 
     public String getS() {

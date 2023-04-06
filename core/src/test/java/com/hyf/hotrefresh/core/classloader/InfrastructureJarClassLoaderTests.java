@@ -35,6 +35,7 @@ public class InfrastructureJarClassLoaderTests {
         Class<?> clazz = InfraUtils.forName(className);
         assertNotNull(clazz);
         assertSame(clazz.getClassLoader(), Util.getInfrastructureJarClassLoader());
+        Util.getInfrastructureJarClassLoader().removePath("test");
     }
 
     @Test

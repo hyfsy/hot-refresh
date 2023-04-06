@@ -14,15 +14,14 @@ public class UtilTests {
     @Test
     public void testGetNotNull() {
         assertNotNull(Util.getOriginContextClassLoader());
-        assertNotNull(Util.getThrowawayMemoryClassLoader());
+        assertNotNull(Util.getThrowawayHotRefreshClassLoader());
         assertNotNull(Util.getInfrastructureJarClassLoader());
-        assertNotNull(Util.getInstrumentation());
     }
 
     @Test
     public void testGetDifferentMemoryClassLoader() {
-        MemoryClassLoader mcl = Util.getThrowawayMemoryClassLoader();
-        MemoryClassLoader mcl2 = Util.getThrowawayMemoryClassLoader();
+        MemoryClassLoader mcl = Util.getThrowawayHotRefreshClassLoader();
+        MemoryClassLoader mcl2 = Util.getThrowawayHotRefreshClassLoader();
         assertNotEquals(mcl, mcl2);
     }
 

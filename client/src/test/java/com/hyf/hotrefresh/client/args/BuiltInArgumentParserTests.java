@@ -8,9 +8,9 @@ import static org.junit.Assert.*;
 
 /**
  * @author baB_hyf
- * @date 2022/06/18
+ * @date 2023/04/05
  */
-public class ArgumentParserTests {
+public class BuiltInArgumentParserTests {
 
     @Test
     public void testInitArgument() {
