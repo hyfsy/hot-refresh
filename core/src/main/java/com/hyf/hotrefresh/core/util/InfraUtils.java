@@ -33,12 +33,22 @@ public abstract class InfraUtils {
         initAsmEnvironment();
     }
 
+    public static Instrumentation getInstrumentation() {
+        // try {
+        return getSystemStartProcessInstrumentation();
+        // } catch (Throwable t) {
+        //     return getDefaultInstrumentation();
+        // }
+    }
+
     /**
      * not recommend to use, just a intermediate object
+     * <p>
+     * this Instrumentation is a new one, not the one at jvm startup, may cause some potential problems
      *
      * @return agent attach generated instrumentation
      */
-    public static Instrumentation getInstrumentation() {
+    public static Instrumentation getDefaultInstrumentation() {
         if (instrumentation == null) {
             try {
                 Object attachmentProvider = AgentHelper.getAttachmentProvider();
@@ -51,7 +61,7 @@ public abstract class InfraUtils {
         return instrumentation;
     }
 
-    public static Instrumentation getSystemStartProcessInstrumentation() {
+    private static Instrumentation getSystemStartProcessInstrumentation() {
         if (systemStartProcessInstrumentation == null) {
             try {
                 Class<?> clazz = InfraUtils.forName(InstrumentationHolder.class.getName());

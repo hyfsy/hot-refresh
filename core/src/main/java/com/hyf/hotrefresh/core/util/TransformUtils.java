@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public abstract class TransformUtils {
 
     public static void signalTransformer(Class<?> clazz, Consumer<ClassNode> classNodeConsumer) throws UnmodifiableClassException {
-        signalTransformer(Util.getInstrumentation(), clazz, classNodeConsumer, false);
+        signalTransformer(InfraUtils.getInstrumentation(), clazz, classNodeConsumer, false);
     }
 
     public static void signalTransformer(Instrumentation instrumentation, Class<?> clazz, Consumer<ClassNode> classNodeConsumer, boolean ephemeral) throws UnmodifiableClassException {

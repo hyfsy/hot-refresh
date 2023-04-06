@@ -14,12 +14,14 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private static final String[] LOCATION_NAMES = {StandardLocation.PLATFORM_CLASS_PATH.name(), /* JPMS StandardLocation.SYSTEM_MODULES **/ "SYSTEM_MODULES"};
 
-    private final MemoryByteCodeCollectClassLoader bcc = new MemoryByteCodeCollectClassLoader();
+    private final MemoryByteCodeCollectClassLoader bcc;
 
-    private final DependencyLookup dependencyLookup = new DependencyLookup(bcc);
+    private final DependencyLookup dependencyLookup;
 
-    public MemoryJavaFileManager(JavaFileManager fileManager) {
+    public MemoryJavaFileManager(JavaFileManager fileManager, ClassLoader parent) {
         super(fileManager);
+        this.bcc = new MemoryByteCodeCollectClassLoader(parent);
+        this.dependencyLookup = new DependencyLookup(bcc);
     }
 
     @Override

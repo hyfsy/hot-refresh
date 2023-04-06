@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.core.memory;
+package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.Constants;
 

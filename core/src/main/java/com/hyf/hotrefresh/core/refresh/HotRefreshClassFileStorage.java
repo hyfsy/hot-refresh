@@ -1,4 +1,4 @@
-package com.hyf.hotrefresh.core.memory;
+package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.util.FileUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
  * @author baB_hyf
  * @date 2022/05/14
  */
-public class MemoryClassFileStorage implements ClassFileStorage {
+public class HotRefreshClassFileStorage implements ClassFileStorage {
 
     @Override
     public String getStorageHome() {

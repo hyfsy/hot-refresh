@@ -3,7 +3,7 @@ package com.hyf.hotrefresh.core.install;
 import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.core.exception.InstallException;
-import com.hyf.hotrefresh.core.util.Util;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,7 +31,7 @@ public class CoreInstaller {
             try {
 
                 // check
-                Util.getInstrumentation();
+                InfraUtils.getInstrumentation();
 
                 new CoreInstaller().invokeInstaller();
 

@@ -1,7 +1,5 @@
 package com.hyf.hotrefresh.core.memory;
 
-import com.hyf.hotrefresh.core.util.Util;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +16,8 @@ class MemoryByteCodeCollectClassLoader extends ClassLoader {
     /** className -> classBytes */
     private final Map<String, MemoryByteCode> collectedByteCode = new HashMap<>();
 
-    MemoryByteCodeCollectClassLoader() {
-        super(MemoryClassLoader.newInstance(Util.getInfrastructureJarClassLoader()));
+    MemoryByteCodeCollectClassLoader(ClassLoader classLoader) {
+        super(classLoader);
     }
 
     @Override

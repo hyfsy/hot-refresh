@@ -11,7 +11,7 @@ import java.io.OutputStream;
  * @author baB_hyf
  * @date 2022/05/27
  */
-public class MemoryClassBytesDumper {
+public class HotRefreshClassBytesDumper {
 
     public static void dump(String className, String storePath) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(FileUtils.getFile(storePath))) {
@@ -20,7 +20,7 @@ public class MemoryClassBytesDumper {
     }
 
     public static void dump(String className, OutputStream os) throws IOException {
-        byte[] bytes = Util.getThrowawayMemoryClassLoader().get(className);
+        byte[] bytes = Util.getThrowawayHotRefreshClassLoader().get(className);
         if (bytes != null) {
             os.write(bytes);
             os.flush();

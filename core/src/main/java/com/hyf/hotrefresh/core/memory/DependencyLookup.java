@@ -73,6 +73,11 @@ class DependencyLookup {
 
             JarURLConnection jarConn = (JarURLConnection) packageFolderURL.openConnection();
             String rootEntryName = jarConn.getEntryName();
+            if (rootEntryName == null) {
+                Log.warn("Wasn't able to open " + packageFolderURL + " as a jar file");
+                return result;
+            }
+
             int rootEnd = rootEntryName.length() + 1;
 
             Enumeration<JarEntry> entryEnum = jarConn.getJarFile().entries();

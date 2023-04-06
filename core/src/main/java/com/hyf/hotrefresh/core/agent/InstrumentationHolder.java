@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author baB_hyf
  * @date 2022/07/03
  * @see Instrumentation
- * @see InfraUtils#getSystemStartProcessInstrumentation
+ * @see InfraUtils#getInstrumentation
  */
 @Infrastructure
 public class InstrumentationHolder {
@@ -61,7 +61,7 @@ public class InstrumentationHolder {
     }
 
     private static void pilingInstrumentationSetStore() throws UnmodifiableClassException {
-        Instrumentation instrumentation = InfraUtils.getInstrumentation();
+        Instrumentation instrumentation = InfraUtils.getDefaultInstrumentation();
         ReplaceRetransformClassesMethodTransformer transformer = new ReplaceRetransformClassesMethodTransformer();
         instrumentation.addTransformer(transformer, true);
         try {
@@ -73,7 +73,7 @@ public class InstrumentationHolder {
 
     private static void initInstrumentationSet() throws UnmodifiableClassException {
         ClassFileTransformer justForInvokeTransformer = new JustForInvokeTransformer();
-        Instrumentation instrumentation = InfraUtils.getInstrumentation();
+        Instrumentation instrumentation = InfraUtils.getDefaultInstrumentation();
         instrumentation.addTransformer(justForInvokeTransformer, true);
         ClassLoader originClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(Util.getInfrastructureJarClassLoader());
@@ -90,8 +90,8 @@ public class InstrumentationHolder {
             systemStartProcessInstrumentation = intermediateInstrumentationSet.iterator().next(); // the first is oldest
         }
         else {
-            throw new RuntimeException("Failed to get instrumentation from intermediateInstrumentationSet, use origin instrumentation");
-            // instrumentation = Util.getInstrumentation(); // TODO enhance failed?
+            // TODO enhance failed?
+            throw new RuntimeException("Failed to get instrumentation from intermediateInstrumentationSet");
         }
     }
 

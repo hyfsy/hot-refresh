@@ -1,7 +1,7 @@
 package com.hyf.hotrefresh.core.refresh;
 
-import com.hyf.hotrefresh.core.agent.AgentHelper;
 import com.hyf.hotrefresh.core.exception.AgentException;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
 import java.lang.instrument.Instrumentation;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 class HotRefreshManager {
 
     // so we broken the parent delegate to fixed it, you can see [d1333eaf](https://github.com/hyfsy/hot-refresh/commit/d1333eaff0e03fb4ef2903c28d8013d5f6662127) for more details.
-    private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayMemoryClassLoader());
+    private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayHotRefreshClassLoader());
 
     private static final Instrumentation INST;
 
     static {
-        INST = Util.getInstrumentation();
+        INST = InfraUtils.getInstrumentation();
         start();
         // Log.info("Hot refresh infrastructure has been installed");
     }
@@ -67,13 +67,13 @@ class HotRefreshManager {
 
     @Deprecated
     public static void reset(String className) throws AgentException {
-        Class<?> clazz = Util.getThrowawayMemoryClassLoader().remove(className);
+        Class<?> clazz = Util.getThrowawayHotRefreshClassLoader().remove(className);
         reTransform(clazz);
     }
 
     @Deprecated
     public static void resetAll() throws AgentException {
-        List<Class<?>> classList = Util.getThrowawayMemoryClassLoader().clear();
+        List<Class<?>> classList = Util.getThrowawayHotRefreshClassLoader().clear();
         reTransform(classList.toArray(new Class[0]));
     }
 }

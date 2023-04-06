@@ -5,7 +5,7 @@ import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.common.util.ExceptionUtils;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.exception.RefreshException;
-import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefreshClassLoader;
 import com.hyf.hotrefresh.core.refresh.HotRefresher;
 import com.hyf.hotrefresh.remoting.constants.RemotingConstants;
 import com.hyf.hotrefresh.remoting.exception.ServerException;
@@ -67,11 +67,11 @@ public class HotRefreshFilter implements Filter {
         // uri match
         if (!uriMatch(req)) {
             // bind ccl
-            MemoryClassLoader.bind();
+            HotRefreshClassLoader.bind();
             try {
                 chain.doFilter(req, resp);
             } finally {
-                MemoryClassLoader.unBind();
+                HotRefreshClassLoader.unBind();
             }
             return;
         }
@@ -110,33 +110,7 @@ public class HotRefreshFilter implements Filter {
     }
 
     protected boolean uriMatch(HttpServletRequest req) {
-        String requestURI = req.getRequestURI();
-        String contextPath = req.getContextPath();
-        String servletPath = req.getServletPath();
-
-        if (requestURI.endsWith("/")) {
-            requestURI = requestURI.substring(0, requestURI.length() - 1);
-        }
-
-        if ("/".equals(contextPath)) {
-            contextPath = "";
-        }
-        if (contextPath.endsWith("/")) {
-            contextPath = contextPath.substring(0, contextPath.length() - 1);
-        }
-
-        if ("/".equals(servletPath)) {
-            servletPath = "";
-        }
-        if (servletPath.endsWith("/")) {
-            servletPath = servletPath.substring(0, servletPath.length() - 1);
-        }
-        if (servletPath.equals(Constants.REFRESH_API)) {
-            servletPath = "";
-        }
-
-        String requestPath = contextPath + servletPath + Constants.REFRESH_API;
-        return requestURI.equals(requestPath);
+        return req.getRequestURI().endsWith(Constants.REFRESH_API);
     }
 
     /**

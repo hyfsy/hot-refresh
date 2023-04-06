@@ -8,6 +8,7 @@ import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
 import com.hyf.hotrefresh.core.util.InfraUtils;
+import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.plugin.execute.Executable;
 import com.hyf.hotrefresh.plugin.execute.ExecutableClassLoader;
 import com.hyf.hotrefresh.plugin.execute.exception.ExecutionException;
@@ -35,9 +36,7 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
 
         try (InputStream content = request.getBody()) {
 
-            ExecutableClassLoader cl = ExecutableClassLoader.createInstance();
-
-            Class<?> clazz = loadContent(cl, content, request.getFileName(), request.getFileLocation());
+            Class<?> clazz = loadContent(content, request.getFileName(), request.getFileLocation());
 
             RpcExecutableResponse response = new RpcExecutableResponse();
             Object result = null;
@@ -83,20 +82,24 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
         }
     }
 
-    private Class<?> loadContent(ExecutableClassLoader cl, InputStream content, String fileName, String fileLocation) throws Exception {
-        String className = "";
+    private Class<?> loadContent(InputStream content, String fileName, String fileLocation) throws Exception {
+
+        ExecutableClassLoader cl = new ExecutableClassLoader();
+
+        String className;
         if (fileName.endsWith(".java")) {
             String javaFileContent = IOUtils.readAsString(content);
-            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(fileName, javaFileContent));
-            cl.store(compiledBytes);
-            if (compiledBytes != null && !compiledBytes.isEmpty()) {
-                className = compiledBytes.keySet().toArray(new String[0])[0];
+            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(fileName, javaFileContent), Util.getThrowawayHotRefreshClassLoader());
+            if (compiledBytes.isEmpty()) {
+                throw new ExecutionException("Nothing has been compiled: \n" + javaFileContent);
             }
+            compiledBytes.forEach(cl::addExecutable);
+            className = compiledBytes.keySet().toArray(new String[0])[0];
         }
         else if (fileName.endsWith(".class")) {
             byte[] bytes = IOUtils.readAsByteArray(content);
             className = InfraUtils.getClassName(bytes);
-            cl.store(className, bytes);
+            cl.addExecutable(className, bytes);
         }
         else {
             throw new ExecutionException("File name illegal: " + fileName);
@@ -106,7 +109,12 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
             throw new ExecutionException("Cannot determinate the class name, file location: " + fileLocation);
         }
 
+        isolateSensitiveInstruction(cl);
         return cl.loadClass(className);
+    }
+
+    private void isolateSensitiveInstruction(ExecutableClassLoader cl) {
+        // TODO System.out -> custom PrintStream
     }
 
     private boolean hasMainMethod(Class<?> clazz) {

@@ -35,7 +35,15 @@ public class MemoryCodeCompiler {
         return compile(Collections.singleton(memoryCode));
     }
 
+    public static Map<String, byte[]> compile(MemoryCode memoryCode, ClassLoader classLoader) throws CompileException {
+        return compile(Collections.singleton(memoryCode), classLoader);
+    }
+
     public static Map<String, byte[]> compile(Set<MemoryCode> memoryCodeList) throws CompileException {
+        return compile(memoryCodeList, MemoryClassLoader.newInstance(Util.getInfrastructureJarClassLoader()));
+    }
+
+    public static Map<String, byte[]> compile(Set<MemoryCode> memoryCodeList, ClassLoader classLoader) throws CompileException {
         if (memoryCodeList == null || memoryCodeList.isEmpty()) {
             return new HashMap<>();
         }
@@ -45,7 +53,7 @@ public class MemoryCodeCompiler {
         }
 
         try {
-            MemoryJavaFileManager memoryByteCodeManager = new MemoryJavaFileManager(COMPILER.getStandardFileManager(null, null, null));
+            MemoryJavaFileManager memoryByteCodeManager = new MemoryJavaFileManager(COMPILER.getStandardFileManager(null, null, null), classLoader);
             DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
             boolean success = COMPILER.getTask(null, memoryByteCodeManager, collector, OPTIONS, null, memoryCodeList).call();

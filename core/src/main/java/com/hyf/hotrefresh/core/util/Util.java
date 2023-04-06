@@ -1,9 +1,8 @@
 package com.hyf.hotrefresh.core.util;
 
 import com.hyf.hotrefresh.core.classloader.InfrastructureJarClassLoader;
+import com.hyf.hotrefresh.core.refresh.HotRefreshClassLoader;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
-
-import java.lang.instrument.Instrumentation;
 
 /**
  * @author baB_hyf
@@ -25,15 +24,11 @@ public abstract class Util {
         return ccl;
     }
 
-    public static MemoryClassLoader getThrowawayMemoryClassLoader() {
-        return MemoryClassLoader.newInstance();
+    public static HotRefreshClassLoader getThrowawayHotRefreshClassLoader() {
+        return HotRefreshClassLoader.newInstance();
     }
 
     public static InfrastructureJarClassLoader getInfrastructureJarClassLoader() {
         return InfrastructureJarClassLoader.getInstance();
-    }
-
-    public static Instrumentation getInstrumentation() {
-        return InfraUtils.getSystemStartProcessInstrumentation();
     }
 }

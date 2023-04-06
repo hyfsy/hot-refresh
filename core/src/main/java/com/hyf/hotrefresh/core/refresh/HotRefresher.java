@@ -29,7 +29,7 @@ public class HotRefresher {
             // TODO 多文件处理
             // TODO 无需编译，直接class
 
-            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent));
+            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent), Util.getThrowawayHotRefreshClassLoader());
             if (compiledBytes == null || compiledBytes.isEmpty()) {
                 if (Log.isDebugMode()) {
                     Log.info("Non class compiled: " + javaFileName);
@@ -37,7 +37,7 @@ public class HotRefresher {
                 return;
             }
 
-            Util.getThrowawayMemoryClassLoader().store(compiledBytes);
+            Util.getThrowawayHotRefreshClassLoader().store(compiledBytes);
 
             for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
                 String className = entry.getKey();
@@ -54,7 +54,7 @@ public class HotRefresher {
                         HotRefreshManager.reTransform(clazz);
                     } catch (ClassNotFoundException ignored) {
                         // prevent modify event but class not exist
-                        Class.forName(className, false, Util.getThrowawayMemoryClassLoader());
+                        Class.forName(className, false, Util.getThrowawayHotRefreshClassLoader());
                     }
                 }
                 // unload
