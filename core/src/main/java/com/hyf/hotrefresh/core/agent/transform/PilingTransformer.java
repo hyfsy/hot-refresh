@@ -1,6 +1,8 @@
 package com.hyf.hotrefresh.core.agent.transform;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.util.IOUtils;
+import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.shadow.infrastructure.Infrastructure;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -18,8 +20,8 @@ import java.util.stream.Collectors;
 @Infrastructure
 public class PilingTransformer implements ClassFileTransformer {
 
-    private List<String>        classResourceNames;
-    private Consumer<ClassNode> classNodeConsumer;
+    private final List<String>        classResourceNames;
+    private final Consumer<ClassNode> classNodeConsumer;
 
     public PilingTransformer(Class<?> clazz, Consumer<ClassNode> classNodeConsumer) {
         this.classResourceNames = Collections.singletonList(clazz.getName().replace(".", "/"));
@@ -45,7 +47,8 @@ public class PilingTransformer implements ClassFileTransformer {
         }
 
         try {
-            ClassReader reader = new ClassReader(className.replace("/", "."));
+            byte[] bytes = IOUtils.readAsByteArray(Util.getOriginContextClassLoader().getResourceAsStream(className + ".class"), true);
+            ClassReader reader = new ClassReader(bytes);
             ClassNode classNode = new ClassNode(Opcodes.ASM5);
             reader.accept(classNode, ClassReader.SKIP_FRAMES);
 
@@ -53,9 +56,9 @@ public class PilingTransformer implements ClassFileTransformer {
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
-            byte[] bytes = writer.toByteArray();
-            // ClassBytesDumper.dump(bytes, "E:\\AAA.class");
-            return bytes;
+            byte[] newBytes = writer.toByteArray();
+            // ClassBytesDumper.dump(newBytes, "E:\\AAA.class");
+            return newBytes;
         } catch (Throwable t) {
             Log.error("Failed to use instrumentation piling class", t);
             return classfileBuffer;
