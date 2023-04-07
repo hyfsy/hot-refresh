@@ -89,24 +89,17 @@ public class HttpPushWatcher extends Thread implements Watcher {
             return;
         }
 
-        InputStream is;
-        try {
-            is = HttpClient.upload(serverAddress, fileMap);
-        } catch (IOException e) {
-            Log.warn("Upload to " + serverAddress + " failed: " + ExceptionUtils.getNestedMessage(e));
-            Log.debug(ExceptionUtils.getStackMessage(e));
-            return;
-        }
+        try (InputStream is = HttpClient.upload(serverAddress, fileMap)) {
 
-        if (is == null) {
-            return; // no content
-        }
+            if (is == null) {
+                return; // no content
+            }
 
-        try {
             String content = IOUtils.readAsString(is);
             handleResponseContent(content);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.warn("Upload to " + serverAddress + " failed: " + ExceptionUtils.getNestedMessage(e));
+            Log.debug(ExceptionUtils.getStackMessage(e));
         }
     }
 

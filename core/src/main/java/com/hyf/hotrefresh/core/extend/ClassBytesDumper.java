@@ -55,12 +55,13 @@ public class ClassBytesDumper {
 
     public static void dumpNoTransformed(Class<?> clazz, OutputStream os) throws IOException {
         String classFilePath = clazz.getName().replace('.', '/') + ".class";
-        InputStream is = clazz.getClassLoader().getResourceAsStream(classFilePath);
-        if (is == null) {
-            throw new FileNotFoundException(classFilePath);
+        try (InputStream is = clazz.getClassLoader().getResourceAsStream(classFilePath)) {
+            if (is == null) {
+                throw new FileNotFoundException(classFilePath);
+            }
+            byte[] bytes = IOUtils.readAsByteArray(is);
+            dump(bytes, os);
         }
-        byte[] bytes = IOUtils.readAsByteArray(is);
-        dump(bytes, os);
     }
 
     public static void dump(byte[] bytes, String storePath) throws IOException {

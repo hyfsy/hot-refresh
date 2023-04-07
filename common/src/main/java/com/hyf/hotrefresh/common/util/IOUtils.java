@@ -11,16 +11,32 @@ import java.io.*;
 public abstract class IOUtils {
 
     public static byte[] readAsByteArray(InputStream is) throws IOException {
+        return readAsByteArray(is, false);
+    }
+
+    public static byte[] readAsByteArray(InputStream is, boolean autoClose) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             writeTo(is, baos);
             return baos.toByteArray();
+        } finally {
+            if (autoClose) {
+                close(is);
+            }
         }
     }
 
     public static String readAsString(InputStream is) throws IOException {
+        return readAsString(is, false);
+    }
+
+    public static String readAsString(InputStream is, boolean autoClose) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             writeTo(is, baos);
             return baos.toString(Constants.MESSAGE_ENCODING.name());
+        } finally {
+            if (autoClose) {
+                close(is);
+            }
         }
     }
 
@@ -40,9 +56,11 @@ public abstract class IOUtils {
 
     public static void close(Closeable... closeable) {
         for (Closeable c : closeable) {
-            try {
-                c.close();
-            } catch (IOException ignored) {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }

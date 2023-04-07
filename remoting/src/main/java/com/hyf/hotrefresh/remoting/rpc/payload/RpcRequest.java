@@ -44,12 +44,10 @@ public abstract class RpcRequest implements RpcMessage {
         byte[] contentBytes = null;
         if (body != null) {
             try {
-                contentBytes = IOUtils.readAsByteArray(body);
+                contentBytes = IOUtils.readAsByteArray(body, true);
                 messageLength += contentBytes.length;
             } catch (IOException e) {
                 throw new RuntimeException("Read input stream failed", e);
-            } finally {
-                IOUtils.close(body);
             }
         }
 
