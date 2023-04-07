@@ -1,4 +1,9 @@
 
+## 1.2.6 ()
+
+- Support execute same class repeatedly.
+- Support authorization command.
+
 ## 1.2.5 (Mar 30, 2023)
 
 - Support grpc remoting feature.
