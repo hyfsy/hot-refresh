@@ -22,7 +22,7 @@ public class ServerTimeoutArgumentParser implements ArgumentParser {
     }
 
     @Override
-    public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+    public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
         parsedArgs.put(ARG_SERVER_TIMEOUT, segments.iterator().next());
     }
 }

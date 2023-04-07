@@ -38,8 +38,8 @@ public class AnnotatedArgumentParserAdapter implements AnnotatedArgumentParser {
     }
 
     @Override
-    public void parse(Map<String, Object> parsedArgs, List<String> segments) {
-        parser.parse(parsedArgs, segments);
+    public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
+        parser.parse(parsedArgs, name, segments);
     }
 
     private Argument createDefaultArgument() {

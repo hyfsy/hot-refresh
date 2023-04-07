@@ -26,7 +26,7 @@ public class AnnotatedArgumentParserAdapterTests {
         adapter.init(args);
         assertTrue((boolean) args.get("mock-no-anno-init"));
 
-        adapter.parse(args, null);
+        adapter.parse(args, null, null);
         assertTrue((boolean) args.get("mock-no-anno-parse"));
     }
 
@@ -54,7 +54,7 @@ public class AnnotatedArgumentParserAdapterTests {
         }
 
         @Override
-        public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+        public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
             parsedArgs.put("mock-no-anno-parse", true);
         }
     }
@@ -63,7 +63,7 @@ public class AnnotatedArgumentParserAdapterTests {
     public static class MockArgumentParserHasArgumentAnnotation implements ArgumentParser {
 
         @Override
-        public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+        public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
         }
     }
 
@@ -82,7 +82,7 @@ public class AnnotatedArgumentParserAdapterTests {
         }
 
         @Override
-        public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+        public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
         }
     }
 }

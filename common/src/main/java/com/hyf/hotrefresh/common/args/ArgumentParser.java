@@ -13,6 +13,6 @@ public interface ArgumentParser {
     default void init(Map<String, Object> initArgs) {
     }
 
-    void parse(Map<String, Object> parsedArgs, List<String> segments);
+    void parse(Map<String, Object> parsedArgs, String name, List<String> segments);
 
 }

@@ -1,6 +1,5 @@
 package com.hyf.hotrefresh.common.args;
 
-import com.hyf.hotrefresh.common.Constants;
 import org.junit.Test;
 
 import java.util.List;
@@ -35,7 +34,9 @@ public class ArgumentParserTests {
         }
 
         @Override
-        public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+        public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
+            assertTrue("-mock-a2".equals(name) || "-mock-b2".equals(name));
+            assertEquals(1, segments.size());
             parsedArgs.put(MockArgumentParser.class.getName(), true);
         }
     }

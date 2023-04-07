@@ -67,7 +67,7 @@ public class ArgumentHolder {
                 if (sl.size() < parser.argc()) {
                     throw new IllegalArgumentException("Un support value length " + sl.size() + " for argument " + sn);
                 }
-                parser.parse(parsedArgs, sl);
+                parser.parse(parsedArgs, sn, sl);
             }
         });
         ARGS.putAll(parsedArgs);

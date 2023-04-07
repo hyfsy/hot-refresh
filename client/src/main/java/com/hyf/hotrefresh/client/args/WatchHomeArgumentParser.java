@@ -22,7 +22,7 @@ public class WatchHomeArgumentParser implements ArgumentParser {
     }
 
     @Override
-    public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+    public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
         String watchHomePath = segments.iterator().next();
         parsedArgs.put(ARG_WATCH_HOME, watchHomePath);
     }

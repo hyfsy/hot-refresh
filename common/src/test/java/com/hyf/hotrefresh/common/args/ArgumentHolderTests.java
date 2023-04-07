@@ -50,7 +50,7 @@ public class ArgumentHolderTests {
         }
 
         @Override
-        public void parse(Map<String, Object> parsedArgs, List<String> segments) {
+        public void parse(Map<String, Object> parsedArgs, String name, List<String> segments) {
             count++;
             parsedArgs.put("mock", true);
         }
