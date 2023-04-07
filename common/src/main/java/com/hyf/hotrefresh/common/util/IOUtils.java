@@ -42,7 +42,7 @@ public abstract class IOUtils {
         for (Closeable c : closeable) {
             try {
                 c.close();
-            } catch (IOException ignore) {
+            } catch (IOException ignored) {
             }
         }
     }

@@ -53,7 +53,7 @@ public class ExtendClassLoader extends URLOperateExportClassLoader {
             if (resolve) {
                 resolveClass(c);
             }
-        } catch (ClassNotFoundException ignore) {
+        } catch (ClassNotFoundException ignored) {
         }
 
         // parent load

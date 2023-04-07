@@ -43,7 +43,7 @@ public class PluginClassLoader extends URLClassLoader {
                     }).filter(Objects::nonNull).toArray(URL[]::new);
                 }
             }
-        } catch (Exception ignore) {
+        } catch (Exception ignored) {
         }
         return new URL[0];
     }

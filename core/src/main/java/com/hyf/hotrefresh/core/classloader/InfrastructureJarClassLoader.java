@@ -149,7 +149,7 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         if (location.startsWith("http")) {
             try {
                 resource = new URL(location);
-            } catch (MalformedURLException ignore) {
+            } catch (MalformedURLException ignored) {
             }
         }
         else {

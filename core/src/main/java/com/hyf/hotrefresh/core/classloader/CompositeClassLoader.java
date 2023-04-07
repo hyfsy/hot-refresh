@@ -32,7 +32,7 @@ public class CompositeClassLoader extends ExtendClassLoader {
         for (ClassLoader cl : classLoaders) {
             try {
                 return cl.loadClass(name);
-            } catch (ClassNotFoundException ignore) {
+            } catch (ClassNotFoundException ignored) {
             }
         }
 
