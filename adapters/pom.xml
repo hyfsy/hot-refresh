@@ -16,6 +16,6 @@
         <module>adapter-mapstruct</module>
         <module>adapter-spring-boot</module>
         <module>adapter-mybatis</module>
-        <!--<module>adapter-skywalking</module>-->
+        <module>adapter-skywalking</module>
     </modules>
 </project>

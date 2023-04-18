@@ -34,10 +34,10 @@
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-adapter-mybatis</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--    <groupId>com.hyf.hotrefresh</groupId>-->
-        <!--    <artifactId>hot-refresh-adapter-skywalking</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.hyf.hotrefresh</groupId>
+            <artifactId>hot-refresh-adapter-skywalking</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.hyf.hotrefresh</groupId>
             <artifactId>hot-refresh-plugin-web</artifactId>

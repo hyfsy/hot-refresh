@@ -133,11 +133,11 @@
                 <artifactId>hot-refresh-adapter-mybatis</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--<dependency>-->
-            <!--    <groupId>${project.groupId}</groupId>-->
-            <!--    <artifactId>hot-refresh-adapter-skywalking</artifactId>-->
-            <!--    <version>${project.version}</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hot-refresh-adapter-skywalking</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hot-refresh-plugin-web</artifactId>
