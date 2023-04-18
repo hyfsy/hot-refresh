@@ -3,6 +3,7 @@
 
 - Support execute same class repeatedly.
 - Support authorization command.
+- Support hot refresh with Skywalking agent.
 
 ## 1.2.5 (Mar 30, 2023)
 

@@ -55,7 +55,7 @@ bin/hot.cmd -s http://localhost:8080 -h ...
 - [ ] 集成JDK Proxy/CGLib
 - [x] 集成Spring
 - [ ] 集成MyBatis
-- [ ] 集成SkyWalking
+- [x] 兼容SkyWalking（agent需添加`-Dskywalking.agent.is_cache_enhanced_class=true`参数）
 - [ ] 集成Arthas
 - [ ] 支持JDK17
 - [ ] 客户端支持Linux/Mac系统

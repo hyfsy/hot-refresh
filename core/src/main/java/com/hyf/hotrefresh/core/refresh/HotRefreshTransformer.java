@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.common.Services;
 import com.hyf.hotrefresh.core.extend.ClassBytesDumper;
 import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.List;
 
 /**
  * @author baB_hyf
@@ -20,8 +22,11 @@ class HotRefreshTransformer implements ClassFileTransformer {
 
     private final MemoryClassLoader placeHolderMemoryClassLoader;
 
+    private final List<HotRefreshTransformPostProcessor> processors;
+
     public HotRefreshTransformer(MemoryClassLoader placeHolderMemoryClassLoader) {
         this.placeHolderMemoryClassLoader = placeHolderMemoryClassLoader;
+        this.processors = Services.gets(HotRefreshTransformPostProcessor.class);
     }
 
     @Override
@@ -39,6 +44,7 @@ class HotRefreshTransformer implements ClassFileTransformer {
             bytes = classFileBuffer;
         }
         else {
+            bytes = postTransform(loader, classResourceName, classBeingRedefined, protectionDomain, classFileBuffer, bytes);
             if (Log.isDebugMode()) {
                 Log.debug("Hot refresh transform class: " + fullClassName);
                 store(classResourceName, classBeingRedefined, classFileBuffer, bytes);
@@ -46,6 +52,16 @@ class HotRefreshTransformer implements ClassFileTransformer {
         }
 
         return bytes;
+    }
+
+    private byte[] postTransform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer, byte[] memoryClassfileBuffer) throws IllegalClassFormatException {
+        for (HotRefreshTransformPostProcessor processor : processors) {
+            byte[] postTransformedBytes = processor.postTransform(loader, className, classBeingRedefined, protectionDomain, classfileBuffer, memoryClassfileBuffer);
+            if (postTransformedBytes != null) {
+                memoryClassfileBuffer = postTransformedBytes;
+            }
+        }
+        return memoryClassfileBuffer;
     }
 
     private void store(String classResourceName, Class<?> classBeingRedefined, byte[] transformedBytes, byte[] memoryBytes) {

@@ -6,6 +6,9 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Infrastructure
 public abstract class AsmUtils {
 
@@ -19,6 +22,17 @@ public abstract class AsmUtils {
             }
         }
         return lookupMethod;
+    }
+
+    public static List<MethodNode> findMethods(ClassNode classNode, String methodName) {
+        List<MethodNode> methodNodes = new ArrayList<>();
+        for (Object method : classNode.methods) {
+            MethodNode methodNode = (MethodNode) method;
+            if (methodName.equals(methodNode.name)) {
+                methodNodes.add(methodNode);
+            }
+        }
+        return methodNodes;
     }
 
     public static void replaceMethod(ClassNode classNode, MethodNode methodNode) {

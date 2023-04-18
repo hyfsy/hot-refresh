@@ -1,6 +1,7 @@
 package com.hyf.hotrefresh.core.refresh;
 
 import com.hyf.hotrefresh.core.exception.AgentException;
+import com.hyf.hotrefresh.core.memory.MemoryClassLoader;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 class HotRefreshManager {
 
     // so we broken the parent delegate to fixed it, you can see [d1333eaf](https://github.com/hyfsy/hot-refresh/commit/d1333eaff0e03fb4ef2903c28d8013d5f6662127) for more details.
-    private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayHotRefreshClassLoader());
+    private static final HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(MemoryClassLoader.newInstance());
 
     private static final Instrumentation INST;
 

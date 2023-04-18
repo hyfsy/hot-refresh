@@ -157,7 +157,7 @@ public class HotRefreshFilter implements Filter {
             if (Log.isDebugMode()) {
                 Log.error("Handle message failed", t);
             }
-            // TODO exception handle
+            // TODO exception handle、 is 被读完后会出错
             Message message = MessageCodec.decode(IOUtils.readAsByteArray(is));
             RpcErrorResponse rpcErrorResponse = new RpcErrorResponse();
             rpcErrorResponse.setThrowable(t);
