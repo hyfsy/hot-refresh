@@ -1,4 +1,3 @@
-
 package com.hyf.hotrefresh.client.args;
 
 import com.hyf.hotrefresh.common.args.Argument;
@@ -14,20 +13,23 @@ import java.util.Map;
 @Argument(value = {"-t", "--token", "--token-name", "--token-type"}, argc = 1)
 public class AuthorizationArgumentParser implements ArgumentParser {
 
-    public static final String AUTHORIZATION_TOKEN = "AUTHORIZATION_TOKEN";
+    public static final String AUTHORIZATION_TOKEN      = "AUTHORIZATION_TOKEN";
     public static final String AUTHORIZATION_TOKEN_NAME = "AUTHORIZATION_TOKEN_NAME";
     public static final String AUTHORIZATION_TOKEN_TYPE = "AUTHORIZATION_TOKEN_TYPE";
 
     @Override
     public void parse(Map<String, Object> map, String name, List<String> list) {
+
+        String value = list.get(0);
+
         if ("-t".equals(name) || "--token".equals(name)) {
-            map.put(AUTHORIZATION_TOKEN, list.get(0));
+            map.put(AUTHORIZATION_TOKEN, value);
         }
         else if ("--token-name".equals(name)) {
-            map.put(AUTHORIZATION_TOKEN_NAME, list.get(0));
+            map.put(AUTHORIZATION_TOKEN_NAME, value);
         }
         else if ("--token-type".equals(name)) {
-            map.put(AUTHORIZATION_TOKEN_TYPE, list.get(0));
+            map.put(AUTHORIZATION_TOKEN_TYPE, value);
         }
     }
 }

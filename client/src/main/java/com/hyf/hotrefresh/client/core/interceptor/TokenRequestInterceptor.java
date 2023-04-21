@@ -29,6 +29,9 @@ public class TokenRequestInterceptor implements RequestInterceptor {
         String tokenName = ArgumentHolder.getOrDefault(AuthorizationArgumentParser.AUTHORIZATION_TOKEN_NAME, DEFAULT_TOKEN_NAME);
 
         if (TokenType.HEADER.name().equalsIgnoreCase(tokenType)) {
+            if (DEFAULT_TOKEN_NAME.equals(tokenName)) {
+                token = "Bearer " + token;
+            }
             request.getHeaders().put(tokenName, token);
         }
         else if (TokenType.COOKIE.name().equalsIgnoreCase(tokenType)) {
