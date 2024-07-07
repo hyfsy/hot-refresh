@@ -12,6 +12,7 @@ public class HttpRequest {
     private String              url;
     private Map<String, String> params;
     private Map<String, String> headers;
+    private Map<String, String> cookies;
 
     public String getUrl() {
         return url;
@@ -41,5 +42,16 @@ public class HttpRequest {
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public Map<String, String> getCookies() {
+        if (cookies == null) {
+            cookies = new HashMap<>();
+        }
+        return cookies;
+    }
+
+    public void setCookies(Map<String, String> cookies) {
+        this.cookies = cookies;
     }
 }

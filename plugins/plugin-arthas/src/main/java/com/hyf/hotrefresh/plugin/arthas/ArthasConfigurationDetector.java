@@ -48,4 +48,20 @@ public class ArthasConfigurationDetector implements SpringApplicationRunListener
     public void finished(ConfigurableApplicationContext configurableApplicationContext, Throwable throwable) {
 
     }
+
+    /**
+     * spring boot 2.x
+     */
+
+    public void starting() {
+
+    }
+
+    public void started(ConfigurableApplicationContext context) {
+
+    }
+
+    public void running(ConfigurableApplicationContext context) {
+
+    }
 }

@@ -73,8 +73,8 @@ class DependencyLookup {
 
             JarURLConnection jarConn = (JarURLConnection) packageFolderURL.openConnection();
             String rootEntryName = jarConn.getEntryName();
+            // jarUri(war type) -> file://xxx.jar ignore
             if (rootEntryName == null) {
-                Log.warn("Wasn't able to open " + packageFolderURL + " as a jar file");
                 return result;
             }
 
