@@ -7,6 +7,7 @@ import com.hyf.hotrefresh.common.util.ReflectionUtils;
 import com.hyf.hotrefresh.common.util.StringUtils;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
+import com.hyf.hotrefresh.core.memory.groovy.GroovyCodeCompiler;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.plugin.execute.Executable;
@@ -83,6 +84,11 @@ public class RpcExecutableRequestHandler implements RpcMessageHandler<RpcExecuta
     }
 
     private Class<?> loadContent(InputStream content, String fileName, String fileLocation) throws Exception {
+
+        // 扩展支持groovy编译
+        if (fileName.endsWith("ByGroovy.java")) {
+            return GroovyCodeCompiler.compile(IOUtils.readAsString(content));
+        }
 
         ExecutableClassLoader cl = new ExecutableClassLoader();
 

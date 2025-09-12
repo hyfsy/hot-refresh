@@ -28,6 +28,7 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
     private static final String BYTE_BUDDY_LOCAL_PATH = "lib/byte-buddy-agent-1.8.17.jar";
     private static final String ASM_LOCAL_PATH        = "lib/asm-5.2.jar";
     private static final String ASM_TREE_LOCAL_PATH   = "lib/asm-tree-5.2.jar";
+    private static final String GROOVY_LOCAL_PATH   = "lib/groovy-all-2.4.21.jar";
 
     private static volatile Map<String, String> DEFAULT_IDENTITY_MAP;
 
@@ -65,6 +66,11 @@ public class InfrastructureJarClassLoader extends ExtendClassLoader {
         URL asmTreeResource = ccl.getResource(ASM_TREE_LOCAL_PATH);
         URL asmTreeURL = ResourcePersistUtils.getResourceURL(asmTreeResource);
         urlMap.put("asm-tree", asmTreeURL);
+
+        // groovy
+        URL groovyResource = ccl.getResource(GROOVY_LOCAL_PATH);
+        URL groovyURL = ResourcePersistUtils.getResourceURL(groovyResource);
+        urlMap.put("groovy", groovyURL);
 
         // tools
         String toolsJarPath = new ToolsJarProcessor().getToolsJarPath();
