@@ -26,6 +26,8 @@ public class HotRefreshClassLoader extends MemoryClassLoader {
 
     private static ClassFileStorage classFileStorage;
 
+    private static final HotRefreshClassLoader INSTANCE = newInstance();
+
     static {
         registerAsParallelCapable();
     }
@@ -39,6 +41,10 @@ public class HotRefreshClassLoader extends MemoryClassLoader {
         super(parent);
     }
 
+    public static HotRefreshClassLoader getInstance() {
+        return INSTANCE;
+    }
+
     public static HotRefreshClassLoader newInstance() {
         return newInstance(Util.getOriginContextClassLoader());
     }
@@ -50,7 +56,7 @@ public class HotRefreshClassLoader extends MemoryClassLoader {
     public static void bind() {
         if (cclPerThreadLocal.get() == null) {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(newInstance());
+            Thread.currentThread().setContextClassLoader(getInstance());
             cclPerThreadLocal.set(ccl);
         }
     }

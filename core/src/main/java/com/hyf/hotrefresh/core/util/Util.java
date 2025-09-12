@@ -12,6 +12,9 @@ public abstract class Util {
 
     public static ClassLoader getOriginContextClassLoader() {
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        if (ccl == null) {
+            return null;
+        }
 
         ClassLoader tmp = ccl;
         do {
@@ -24,8 +27,15 @@ public abstract class Util {
         return ccl;
     }
 
+    /**
+     * 注意避免内存泄漏的问题，结合tomcat的{@link org.apache.commons.logging.LogFactory#cacheFactory(ClassLoader, LogFactory)}缓存功能
+     */
     public static HotRefreshClassLoader getThrowawayHotRefreshClassLoader() {
         return HotRefreshClassLoader.newInstance();
+    }
+
+    public static HotRefreshClassLoader getHotRefreshClassLoader() {
+        return HotRefreshClassLoader.getInstance();
     }
 
     public static InfrastructureJarClassLoader getInfrastructureJarClassLoader() {
