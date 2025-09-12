@@ -29,4 +29,18 @@ public class UtilTests {
     public void testCCLNotMemoryClassLoader() {
         assertFalse(Util.getOriginContextClassLoader() instanceof MemoryClassLoader);
     }
+
+    @Test
+    public void testBootstrapClassLoader() {
+        Thread.currentThread().setContextClassLoader(null);
+        assertNull(Util.getOriginContextClassLoader());
+    }
+
+    @Test
+    public void testSingletonHotRefreshClassLoader() {
+        MemoryClassLoader mcl = Util.getHotRefreshClassLoader();
+        MemoryClassLoader mcl2 = Util.getHotRefreshClassLoader();
+        assertEquals(mcl, mcl2);
+    }
+
 }
