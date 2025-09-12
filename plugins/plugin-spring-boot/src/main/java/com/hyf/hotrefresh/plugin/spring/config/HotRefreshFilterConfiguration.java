@@ -21,7 +21,7 @@ import java.util.Collections;
 public class HotRefreshFilterConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "hotRefreshFilter")
     public FilterRegistrationBean /* 兼容低版本spring */ hotRefreshFilter() {
         FilterRegistrationBean filterFilterRegistrationBean = new FilterRegistrationBean();
         filterFilterRegistrationBean.setFilter(getFilter());
