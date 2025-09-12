@@ -8,8 +8,10 @@ import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.install.CoreInstaller;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
+import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,7 +20,7 @@ import java.util.Map;
  */
 public class HotRefresher {
 
-    public static void refresh(String javaFileName, String javaFileContent, String fileChangeType) throws RefreshException {
+    public static void refresh(String fileName, byte[] fileContent, String fileChangeType) throws RefreshException {
 
         if (!CoreInstaller.enable()) {
             return;
@@ -26,20 +28,31 @@ public class HotRefresher {
 
         try {
 
-            // TODO 多文件处理
-            // TODO 无需编译，直接class
+            Map<String, byte[]> classBytesMap = new LinkedHashMap<>();
 
-            Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(new MemoryCode(javaFileName, javaFileContent), Util.getThrowawayHotRefreshClassLoader());
-            if (compiledBytes == null || compiledBytes.isEmpty()) {
-                if (Log.isDebugMode()) {
-                    Log.info("Non class compiled: " + javaFileName);
+            // java文件
+            if (fileName.endsWith(".java")) {
+                Map<String, byte[]> compiledBytes = classBytesMap = MemoryCodeCompiler.compile(new MemoryCode(fileName, new String(fileContent)), Util.getThrowawayHotRefreshClassLoader());
+                if (compiledBytes == null || compiledBytes.isEmpty()) {
+                    if (Log.isDebugMode()) {
+                        Log.info("Non class compiled: " + fileName);
+                    }
+                    return;
                 }
+                classBytesMap.putAll(compiledBytes);
+            }
+            // class文件
+            else if (fileName.endsWith(".class")) {
+                String className = InfraUtils.getClassName(fileContent);
+                classBytesMap.put(className, fileContent);
+            } else {
+                // file suffix not supported
                 return;
             }
 
-            Util.getThrowawayHotRefreshClassLoader().store(compiledBytes);
+            Util.getThrowawayHotRefreshClassLoader().store(classBytesMap);
 
-            for (Map.Entry<String, byte[]> entry : compiledBytes.entrySet()) {
+            for (Map.Entry<String, byte[]> entry : classBytesMap.entrySet()) {
                 String className = entry.getKey();
 
                 ChangeType changeType = ChangeType.valueOf(fileChangeType);
@@ -64,7 +77,7 @@ public class HotRefresher {
             }
 
             HotRefreshEventPublisher eventPublisher = HotRefreshEventPublisher.getInstance();
-            eventPublisher.publishEvent(new ByteCodeRefreshedEvent(compiledBytes));
+            eventPublisher.publishEvent(new ByteCodeRefreshedEvent(classBytesMap));
         } catch (RefreshException e) {
             throw e;
         } catch (Throwable e) {

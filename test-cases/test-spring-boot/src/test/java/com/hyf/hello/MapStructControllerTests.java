@@ -11,6 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +52,7 @@ public class MapStructControllerTests {
 
         content = content.replace("// PersonDto convert(PersonDo personDo);", "PersonDto convert(PersonDo personDo);");
 
-        HotRefresher.refresh("HelloConverter.java", content, ChangeType.MODIFY.name());
+        HotRefresher.refresh("HelloConverter.java", content.getBytes(StandardCharsets.UTF_8), ChangeType.MODIFY.name());
 
         assertTrue(mapStrutController.addCompiledMethod());
     }

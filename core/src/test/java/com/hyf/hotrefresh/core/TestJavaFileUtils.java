@@ -24,6 +24,10 @@ public class TestJavaFileUtils {
     }
 
     public static String getClassFileName() {
+        return "Test.class";
+    }
+
+    public static String getInnerClassFileName() {
         return "Test.class.HOT_REFRESH";
     }
 
@@ -43,7 +47,7 @@ public class TestJavaFileUtils {
     }
 
     public static byte[] getClassBytes() {
-        try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream(getClassFileName());
+        try (InputStream is = Util.getOriginContextClassLoader().getResourceAsStream(getInnerClassFileName());
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             IOUtils.writeTo(is, baos);
             return baos.toByteArray();

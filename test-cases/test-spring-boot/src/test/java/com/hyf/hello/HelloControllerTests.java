@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +36,7 @@ public class HelloControllerTests {
         assertFalse(helloController.loadOuterClass());
         assertFalse(helloController.invokeOuterClass());
 
-        HotRefresher.refresh("Test.java", getTestClassCode(), ChangeType.MODIFY.name());
+        HotRefresher.refresh("Test.java", getTestClassCode().getBytes(StandardCharsets.UTF_8), ChangeType.MODIFY.name());
 
         HotRefreshClassLoader.bind();
         assertTrue(helloController.loadOuterClass());
@@ -59,7 +60,7 @@ public class HelloControllerTests {
                         "        return true;\n" +
                         "    }\n");
 
-        HotRefresher.refresh("HelloController.java", content, ChangeType.MODIFY.name());
+        HotRefresher.refresh("HelloController.java", content.getBytes(StandardCharsets.UTF_8), ChangeType.MODIFY.name());
 
         assertTrue(helloController.modifySelf());
     }

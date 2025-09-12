@@ -6,6 +6,7 @@ import com.hyf.hotrefresh.core.exception.RefreshException;
 import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
@@ -22,8 +23,15 @@ public class HotRefresherTests {
     }
 
     @Test
-    public void testHasRefreshed() throws RefreshException {
-        HotRefresher.refresh(TestJavaFileUtils.getFileName(), TestJavaFileUtils.getContent(), ChangeType.MODIFY.name());
+    public void testJavaFileRefreshed() throws RefreshException {
+        HotRefresher.refresh(TestJavaFileUtils.getFileName(), TestJavaFileUtils.getContent().getBytes(StandardCharsets.UTF_8), ChangeType.MODIFY.name());
+        assertNotNull(Util.getThrowawayHotRefreshClassLoader().getClass(TestJavaFileUtils.getClassName()));
+        Util.getThrowawayHotRefreshClassLoader().clear();
+    }
+
+    @Test
+    public void testClassFileRefreshed() throws RefreshException {
+        HotRefresher.refresh(TestJavaFileUtils.getClassFileName(), TestJavaFileUtils.getClassBytes(), ChangeType.MODIFY.name());
         assertNotNull(Util.getThrowawayHotRefreshClassLoader().getClass(TestJavaFileUtils.getClassName()));
         Util.getThrowawayHotRefreshClassLoader().clear();
     }

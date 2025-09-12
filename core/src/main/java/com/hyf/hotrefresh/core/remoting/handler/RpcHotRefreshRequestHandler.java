@@ -39,9 +39,9 @@ public class RpcHotRefreshRequestHandler implements RpcMessageHandler<RpcHotRefr
 
             // 热刷新
             if (Arrays.asList(RpcHotRefreshRequestInst.CREATE, RpcHotRefreshRequestInst.MODIFY, RpcHotRefreshRequestInst.DELETE).contains(inst)) {
-                String contentString = IOUtils.readAsString(content);
-                if (contentString != null && !"".equals(contentString.trim())) {
-                    HotRefresher.refresh(fileName, contentString, ChangeType.valueOf(inst.name()).name());
+                byte[] contentBytes = IOUtils.readAsByteArray(content);
+                if (contentBytes.length > 0) {
+                    HotRefresher.refresh(fileName, contentBytes, ChangeType.valueOf(inst.name()).name());
                 }
             }
         }

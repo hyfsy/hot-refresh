@@ -5,7 +5,7 @@ import com.hyf.hotrefresh.core.util.AsmUtils;
 import com.hyf.hotrefresh.core.util.InfraUtils;
 import com.hyf.hotrefresh.core.util.Util;
 import com.hyf.hotrefresh.shadow.infrastructure.Infrastructure;
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
