@@ -4,6 +4,9 @@
 - Support execute same class repeatedly.
 - Support authorization command.
 - Support hot refresh with Skywalking agent.
+- Support hot refresh class file.
+- Support execute the class compiled by groovy.
+- Fix the memory leak caused by HotRefreshClassLoader.
 
 ## 1.2.5 (Mar 30, 2023)
 
