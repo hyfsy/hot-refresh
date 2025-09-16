@@ -26,6 +26,8 @@ public class RpcMessageType {
     public static final byte RESPONSE_COMMAND_HOT_REFRESH = 14;
     public static final byte REQUEST_COMMAND_ARTHAS       = 15;
     public static final byte RESPONSE_COMMAND_ARTHAS      = 16;
+    public static final byte REQUEST_BATCH_HOT_REFRESH    = 17;
+    public static final byte RESPONSE_BATCH_HOT_REFRESH   = 18;
 
     // ------------------ custom code: 1000+ ------------------
 

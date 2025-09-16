@@ -5,6 +5,7 @@ import com.hyf.hotrefresh.client.core.DeferredOpenFileInputStream;
 import com.hyf.hotrefresh.client.core.client.HotRefreshClient;
 import com.hyf.hotrefresh.common.ChangeType;
 import com.hyf.hotrefresh.common.Log;
+import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshBatchRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.remoting.exception.ClientException;
@@ -27,6 +28,16 @@ public class RpcPushWatcher extends Thread implements Watcher {
     private final HotRefreshClient client = HotRefreshClient.getInstance();
 
     private volatile boolean closed = false;
+
+    private volatile boolean enableBatch = false;
+
+    public void setEnableBatch(boolean enableBatch) {
+        this.enableBatch = enableBatch;
+    }
+
+    public boolean isEnableBatch() {
+        return enableBatch;
+    }
 
     @Override
     public boolean interest(Object context) {
@@ -104,7 +115,12 @@ public class RpcPushWatcher extends Thread implements Watcher {
                 client.sendRequest(messages.get(0));
             }
             else {
-                client.sendBatchRequest((List) messages);
+                if (enableBatch) {
+                    client.sendRequest(toBatch(messages));
+                }
+                else {
+                    client.sendBatchRequest((List) messages);
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -149,5 +165,13 @@ public class RpcPushWatcher extends Thread implements Watcher {
         result.sort(Comparator.comparing(r -> r.getFileLocation().substring(0, r.getFileLocation().lastIndexOf("."))));
 
         return result;
+    }
+
+    private RpcHotRefreshBatchRequest toBatch(List<RpcHotRefreshRequest> messages) {
+        RpcHotRefreshBatchRequest request = new RpcHotRefreshBatchRequest();
+        for (RpcHotRefreshRequest message : messages) {
+            request.addRequest(message);
+        }
+        return request;
     }
 }

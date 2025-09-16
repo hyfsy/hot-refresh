@@ -19,5 +19,7 @@ public class RpcHotRefreshRequestHandlerRegister implements RpcMessageHandlerReg
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_HOT_REFRESH, HandleSide.CLIENT, new RpcHotRefreshResponseHandler()));
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.REQUEST_COMMAND_HOT_REFRESH, HandleSide.SERVER, new RpcHotRefreshCommandRequestHandler()));
         registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_COMMAND_HOT_REFRESH, HandleSide.CLIENT, new RpcResponseHandler()));
+        registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.REQUEST_BATCH_HOT_REFRESH, HandleSide.SERVER, new RpcHotRefreshBatchRequestHandler()));
+        registry.register(new DefaultRpcMessageHandlerRegistrationInfo(RpcMessageType.RESPONSE_BATCH_HOT_REFRESH, HandleSide.CLIENT, new RpcHotRefreshBatchResponseHandler()));
     }
 }
