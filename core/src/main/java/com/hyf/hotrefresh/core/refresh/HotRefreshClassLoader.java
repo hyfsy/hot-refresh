@@ -46,6 +46,8 @@ public class HotRefreshClassLoader extends MemoryClassLoader {
     }
 
     public static HotRefreshClassLoader newInstance() {
+        // TODO 内部类的情况，会因为访问权限控制导致无法被使用，因为主类是spring加载，子类是app加载
+        //  可以考虑特殊处理内部类，找到主类的类加载器进行加载
         return newInstance(Util.getOriginContextClassLoader());
     }
 
@@ -70,8 +72,6 @@ public class HotRefreshClassLoader extends MemoryClassLoader {
     }
 
     /**
-     * TODO 为什么存在这种情况？能否去掉？
-     * <p>
      * for scl to load the new compiled class dynamic added by hot refresh
      */
     private static void addOutputHome() {
