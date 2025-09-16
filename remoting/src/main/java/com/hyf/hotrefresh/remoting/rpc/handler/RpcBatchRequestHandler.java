@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class RpcBatchRequestHandler implements RpcMessageHandler<RpcBatchRequest, RpcBatchResponse> {
 
-    private final MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
-
     @Override
     public RpcBatchResponse handle(RpcBatchRequest request) throws Exception {
+
+        MessageHandler serverMessageHandler = MessageHandlerFactory.getServerMessageHandler();
 
         List<RpcMessage> rpcResponses = new ArrayList<>();
 

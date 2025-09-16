@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class RpcBatchResponseHandler extends RpcMessageResponseHandler<RpcBatchResponse> {
 
-    private final MessageHandler clientMessageHandler = MessageHandlerFactory.getClientMessageHandler();
-
     @Override
     public void handleResponse(RpcBatchResponse response) throws Exception {
+
+        MessageHandler clientMessageHandler = MessageHandlerFactory.getClientMessageHandler();
 
         List<RpcMessage> rpcResponses = response.getRpcMessages();
         for (RpcMessage rpcResponse : rpcResponses) {
