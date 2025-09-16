@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO 为什么不考虑先加载内存类而要先找父类？
+ * TODO 为什么不考虑先加载内存类而要先找父类？因为该类加载器出来的类不是原来的类，导致spring通过这里找到的类找对象找不到的问题
  *
  * @author baB_hyf
  * @date 2021/12/12
@@ -74,11 +74,20 @@ public class MemoryClassLoader extends ClassLoader {
     }
 
     public Class<?> getClass(String className) {
+
+        // 不破坏双亲委派的情况使用，优先从父类加载器中加载该类
         try {
-            return findClass(className);
-        } catch (ClassNotFoundException e) {
+            return super.loadClass(className);
+        } catch (ClassNotFoundException ignored) {
             throw new RuntimeException("Cannot find class: " + className);
         }
+
+        // 破坏双亲委派的情况使用
+        // try {
+        //     return findClass(className);
+        // } catch (ClassNotFoundException e) {
+        //     throw new RuntimeException("Cannot find class: " + className);
+        // }
     }
 
     public List<Class<?>> clear() {

@@ -3,6 +3,7 @@ package com.hyf.hotrefresh.core.memory;
 import com.hyf.hotrefresh.common.Constants;
 import com.hyf.hotrefresh.common.util.IOUtils;
 import com.hyf.hotrefresh.core.TestJavaFileUtils;
+import com.hyf.hotrefresh.core.TestJavaModel;
 import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.util.Util;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -22,7 +24,7 @@ import static org.junit.Assert.assertNull;
  */
 public class MemoryByteCodeCollectClassLoaderTests {
 
-    private static final String CLASS_NAME = TestJavaFileUtils.getClassName();
+    private final TestJavaModel javaModel = new TestJavaModel();
 
     private MemoryByteCodeCollectClassLoader classLoader;
     private MemoryByteCode                   memoryByteCode;
@@ -30,17 +32,17 @@ public class MemoryByteCodeCollectClassLoaderTests {
     @Before
     public void before() {
         classLoader = new MemoryByteCodeCollectClassLoader(MemoryClassLoader.newInstance(Util.getInfrastructureJarClassLoader()));
-        memoryByteCode = new MemoryByteCode(CLASS_NAME);
+        memoryByteCode = new MemoryByteCode(javaModel.getClassName());
     }
 
     @Test
     public void testMemoryByteCodeCollect() throws IOException {
 
-        assertNull(classLoader.get(CLASS_NAME));
+        assertNull(classLoader.get(javaModel.getClassName()));
         classLoader.collect(memoryByteCode);
-        assertNotNull(classLoader.get(CLASS_NAME));
+        assertNotNull(classLoader.get(javaModel.getClassName()));
 
-        assertNull(classLoader.getCollectedByteCodes().get(CLASS_NAME));
+        assertNull(classLoader.getCollectedByteCodes().get(javaModel.getClassName()));
 
         byte[] content = "aaa".getBytes(Constants.MESSAGE_ENCODING);
         try (ByteArrayInputStream bais = new ByteArrayInputStream(content);
@@ -48,27 +50,27 @@ public class MemoryByteCodeCollectClassLoaderTests {
             IOUtils.writeTo(bais, os);
         }
 
-        assertNotNull(classLoader.getCollectedByteCodes().get(CLASS_NAME));
+        assertNotNull(classLoader.getCollectedByteCodes().get(javaModel.getClassName()));
     }
 
     @Test(expected = ClassNotFoundException.class)
     public void testLoadNonCollectedClass() throws ClassNotFoundException {
-        classLoader.loadClass(CLASS_NAME);
+        classLoader.loadClass(javaModel.getClassName());
     }
 
     @Test
     public void testLoadCollectedClass() throws IOException, ClassNotFoundException, CompileException {
 
-        MemoryCode memoryCode = new MemoryCode(TestJavaFileUtils.getFileName(), TestJavaFileUtils.getContent());
+        MemoryCode memoryCode = new MemoryCode(javaModel.getFileName(), javaModel.getContent());
         Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(memoryCode);
 
-        byte[] content = compiledBytes.get(TestJavaFileUtils.getClassName());
+        byte[] content = compiledBytes.get(javaModel.getClassName());
         try (ByteArrayInputStream bais = new ByteArrayInputStream(content);
              OutputStream os = memoryByteCode.openOutputStream()) {
             IOUtils.writeTo(bais, os);
         }
         classLoader.collect(memoryByteCode);
-        classLoader.loadClass(CLASS_NAME);
+        classLoader.loadClass(javaModel.getClassName());
     }
 
 }

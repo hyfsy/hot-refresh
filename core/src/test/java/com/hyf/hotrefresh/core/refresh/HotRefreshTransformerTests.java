@@ -1,6 +1,6 @@
 package com.hyf.hotrefresh.core.refresh;
 
-import com.hyf.hotrefresh.core.TestJavaFileUtils;
+import com.hyf.hotrefresh.core.TestJavaModel;
 import com.hyf.hotrefresh.core.exception.CompileException;
 import com.hyf.hotrefresh.core.memory.MemoryCode;
 import com.hyf.hotrefresh.core.memory.MemoryCodeCompiler;
@@ -19,21 +19,23 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class HotRefreshTransformerTests {
 
+    private final TestJavaModel javaModel = new TestJavaModel();
+
     @Test
     public void testTransform() throws IllegalClassFormatException, CompileException {
 
         HotRefreshTransformer hotRefreshTransformer = new HotRefreshTransformer(Util.getThrowawayHotRefreshClassLoader());
         byte[] bytes = new byte[]{1};
-        byte[] transformedBytes = hotRefreshTransformer.transform(null, TestJavaFileUtils.getClassName().replace(".", "/"), null, null, bytes);
+        byte[] transformedBytes = hotRefreshTransformer.transform(null, javaModel.getClassName().replace(".", "/"), null, null, bytes);
 
         assertEquals(bytes, transformedBytes);
 
         HotRefreshClassLoader memoryClassLoader = HotRefreshClassLoader.newInstance();
-        MemoryCode memoryCode = new MemoryCode(TestJavaFileUtils.getFileName(), TestJavaFileUtils.getContent());
+        MemoryCode memoryCode = new MemoryCode(javaModel.getFileName(), javaModel.getContent());
         Map<String, byte[]> compiledBytes = MemoryCodeCompiler.compile(memoryCode);
         memoryClassLoader.store(compiledBytes);
 
-        transformedBytes = hotRefreshTransformer.transform(null, TestJavaFileUtils.getClassName().replace(".", "/"), null, null, bytes);
+        transformedBytes = hotRefreshTransformer.transform(null, javaModel.getClassName().replace(".", "/"), null, null, bytes);
         assertNotEquals(bytes, transformedBytes);
         memoryClassLoader.clear();
     }
