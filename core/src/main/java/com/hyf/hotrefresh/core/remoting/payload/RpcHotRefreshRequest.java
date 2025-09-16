@@ -134,4 +134,9 @@ public class RpcHotRefreshRequest extends RpcRequest {
     public int hashCode() {
         return Objects.hash(super.hashCode(), fileName, fileLocation, inst);
     }
+
+    @Override
+    public String toString() {
+        return "[" + inst.name() + "] " + fileLocation;
+    }
 }

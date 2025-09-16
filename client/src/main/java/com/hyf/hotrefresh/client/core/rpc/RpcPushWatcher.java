@@ -8,15 +8,13 @@ import com.hyf.hotrefresh.common.Log;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequest;
 import com.hyf.hotrefresh.core.remoting.payload.RpcHotRefreshRequestInst;
 import com.hyf.hotrefresh.remoting.exception.ClientException;
-import com.hyf.hotrefresh.remoting.rpc.RpcMessage;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 
 /**
  * @author baB_hyf
@@ -24,7 +22,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class RpcPushWatcher extends Thread implements Watcher {
 
-    private final BlockingQueue<RpcMessage> rpcMessageQueue = new ArrayBlockingQueue<>(1000);
+    private final BlockingQueue<RpcHotRefreshRequest> rpcMessageQueue = new ArrayBlockingQueue<>(1000);
 
     private final HotRefreshClient client = HotRefreshClient.getInstance();
 
@@ -37,7 +35,7 @@ public class RpcPushWatcher extends Thread implements Watcher {
         }
 
         Path p = (Path) context;
-        return p.toString().endsWith(".java");
+        return p.toString().endsWith(".java") || p.toString().endsWith(".class");
     }
 
     @Override
@@ -80,20 +78,33 @@ public class RpcPushWatcher extends Thread implements Watcher {
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void handleFileChangeRequest() throws ClientException {
         try {
-            List<RpcMessage> messages = new ArrayList<>();
+            List<RpcHotRefreshRequest> messages = new ArrayList<>();
             messages.add(rpcMessageQueue.take());
-            preventFluctuation();
-            rpcMessageQueue.drainTo(messages);
 
-            messages = new ArrayList<>(new HashSet<>(messages));
+            // 特殊处理：编译的时候内部类先编译完成，然后主类过一段时间才编译完成的情况，主子类都要收集
+            while (true) {
+                int snapshotSize = messages.size();
+                preventFluctuation();
+                rpcMessageQueue.drainTo(messages);
+                if (snapshotSize == messages.size()) {
+                    break;
+                }
+            }
+
+            messages = mergeRequest(messages);
+
+            if (Log.isDebugMode()) {
+                Log.debug("Changed file: \n" + messages.stream().map(RpcHotRefreshRequest::toString).collect(Collectors.joining("\n")));
+            }
 
             if (messages.size() == 1) {
                 client.sendRequest(messages.get(0));
             }
             else {
-                client.sendBatchRequest(messages);
+                client.sendBatchRequest((List) messages);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -107,5 +118,36 @@ public class RpcPushWatcher extends Thread implements Watcher {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private List<RpcHotRefreshRequest> mergeRequest(List<RpcHotRefreshRequest> messages) {
+
+        // 去重
+        messages = new ArrayList<>(new HashSet<>(messages));
+
+        Map<String, Map<RpcHotRefreshRequestInst, RpcHotRefreshRequest>> temp = new LinkedHashMap<>();
+        for (RpcHotRefreshRequest message : messages) {
+            temp.putIfAbsent(message.getFileLocation(), new HashMap<>());
+            temp.get(message.getFileLocation()).put(message.getInst(), message);
+        }
+
+        List<RpcHotRefreshRequest> result = new ArrayList<>();
+        for (Map.Entry<String, Map<RpcHotRefreshRequestInst, RpcHotRefreshRequest>> entry : temp.entrySet()) {
+            int size = entry.getValue().size();
+            if (size == 1) {
+                result.addAll(entry.getValue().values());
+            }
+            // 新增、修改、删除同时存在的情况
+            else {
+                result.add(Optional.ofNullable(entry.getValue().get(RpcHotRefreshRequestInst.DELETE)) // 优先删除
+                .orElseGet(() -> Optional.ofNullable(entry.getValue().get(RpcHotRefreshRequestInst.MODIFY)) // 其次修改
+                .orElseGet(() -> entry.getValue().get(RpcHotRefreshRequestInst.CREATE)))); // 最后创建
+            }
+        }
+
+        // 文件从大到小排序，主要因为内部类的情况，让主类先编译好
+        result.sort(Comparator.comparing(r -> r.getFileLocation().substring(0, r.getFileLocation().lastIndexOf("."))));
+
+        return result;
     }
 }
