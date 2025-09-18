@@ -1,3 +1,4 @@
 com.hyf.hotrefresh.client.command.HotRefreshCommandHandler
 com.hyf.hotrefresh.client.command.SystemCommandHandler
 com.hyf.hotrefresh.client.command.ArgumentCommandHandler
+com.hyf.hotrefresh.client.command.RequestCommandHandler
