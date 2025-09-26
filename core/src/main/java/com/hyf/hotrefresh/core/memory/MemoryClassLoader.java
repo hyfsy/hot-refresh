@@ -75,6 +75,9 @@ public class MemoryClassLoader extends ClassLoader {
 
     public Class<?> getClass(String className) {
 
+        // 优先从父类加载器加载的原因：
+        // remove/clear时得给app加载的类才能refresh成功，否则mem加载的类不会导致任何app类被refresh
+
         // 不破坏双亲委派的情况使用，优先从父类加载器中加载该类
         try {
             return super.loadClass(className);
@@ -83,11 +86,15 @@ public class MemoryClassLoader extends ClassLoader {
         }
 
         // 破坏双亲委派的情况使用
-        // try {
-        //     return findClass(className);
-        // } catch (ClassNotFoundException e) {
-        //     throw new RuntimeException("Cannot find class: " + className);
-        // }
+        // return brokeGetClass(className);
+    }
+
+    private Class<?> brokeGetClass(String className) {
+        try {
+            return findClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Cannot find class: " + className);
+        }
     }
 
     public List<Class<?>> clear() {
@@ -105,6 +112,39 @@ public class MemoryClassLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
 
+        // 优先从父类加载器加载的原因：
+        // 子类加载器会造成覆盖问题，应用中存在该类，但被子类加载，类加载器不同，内部类的情况无法reTransform且使用该类时会造成非法访问的权限问题
+        // TODO 但优先从父类加载器中加载也会导致问题，storage的问题，导致app一直能加载出来
+        //  而关联的业务类找不到的情况，导致reTransform时出现java.lang.InternalError的错误
+        //  这问题先不考虑，只有内部类的情况会有问题
+
+        // 不破坏双亲委派的情况使用，优先从父类加载器中加载该类
+        try {
+            return super.findClass(name);
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        synchronized (LOCK) {
+            Class<?> clazz = classCache.get(name);
+            if (clazz == null) {
+                byte[] bytes = bytesCache.get(name);
+                if (bytes != null) {
+                    clazz = defineClass(name, bytes, 0, bytes.length);
+                    classCache.put(name, clazz);
+                }
+            }
+            if (clazz != null) {
+                return clazz;
+            }
+        }
+
+        throw new ClassNotFoundException(name);
+
+        // 破坏双亲委派的情况使用
+        // return brokeFindClass(name);
+    }
+
+    protected Class<?> brokeFindClass(String name) throws ClassNotFoundException {
         synchronized (LOCK) {
             Class<?> clazz = classCache.get(name);
             if (clazz == null) {
